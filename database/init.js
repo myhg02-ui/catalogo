@@ -41,11 +41,16 @@ function loadDatabase() {
 }
 
 function saveDatabase(db) {
-  var dataDir = path.dirname(DB_PATH);
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+  try {
+    var dataDir = path.dirname(DB_PATH);
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
+    console.log('✅ Base de datos guardada exitosamente');
+  } catch (e) {
+    console.warn('⚠️ No se pudo escribir en el disco (entorno de solo lectura como Vercel):', e.message);
   }
-  fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
 }
 
 // Helpers para simular operaciones tipo SQL

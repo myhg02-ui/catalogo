@@ -507,7 +507,8 @@
                 <textarea class="form-input" id="prodDescription" rows="3" placeholder="Descripción del producto...">${isEdit ? escapeHTML(product.description || '') : ''}</textarea>
             </div>
             <div class="form-group">
-                <label>Imagen</label>
+                <label>Imagen (Subir archivo o pegar enlace URL)</label>
+                <input type="text" class="form-input" id="prodImageUrl" value="${isEdit && product.image ? escapeAttr(product.image) : ''}" placeholder="Pega el enlace de la imagen (ej: de imgbb o postimages) o sube una abajo..." style="margin-bottom: 8px;">
                 <div class="image-upload-area" id="imageUploadArea">
                     <p>📷 Haz clic para subir una imagen</p>
                     <input type="file" id="prodImageFile" accept="image/*" style="display:none;">
@@ -515,7 +516,6 @@
                 <div class="image-preview" id="imagePreview" style="${isEdit && product.image ? '' : 'display:none'}">
                     <img id="imagePreviewImg" src="${isEdit && product.image ? escapeAttr(product.image) : ''}" alt="Preview">
                 </div>
-                <input type="hidden" id="prodImageUrl" value="${isEdit && product.image ? escapeAttr(product.image) : ''}">
             </div>
             <div class="form-group">
                 <label>Orden</label>

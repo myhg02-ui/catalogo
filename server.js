@@ -31,7 +31,11 @@ var catalogTypes = ['streaming', 'doxeo', 'seguidores'];
 catalogTypes.forEach(function(type) {
   var dir = path.join(uploadsDir, type);
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+    try {
+      fs.mkdirSync(dir, { recursive: true });
+    } catch (e) {
+      console.warn('⚠️ No se pudo crear el directorio de subidas:', dir, e.message);
+    }
   }
 });
 
@@ -44,7 +48,11 @@ var storage = multer.diskStorage({
     }
     var destDir = path.join(uploadsDir, catalog);
     if (!fs.existsSync(destDir)) {
-      fs.mkdirSync(destDir, { recursive: true });
+      try {
+        fs.mkdirSync(destDir, { recursive: true });
+      } catch (e) {
+        console.warn('⚠️ No se pudo crear el directorio destino de subida:', destDir, e.message);
+      }
     }
     cb(null, destDir);
   },

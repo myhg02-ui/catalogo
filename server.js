@@ -4,7 +4,10 @@ var bcrypt = require('bcryptjs');
 var multer = require('multer');
 var path = require('path');
 var fs = require('fs');
+var crypto = require('crypto');
 var dbModule = require('./database/init');
+
+var SESSION_SECRET = 'strmz-catalog-s3cr3t-k3y-2024';
 
 var app = express();
 var PORT = process.env.PORT || 3000;
@@ -16,7 +19,7 @@ var db = dbModule.loadDatabase();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-  secret: 'strmz-catalog-s3cr3t-k3y-2024',
+  secret: SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
@@ -57,7 +60,27 @@ app.use('/admin', express.static(path.join(__dirname, 'admin')));
 
 // Auth middleware
 function requireAuth(req, res, next) {
-  if (req.session && req.session.authenticated) return next();
+  // 1. Verificar sesión convencional en memoria (para desarrollo local)
+  if (req.session && req.session.authenticated) {
+    return next();
+  }
+
+  // 2. Verificar cookie sin estado (ideal para entornos Serverless como Vercel)
+  var cookies = {};
+  if (req.headers.cookie) {
+    req.headers.cookie.split(';').forEach(function(cookie) {
+      var parts = cookie.split('=');
+      cookies[parts[0].trim()] = (parts[1] || '').trim();
+    });
+  }
+
+  if (db.settings.admin_password) {
+    var expectedToken = crypto.createHmac('sha256', SESSION_SECRET).update(db.settings.admin_password).digest('hex');
+    if (cookies.admin_token === expectedToken) {
+      return next();
+    }
+  }
+
   res.status(401).json({ error: 'No autorizado' });
 }
 
@@ -104,6 +127,11 @@ app.post('/api/login', function(req, res) {
   var password = req.body.password;
   if (db.settings.admin_password && bcrypt.compareSync(password || '', db.settings.admin_password)) {
     req.session.authenticated = true;
+    
+    // Cookie de respaldo sin estado para compatibilidad con Serverless (Vercel)
+    var expectedToken = crypto.createHmac('sha256', SESSION_SECRET).update(db.settings.admin_password).digest('hex');
+    res.setHeader('Set-Cookie', 'admin_token=' + expectedToken + '; Path=/; HttpOnly; SameSite=Strict; Max-Age=' + (24 * 60 * 60));
+    
     res.json({ success: true });
   } else {
     res.status(401).json({ success: false, error: 'Contraseña incorrecta' });
@@ -112,6 +140,10 @@ app.post('/api/login', function(req, res) {
 
 app.post('/api/logout', function(req, res) {
   req.session.destroy(function() {});
+  
+  // Limpiar cookie de respaldo
+  res.setHeader('Set-Cookie', 'admin_token=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0');
+  
   res.json({ success: true });
 });
 

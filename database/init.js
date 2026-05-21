@@ -72,7 +72,7 @@ function insertPlan(db, product_id, price, duration, sort_order) {
 }
 
 function seedDatabase(db) {
-  var passwordHash = bcrypt.hashSync('fyis', 10);
+  var passwordHash = bcrypt.hashSync('152028', 10);
   db.settings = {
     admin_password: passwordHash,
     business_name: 'Fyis Catálogo',

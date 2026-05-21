@@ -1,8 +1,86 @@
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const fs = require('fs');
+const https = require('https');
 
 const DB_PATH = path.join(__dirname, '..', 'data', 'catalog.json');
+
+// Helper: petición HTTPS a JSONBin.io sin dependencias externas
+function jsonbinRequest(method, urlPath, body) {
+  return new Promise((resolve, reject) => {
+    const apiKey = process.env.JSONBIN_API_KEY;
+    const binId = process.env.JSONBIN_BIN_ID;
+    if (!apiKey || !binId) {
+      return reject(new Error('Faltan variables de entorno para JSONBin'));
+    }
+
+    const options = {
+      hostname: 'api.jsonbin.io',
+      port: 443,
+      path: urlPath.replace('<BIN_ID>', binId),
+      method: method,
+      headers: {
+        'X-Master-Key': apiKey,
+        'Content-Type': 'application/json'
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(new Error('Error parseando respuesta JSONBin: ' + e.message));
+          }
+        } else {
+          reject(new Error(`JSONBin devolvió estado ${res.statusCode}: ${data}`));
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      reject(err);
+    });
+
+    if (body) {
+      req.write(JSON.stringify(body));
+    }
+    req.end();
+  });
+}
+
+async function loadDatabaseCloud() {
+  try {
+    const res = await jsonbinRequest('GET', '/v3/b/<BIN_ID>/latest');
+    return res.record;
+  } catch (err) {
+    console.error('⚠️ Error al leer de JSONBin:', err.message);
+    return null;
+  }
+}
+
+async function saveDatabaseCloud(db) {
+  try {
+    const cleanDb = {
+      categories: db.categories,
+      products: db.products,
+      plans: db.plans,
+      settings: db.settings,
+      _nextId: db._nextId
+    };
+    await jsonbinRequest('PUT', '/v3/b/<BIN_ID>', cleanDb);
+    console.log('☁️ Base de datos guardada exitosamente en JSONBin');
+    return true;
+  } catch (err) {
+    console.error('⚠️ Error al guardar en JSONBin:', err.message);
+    return false;
+  }
+}
 
 // Estructura de la base de datos
 function createEmptyDB() {
@@ -15,43 +93,72 @@ function createEmptyDB() {
   };
 }
 
-function loadDatabase() {
+async function loadDatabase() {
+  // Intentar cargar desde JSONBin si está configurado
+  if (process.env.JSONBIN_API_KEY && process.env.JSONBIN_BIN_ID) {
+    console.log('☁️ Intentando cargar base de datos desde JSONBin...');
+    const cloudData = await loadDatabaseCloud();
+    if (cloudData) {
+      console.log('☁️ Base de datos cargada con éxito desde JSONBin');
+      return cloudData;
+    }
+    console.warn('⚠️ Falló la carga desde la nube, usando almacenamiento local como respaldo...');
+  }
+
   const dataDir = path.dirname(DB_PATH);
   if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+    try {
+      fs.mkdirSync(dataDir, { recursive: true });
+    } catch (e) {
+      console.warn('⚠️ No se pudo crear el directorio de base de datos:', e.message);
+    }
   }
 
   if (fs.existsSync(DB_PATH)) {
     try {
       const data = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
-      console.log('📦 Base de datos cargada desde archivo existente');
+      console.log('📦 Base de datos cargada desde archivo existente local');
       return data;
     } catch (e) {
-      console.error('⚠️ Error leyendo DB, creando nueva:', e.message);
+      console.error('⚠️ Error leyendo DB local, creando nueva:', e.message);
     }
   }
 
   // Crear DB con datos de ejemplo
-  console.log('🌱 Inicializando base de datos con datos de ejemplo...');
+  console.log('🌱 Inicializando base de datos local con datos de ejemplo...');
   var db = createEmptyDB();
   seedDatabase(db);
-  saveDatabase(db);
-  console.log('✅ Base de datos inicializada con todos los servicios y precios');
+  await saveDatabase(db);
+  console.log('✅ Base de datos local inicializada con todos los servicios y precios');
   return db;
 }
 
-function saveDatabase(db) {
+async function saveDatabase(db) {
+  // Intentar guardar en JSONBin si está configurado
+  if (process.env.JSONBIN_API_KEY && process.env.JSONBIN_BIN_ID) {
+    const success = await saveDatabaseCloud(db);
+    if (success) {
+      return;
+    }
+    console.warn('⚠️ Falló el guardado en la nube, intentando guardar de forma local...');
+  }
+
   try {
     var dataDir = path.dirname(DB_PATH);
     if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
+      try {
+        fs.mkdirSync(dataDir, { recursive: true });
+      } catch (e) {
+        console.warn('⚠️ No se pudo crear el directorio de base de datos:', e.message);
+      }
     }
     fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
-    console.log('✅ Base de datos guardada exitosamente');
+    console.log('✅ Base de datos guardada exitosamente de forma local');
   } catch (e) {
     console.warn('⚠️ No se pudo escribir en el disco (entorno de solo lectura como Vercel):', e.message);
   }
 }
+
 
 // Helpers para simular operaciones tipo SQL
 function insertCategory(db, name, icon, sort_order, type) {

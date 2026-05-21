@@ -12,10 +12,44 @@ var SESSION_SECRET = 'strmz-catalog-s3cr3t-k3y-2024';
 var app = express();
 var PORT = process.env.PORT || 3000;
 
-// Cargar base de datos
-var db = dbModule.loadDatabase();
+// Caché de base de datos en memoria para optimizar peticiones
+var cachedDb = null;
+var lastLoadTime = 0;
+var CACHE_TTL = 2000; // 2 segundos de caché
 
-// Middleware
+async function getDb() {
+  var now = Date.now();
+  // Si no está configurada la nube, usamos fallback local
+  if (!process.env.JSONBIN_API_KEY || !process.env.JSONBIN_BIN_ID) {
+    if (!cachedDb) {
+      cachedDb = await dbModule.loadDatabase();
+    }
+    return cachedDb;
+  }
+  // Carga con caché para producción
+  if (!cachedDb || (now - lastLoadTime) > CACHE_TTL) {
+    cachedDb = await dbModule.loadDatabase();
+    lastLoadTime = Date.now();
+  }
+  return cachedDb;
+}
+
+function invalidateCache() {
+  cachedDb = null;
+  lastLoadTime = 0;
+}
+
+// Middleware para poblar req.db en cada petición
+app.use(async function(req, res, next) {
+  try {
+    req.db = await getDb();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: 'Error cargando la base de datos: ' + err.message });
+  }
+});
+
+// Middleware standard
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
@@ -96,8 +130,8 @@ function requireAuth(req, res, next) {
     });
   }
 
-  if (db.settings.admin_password) {
-    var expectedToken = crypto.createHmac('sha256', SESSION_SECRET).update(db.settings.admin_password).digest('hex');
+  if (req.db.settings.admin_password) {
+    var expectedToken = crypto.createHmac('sha256', SESSION_SECRET).update(req.db.settings.admin_password).digest('hex');
     if (cookies.admin_token === expectedToken) {
       return next();
     }
@@ -107,7 +141,7 @@ function requireAuth(req, res, next) {
 }
 
 // Helper: construir categorías con productos y planes anidados
-function buildCategoriesTree(includeInactive) {
+function buildCategoriesTree(db, includeInactive) {
   var cats = db.categories.slice().sort(function(a, b) { return a.sort_order - b.sort_order; });
   return cats.map(function(cat) {
     var prods = db.products
@@ -128,14 +162,14 @@ function buildCategoriesTree(includeInactive) {
 // ════════════════════════════════════
 
 app.get('/api/categories', function(req, res) {
-  res.json(buildCategoriesTree(false));
+  res.json(buildCategoriesTree(req.db, false));
 });
 
 app.get('/api/settings', function(req, res) {
   var settings = {};
-  Object.keys(db.settings).forEach(function(key) {
+  Object.keys(req.db.settings).forEach(function(key) {
     if (key !== 'admin_password') {
-      settings[key] = db.settings[key];
+      settings[key] = req.db.settings[key];
     }
   });
   res.json(settings);
@@ -147,11 +181,11 @@ app.get('/api/settings', function(req, res) {
 
 app.post('/api/login', function(req, res) {
   var password = req.body.password;
-  if (db.settings.admin_password && bcrypt.compareSync(password || '', db.settings.admin_password)) {
+  if (req.db.settings.admin_password && bcrypt.compareSync(password || '', req.db.settings.admin_password)) {
     req.session.authenticated = true;
     
     // Cookie de respaldo sin estado para compatibilidad con Serverless (Vercel)
-    var expectedToken = crypto.createHmac('sha256', SESSION_SECRET).update(db.settings.admin_password).digest('hex');
+    var expectedToken = crypto.createHmac('sha256', SESSION_SECRET).update(req.db.settings.admin_password).digest('hex');
     res.setHeader('Set-Cookie', 'admin_token=' + expectedToken + '; Path=/; HttpOnly; SameSite=Strict; Max-Age=' + (24 * 60 * 60));
     
     res.json({ success: true });
@@ -174,26 +208,28 @@ app.get('/api/admin/check', requireAuth, function(req, res) {
 });
 
 // ════════════════════════════════════
+// ════════════════════════════════════
 // ADMIN — Categorías
 // ════════════════════════════════════
 
 app.get('/api/admin/categories', requireAuth, function(req, res) {
-  res.json(buildCategoriesTree(true));
+  res.json(buildCategoriesTree(req.db, true));
 });
 
-app.post('/api/admin/categories', requireAuth, function(req, res) {
+app.post('/api/admin/categories', requireAuth, async function(req, res) {
   var type = req.body.type || 'streaming';
   if (['streaming', 'doxeo', 'seguidores'].indexOf(type) === -1) {
     type = 'streaming';
   }
-  var id = dbModule.insertCategory(db, req.body.name, req.body.icon || '', req.body.sort_order || 0, type);
-  dbModule.saveDatabase(db);
+  var id = dbModule.insertCategory(req.db, req.body.name, req.body.icon || '', req.body.sort_order || 0, type);
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ id: id, name: req.body.name, icon: req.body.icon || '', sort_order: req.body.sort_order || 0, type: type });
 });
 
-app.put('/api/admin/categories/:id', requireAuth, function(req, res) {
+app.put('/api/admin/categories/:id', requireAuth, async function(req, res) {
   var id = parseInt(req.params.id);
-  var cat = db.categories.find(function(c) { return c.id === id; });
+  var cat = req.db.categories.find(function(c) { return c.id === id; });
   if (!cat) return res.status(404).json({ error: 'Categoría no encontrada' });
   var type = req.body.type || 'streaming';
   if (['streaming', 'doxeo', 'seguidores'].indexOf(type) === -1) {
@@ -203,18 +239,20 @@ app.put('/api/admin/categories/:id', requireAuth, function(req, res) {
   cat.icon = req.body.icon || '';
   cat.sort_order = req.body.sort_order || 0;
   cat.type = type;
-  dbModule.saveDatabase(db);
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ success: true });
 });
 
-app.delete('/api/admin/categories/:id', requireAuth, function(req, res) {
+app.delete('/api/admin/categories/:id', requireAuth, async function(req, res) {
   var id = parseInt(req.params.id);
   // Eliminar productos y planes de esta categoría
-  var productIds = db.products.filter(function(p) { return p.category_id === id; }).map(function(p) { return p.id; });
-  db.plans = db.plans.filter(function(pl) { return productIds.indexOf(pl.product_id) === -1; });
-  db.products = db.products.filter(function(p) { return p.category_id !== id; });
-  db.categories = db.categories.filter(function(c) { return c.id !== id; });
-  dbModule.saveDatabase(db);
+  var productIds = req.db.products.filter(function(p) { return p.category_id === id; }).map(function(p) { return p.id; });
+  req.db.plans = req.db.plans.filter(function(pl) { return productIds.indexOf(pl.product_id) === -1; });
+  req.db.products = req.db.products.filter(function(p) { return p.category_id !== id; });
+  req.db.categories = req.db.categories.filter(function(c) { return c.id !== id; });
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ success: true });
 });
 
@@ -222,21 +260,22 @@ app.delete('/api/admin/categories/:id', requireAuth, function(req, res) {
 // ADMIN — Productos
 // ════════════════════════════════════
 
-app.post('/api/admin/products', requireAuth, function(req, res) {
+app.post('/api/admin/products', requireAuth, async function(req, res) {
   var b = req.body;
-  var id = dbModule.insertProduct(db, b.category_id, b.name, b.emoji, b.description, b.highlight, b.sort_order, b.active);
-  var prod = db.products.find(function(p) { return p.id === id; });
+  var id = dbModule.insertProduct(req.db, b.category_id, b.name, b.emoji, b.description, b.highlight, b.sort_order, b.active);
+  var prod = req.db.products.find(function(p) { return p.id === id; });
   if (prod) {
     if (b.image) prod.image = b.image;
     prod.out_of_stock = b.out_of_stock !== undefined ? !!b.out_of_stock : false;
   }
-  dbModule.saveDatabase(db);
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json(Object.assign({ id: id }, b));
 });
 
-app.put('/api/admin/products/:id', requireAuth, function(req, res) {
+app.put('/api/admin/products/:id', requireAuth, async function(req, res) {
   var id = parseInt(req.params.id);
-  var prod = db.products.find(function(p) { return p.id === id; });
+  var prod = req.db.products.find(function(p) { return p.id === id; });
   if (!prod) return res.status(404).json({ error: 'Producto no encontrado' });
   var b = req.body;
   prod.category_id = b.category_id;
@@ -248,15 +287,17 @@ app.put('/api/admin/products/:id', requireAuth, function(req, res) {
   prod.sort_order = b.sort_order || 0;
   prod.active = b.active !== undefined ? b.active : 1;
   prod.out_of_stock = b.out_of_stock !== undefined ? !!b.out_of_stock : false;
-  dbModule.saveDatabase(db);
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ success: true });
 });
 
-app.delete('/api/admin/products/:id', requireAuth, function(req, res) {
+app.delete('/api/admin/products/:id', requireAuth, async function(req, res) {
   var id = parseInt(req.params.id);
-  db.plans = db.plans.filter(function(pl) { return pl.product_id !== id; });
-  db.products = db.products.filter(function(p) { return p.id !== id; });
-  dbModule.saveDatabase(db);
+  req.db.plans = req.db.plans.filter(function(pl) { return pl.product_id !== id; });
+  req.db.products = req.db.products.filter(function(p) { return p.id !== id; });
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ success: true });
 });
 
@@ -264,29 +305,32 @@ app.delete('/api/admin/products/:id', requireAuth, function(req, res) {
 // ADMIN — Planes
 // ════════════════════════════════════
 
-app.post('/api/admin/products/:productId/plans', requireAuth, function(req, res) {
+app.post('/api/admin/products/:productId/plans', requireAuth, async function(req, res) {
   var productId = parseInt(req.params.productId);
   var b = req.body;
-  var id = dbModule.insertPlan(db, productId, b.price, b.duration, b.sort_order || 0);
-  dbModule.saveDatabase(db);
+  var id = dbModule.insertPlan(req.db, productId, b.price, b.duration, b.sort_order || 0);
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ id: id, product_id: productId, price: b.price, duration: b.duration, sort_order: b.sort_order || 0 });
 });
 
-app.put('/api/admin/plans/:id', requireAuth, function(req, res) {
+app.put('/api/admin/plans/:id', requireAuth, async function(req, res) {
   var id = parseInt(req.params.id);
-  var plan = db.plans.find(function(pl) { return pl.id === id; });
+  var plan = req.db.plans.find(function(pl) { return pl.id === id; });
   if (!plan) return res.status(404).json({ error: 'Plan no encontrado' });
   plan.price = req.body.price;
   plan.duration = req.body.duration;
   plan.sort_order = req.body.sort_order || 0;
-  dbModule.saveDatabase(db);
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ success: true });
 });
 
-app.delete('/api/admin/plans/:id', requireAuth, function(req, res) {
+app.delete('/api/admin/plans/:id', requireAuth, async function(req, res) {
   var id = parseInt(req.params.id);
-  db.plans = db.plans.filter(function(pl) { return pl.id !== id; });
-  dbModule.saveDatabase(db);
+  req.db.plans = req.db.plans.filter(function(pl) { return pl.id !== id; });
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ success: true });
 });
 
@@ -303,24 +347,26 @@ app.post('/api/admin/upload', requireAuth, upload.single('image'), function(req,
   res.json({ url: '/uploads/' + catalog + '/' + req.file.filename });
 });
 
-app.put('/api/admin/settings', requireAuth, function(req, res) {
+app.put('/api/admin/settings', requireAuth, async function(req, res) {
   Object.keys(req.body).forEach(function(key) {
     if (key !== 'admin_password') {
-      db.settings[key] = String(req.body[key]);
+      req.db.settings[key] = String(req.body[key]);
     }
   });
-  dbModule.saveDatabase(db);
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ success: true });
 });
 
-app.put('/api/admin/password', requireAuth, function(req, res) {
+app.put('/api/admin/password', requireAuth, async function(req, res) {
   var currentPassword = req.body.currentPassword;
   var newPassword = req.body.newPassword;
-  if (!db.settings.admin_password || !bcrypt.compareSync(currentPassword, db.settings.admin_password)) {
+  if (!req.db.settings.admin_password || !bcrypt.compareSync(currentPassword, req.db.settings.admin_password)) {
     return res.status(401).json({ error: 'Contraseña actual incorrecta' });
   }
-  db.settings.admin_password = bcrypt.hashSync(newPassword, 10);
-  dbModule.saveDatabase(db);
+  req.db.settings.admin_password = bcrypt.hashSync(newPassword, 10);
+  await dbModule.saveDatabase(req.db);
+  invalidateCache();
   res.json({ success: true });
 });
 

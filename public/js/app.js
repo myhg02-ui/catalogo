@@ -132,15 +132,25 @@ const getBrandLogoHtml = (product, productName) => {
 /**
  * Generates a WhatsApp link with a pre-filled message.
  */
-const buildWhatsAppLink = (whatsappNumber, productName, duration, price) => {
-    const message = `Hola! Me interesa *${productName}* por *${duration}* (S/${price}) desde tu Catálogo.`;
+const buildWhatsAppLink = (settings, productName, duration, price) => {
+    const whatsappNumber = settings.whatsapp_number || '639631207428';
+    const currencySymbol = settings.currency_symbol || 'S/';
+    
+    let messageTemplate = settings.whatsapp_message_template || 'Hola! Me interesa *{productName}* por *{duration}* ({currencySymbol}{price}) desde tu Catálogo.';
+    
+    const message = messageTemplate
+        .replace(/{productName}/g, productName)
+        .replace(/{duration}/g, duration)
+        .replace(/{price}/g, price)
+        .replace(/{currencySymbol}/g, currencySymbol);
+
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 };
 
 /**
  * Creates a single product card DOM element.
  */
-const createProductCard = (product, whatsappNumber) => {
+const createProductCard = (product, settings) => {
     const card = document.createElement('div');
     card.className = 'product-card fade-in' + (product.out_of_stock ? ' out-of-stock' : '');
 
@@ -150,6 +160,9 @@ const createProductCard = (product, whatsappNumber) => {
     // Sort plans by sort_order
     const plans = [...product.plans].sort((a, b) => a.sort_order - b.sort_order);
     const defaultPlan = plans[0];
+
+    const whatsappNumber = settings.whatsapp_number || '639631207428';
+    const currencySymbol = settings.currency_symbol || 'S/';
 
     // Build inner HTML
     let html = '';
@@ -188,7 +201,7 @@ const createProductCard = (product, whatsappNumber) => {
     if (defaultPlan) {
         html += `
             <div class="price-display">
-                <span class="price-amount"><span class="price-currency">S/</span>${defaultPlan.price}</span>
+                <span class="price-amount"><span class="price-currency">${currencySymbol}</span>${defaultPlan.price}</span>
                 <span class="price-duration">${defaultPlan.duration}</span>
             </div>
         `;
@@ -199,7 +212,7 @@ const createProductCard = (product, whatsappNumber) => {
         if (product.out_of_stock) {
             html += `<button class="btn-buy btn-out-of-stock" disabled>Agotado / Sin Stock</button>`;
         } else {
-            const whatsappLink = buildWhatsAppLink(whatsappNumber, product.name, defaultPlan.duration, defaultPlan.price);
+            const whatsappLink = buildWhatsAppLink(settings, product.name, defaultPlan.duration, defaultPlan.price);
             html += `<a class="btn-buy" href="${whatsappLink}" target="_blank" rel="noopener">Comprar por WhatsApp</a>`;
         }
     }
@@ -236,7 +249,7 @@ const createProductCard = (product, whatsappNumber) => {
             const duration = pill.dataset.duration;
 
             if (priceAmount) {
-                priceAmount.innerHTML = `<span class="price-currency">S/</span>${price}`;
+                priceAmount.innerHTML = `<span class="price-currency">${currencySymbol}</span>${price}`;
             }
             if (priceDuration) {
                 priceDuration.textContent = duration;
@@ -244,7 +257,7 @@ const createProductCard = (product, whatsappNumber) => {
 
             // Update buy button link
             if (buyBtn && buyBtn.tagName === 'A') {
-                buyBtn.href = buildWhatsAppLink(whatsappNumber, product.name, duration, price);
+                buyBtn.href = buildWhatsAppLink(settings, product.name, duration, price);
             }
         });
     });
@@ -255,7 +268,7 @@ const createProductCard = (product, whatsappNumber) => {
 /**
  * Renders the full catalog from categories data.
  */
-const renderCatalog = (categories, whatsappNumber) => {
+const renderCatalog = (categories, settings) => {
     const catalog = document.getElementById('catalog');
     catalog.innerHTML = ''; // Clear prior loading
 
@@ -289,7 +302,7 @@ const renderCatalog = (categories, whatsappNumber) => {
         grid.className = 'products-grid';
 
         activeProducts.forEach((product, index) => {
-            const card = createProductCard(product, whatsappNumber);
+            const card = createProductCard(product, settings);
             // Stagger animation delay
             card.style.transitionDelay = `${index * 0.05}s`;
             grid.appendChild(card);
@@ -581,12 +594,12 @@ const init = async () => {
 
         const categories = await categoriesRes.json();
         let whatsappNumber = '639631207428'; // Default fallback
+        let settings = { whatsapp_number: whatsappNumber, currency_symbol: 'S/' };
 
         if (settingsRes.ok) {
-            const settings = await settingsRes.json();
-            if (settings.whatsapp_number) {
-                whatsappNumber = settings.whatsapp_number;
-            }
+            const fetchedSettings = await settingsRes.json();
+            settings = Object.assign(settings, fetchedSettings);
+            whatsappNumber = settings.whatsapp_number || whatsappNumber;
         }
 
         // Hide loading spinner
@@ -605,7 +618,7 @@ const init = async () => {
 
         // Render contents
         renderNavigation(categories);
-        renderCatalog(categories, whatsappNumber);
+        renderCatalog(categories, settings);
 
         // Set up interactions
         setupMainTabs();

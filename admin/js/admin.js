@@ -42,6 +42,8 @@
         changePasswordBtn: $('#changePasswordBtn'),
         settingBusinessName: $('#settingBusinessName'),
         settingWhatsapp: $('#settingWhatsapp'),
+        settingCurrency: $('#settingCurrency'),
+        settingWhatsappTemplate: $('#settingWhatsappTemplate'),
         currentPassword: $('#currentPassword'),
         newPassword: $('#newPassword'),
         modalOverlay: $('#modalOverlay'),
@@ -676,6 +678,7 @@
         const renderPlansTable = () => {
             let tableHTML = '';
             if (plans.length > 0) {
+                const currencySymbol = state.settings.currency_symbol || 'S/';
                 tableHTML = `
                     <table class="plans-mini-table">
                         <thead><tr><th>Duración</th><th>Precio</th><th>Orden</th><th>Acciones</th></tr></thead>
@@ -686,7 +689,7 @@
                                     (plan) => `
                                 <tr>
                                     <td>${escapeHTML(plan.duration)}</td>
-                                    <td><strong>€${parseFloat(plan.price).toFixed(2)}</strong></td>
+                                    <td><strong>${currencySymbol}${parseFloat(plan.price).toFixed(2)}</strong></td>
                                     <td>${plan.sort_order || 0}</td>
                                     <td>
                                         <div class="table-actions">
@@ -707,6 +710,7 @@
         };
 
         const renderModal = () => {
+            const currencySymbol = state.settings.currency_symbol || 'S/';
             const bodyHTML = `
                 <div class="plans-section" style="border-top:none; padding-top:0; margin-top:0;">
                     <div id="plansTableArea">${renderPlansTable()}</div>
@@ -717,7 +721,7 @@
                             <input type="text" class="form-input" id="planDuration" placeholder="Ej: 1 Mes">
                         </div>
                         <div class="form-group" style="margin-bottom:0">
-                            <label>Precio (€)</label>
+                            <label>Precio (${currencySymbol})</label>
                             <input type="number" class="form-input" id="planPrice" placeholder="0.00" step="0.01" min="0">
                         </div>
                         <div class="form-group" style="margin-bottom:0">
@@ -798,13 +802,14 @@
         const plan = (product.plans || []).find((p) => p.id === planId);
         if (!plan) return;
 
+        const currencySymbol = state.settings.currency_symbol || 'S/';
         const bodyHTML = `
             <div class="form-group">
                 <label>Duración</label>
                 <input type="text" class="form-input" id="editPlanDuration" value="${escapeAttr(plan.duration)}">
             </div>
             <div class="form-group">
-                <label>Precio (€)</label>
+                <label>Precio (${currencySymbol})</label>
                 <input type="number" class="form-input" id="editPlanPrice" value="${plan.price}" step="0.01" min="0">
             </div>
             <div class="form-group">
@@ -855,6 +860,8 @@
     function renderSettings() {
         dom.settingBusinessName.value = state.settings.business_name || '';
         dom.settingWhatsapp.value = state.settings.whatsapp_number || '';
+        dom.settingCurrency.value = state.settings.currency_symbol || 'S/';
+        dom.settingWhatsappTemplate.value = state.settings.whatsapp_message_template || '';
         dom.currentPassword.value = '';
         dom.newPassword.value = '';
     }
@@ -862,6 +869,8 @@
     dom.saveSettingsBtn.addEventListener('click', async () => {
         const business_name = dom.settingBusinessName.value.trim();
         const whatsapp_number = dom.settingWhatsapp.value.trim();
+        const currency_symbol = dom.settingCurrency.value.trim() || 'S/';
+        const whatsapp_message_template = dom.settingWhatsappTemplate.value.trim();
 
         if (!business_name) {
             showToast('El nombre del negocio es obligatorio', 'error');
@@ -871,10 +880,12 @@
         try {
             await api('/api/admin/settings', {
                 method: 'PUT',
-                body: { business_name, whatsapp_number },
+                body: { business_name, whatsapp_number, currency_symbol, whatsapp_message_template },
             });
             state.settings.business_name = business_name;
             state.settings.whatsapp_number = whatsapp_number;
+            state.settings.currency_symbol = currency_symbol;
+            state.settings.whatsapp_message_template = whatsapp_message_template;
             showToast('Configuración guardada', 'success');
         } catch (err) {
             showToast(err.message, 'error');

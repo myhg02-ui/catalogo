@@ -1,0 +1,853 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Perfiles Individuales",
+      "icon": "📌",
+      "sort_order": 1
+    },
+    {
+      "id": 2,
+      "name": "Ofertas Sin Netflix",
+      "icon": "💥",
+      "sort_order": 2
+    },
+    {
+      "id": 3,
+      "name": "Dúo — Netflix + 1 app",
+      "icon": "👥",
+      "sort_order": 3
+    },
+    {
+      "id": 4,
+      "name": "Trío — Netflix + 2 apps",
+      "icon": "👨‍👩‍👦",
+      "sort_order": 4
+    },
+    {
+      "id": 5,
+      "name": "Full — Netflix + 3 apps",
+      "icon": "👑",
+      "sort_order": 5
+    },
+    {
+      "id": 6,
+      "name": "2 Netflix — Promo Temporal",
+      "icon": "🔥",
+      "sort_order": 6
+    },
+    {
+      "id": 7,
+      "name": "IA y Herramientas",
+      "icon": "🧠",
+      "sort_order": 7
+    },
+    {
+      "id": 8,
+      "name": "⚽ Mundial 2026 & Canales",
+      "icon": "⚽",
+      "sort_order": 8
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "category_id": 1,
+      "name": "Netflix Premium",
+      "emoji": "🎬",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 1,
+      "active": true,
+      "out_of_stock": false
+    },
+    {
+      "id": 2,
+      "category_id": 1,
+      "name": "Disney Premium",
+      "emoji": "🏰",
+      "description": "Incluye todos los canales de ESPN. Disponible para ver el mundial 2026.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 2,
+      "active": true
+    },
+    {
+      "id": 3,
+      "category_id": 1,
+      "name": "Disney Estándar",
+      "emoji": "🏰",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 3,
+      "active": true
+    },
+    {
+      "id": 4,
+      "category_id": 1,
+      "name": "HBO Max",
+      "emoji": "🎥",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 4,
+      "active": 1
+    },
+    {
+      "id": 5,
+      "category_id": 1,
+      "name": "Prime Video",
+      "emoji": "🛍️",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 5,
+      "active": 1
+    },
+    {
+      "id": 6,
+      "category_id": 1,
+      "name": "Paramount+",
+      "emoji": "⭐",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 6,
+      "active": 1
+    },
+    {
+      "id": 7,
+      "category_id": 1,
+      "name": "Crunchyroll",
+      "emoji": "🎌",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 7,
+      "active": 1
+    },
+    {
+      "id": 8,
+      "category_id": 2,
+      "name": "Prime + HBO Max",
+      "emoji": "⚡",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 1,
+      "active": 1
+    },
+    {
+      "id": 9,
+      "category_id": 2,
+      "name": "Disney Premium + Prime",
+      "emoji": "⚡",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 2,
+      "active": 1
+    },
+    {
+      "id": 10,
+      "category_id": 2,
+      "name": "Disney Premium + HBO Max",
+      "emoji": "⚡",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 3,
+      "active": 1
+    },
+    {
+      "id": 11,
+      "category_id": 2,
+      "name": "Disney Premium + HBO Max + Prime",
+      "emoji": "⚡",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 4,
+      "active": 1
+    },
+    {
+      "id": 12,
+      "category_id": 3,
+      "name": "Netflix + Prime",
+      "emoji": "🎬",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 1,
+      "active": 1
+    },
+    {
+      "id": 13,
+      "category_id": 3,
+      "name": "Netflix + HBO Max",
+      "emoji": "🎬",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 2,
+      "active": 1
+    },
+    {
+      "id": 14,
+      "category_id": 3,
+      "name": "Netflix + Disney Estándar",
+      "emoji": "🎬",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 3,
+      "active": 1
+    },
+    {
+      "id": 15,
+      "category_id": 3,
+      "name": "Netflix + Disney Premium",
+      "emoji": "🎬",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 4,
+      "active": 1
+    },
+    {
+      "id": 16,
+      "category_id": 4,
+      "name": "Netflix + Prime + HBO Max",
+      "emoji": "🔥",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 1,
+      "active": 1
+    },
+    {
+      "id": 17,
+      "category_id": 4,
+      "name": "Netflix + Disney Premium + Prime",
+      "emoji": "🔥",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 2,
+      "active": 1
+    },
+    {
+      "id": 18,
+      "category_id": 4,
+      "name": "Netflix + Disney Premium + HBO Max",
+      "emoji": "🔥",
+      "description": "",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 3,
+      "active": 1
+    },
+    {
+      "id": 19,
+      "category_id": 5,
+      "name": "Netflix + Disney Premium + HBO Max + Prime",
+      "emoji": "💎",
+      "description": "",
+      "image": null,
+      "highlight": 1,
+      "sort_order": 1,
+      "active": 1
+    },
+    {
+      "id": 20,
+      "category_id": 6,
+      "name": "2 Netflix + Apps",
+      "emoji": "🎁",
+      "description": "1 App PREMIUM (Disney Premium) ó 2 Apps ESTÁNDAR (HBO Max, Prime Video, Canva o Disney Estándar)",
+      "image": null,
+      "highlight": 1,
+      "sort_order": 1,
+      "active": 1
+    },
+    {
+      "id": 21,
+      "category_id": 7,
+      "name": "ChatGPT Plus",
+      "emoji": "🤖",
+      "description": "Cuenta completa",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 1,
+      "active": 1
+    },
+    {
+      "id": 22,
+      "category_id": 7,
+      "name": "Spotify Premium",
+      "emoji": "▶️",
+      "description": "Cuenta completa",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 2,
+      "active": 1
+    },
+    {
+      "id": 23,
+      "category_id": 7,
+      "name": "Canva Edu Pro",
+      "emoji": "🎨",
+      "description": "Cuenta completa",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 3,
+      "active": 1
+    },
+    {
+      "id": 24,
+      "category_id": 8,
+      "name": "Disney Premium — Mundial 2026",
+      "emoji": "🏰",
+      "description": "Incluye todos los canales de ESPN para disfrutar de todo el Mundial 2026 en vivo con calidad Ultra HD.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 1,
+      "active": 1
+    },
+    {
+      "id": 25,
+      "category_id": 8,
+      "name": "IPTV Premium + 12h Gratis",
+      "emoji": "📺",
+      "description": "Más de 10,000 canales en vivo, series y películas. ¡Incluye todo el Mundial 2026! Solicita tu prueba de 12 horas.",
+      "image": "/images/iptv.png",
+      "highlight": true,
+      "sort_order": 2,
+      "active": true
+    }
+  ],
+  "plans": [
+    {
+      "id": 1,
+      "product_id": 1,
+      "price": 15,
+      "duration": "1 mes",
+      "sort_order": 1
+    },
+    {
+      "id": 2,
+      "product_id": 1,
+      "price": 28,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 3,
+      "product_id": 1,
+      "price": 40,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 4,
+      "product_id": 2,
+      "price": 10,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 5,
+      "product_id": 2,
+      "price": 18,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 6,
+      "product_id": 2,
+      "price": 25,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 7,
+      "product_id": 3,
+      "price": 6,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 8,
+      "product_id": 3,
+      "price": 11,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 9,
+      "product_id": 3,
+      "price": 15,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 10,
+      "product_id": 4,
+      "price": 6,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 11,
+      "product_id": 4,
+      "price": 11,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 12,
+      "product_id": 4,
+      "price": 15,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 13,
+      "product_id": 5,
+      "price": 5,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 14,
+      "product_id": 5,
+      "price": 9,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 15,
+      "product_id": 5,
+      "price": 12,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 16,
+      "product_id": 6,
+      "price": 6,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 17,
+      "product_id": 6,
+      "price": 11,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 18,
+      "product_id": 6,
+      "price": 15,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 19,
+      "product_id": 7,
+      "price": 5,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 20,
+      "product_id": 7,
+      "price": 9,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 21,
+      "product_id": 7,
+      "price": 12,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 22,
+      "product_id": 8,
+      "price": 10,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 23,
+      "product_id": 8,
+      "price": 19,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 24,
+      "product_id": 8,
+      "price": 27,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 25,
+      "product_id": 9,
+      "price": 13,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 26,
+      "product_id": 9,
+      "price": 25,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 27,
+      "product_id": 9,
+      "price": 36,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 28,
+      "product_id": 10,
+      "price": 14,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 29,
+      "product_id": 10,
+      "price": 27,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 30,
+      "product_id": 10,
+      "price": 39,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 31,
+      "product_id": 11,
+      "price": 18,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 32,
+      "product_id": 11,
+      "price": 35,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 33,
+      "product_id": 11,
+      "price": 51,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 34,
+      "product_id": 12,
+      "price": 17,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 35,
+      "product_id": 12,
+      "price": 33,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 36,
+      "product_id": 12,
+      "price": 48,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 37,
+      "product_id": 13,
+      "price": 18,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 38,
+      "product_id": 13,
+      "price": 35,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 39,
+      "product_id": 13,
+      "price": 51,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 40,
+      "product_id": 14,
+      "price": 18,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 41,
+      "product_id": 14,
+      "price": 35,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 42,
+      "product_id": 14,
+      "price": 51,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 43,
+      "product_id": 15,
+      "price": 20,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 44,
+      "product_id": 15,
+      "price": 39,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 45,
+      "product_id": 15,
+      "price": 57,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 46,
+      "product_id": 16,
+      "price": 21,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 47,
+      "product_id": 16,
+      "price": 41,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 48,
+      "product_id": 16,
+      "price": 60,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 49,
+      "product_id": 17,
+      "price": 23,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 50,
+      "product_id": 17,
+      "price": 45,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 51,
+      "product_id": 17,
+      "price": 66,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 52,
+      "product_id": 18,
+      "price": 24,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 53,
+      "product_id": 18,
+      "price": 47,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 54,
+      "product_id": 18,
+      "price": 69,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 55,
+      "product_id": 19,
+      "price": 27,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 56,
+      "product_id": 19,
+      "price": 53,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 57,
+      "product_id": 19,
+      "price": 78,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 58,
+      "product_id": 20,
+      "price": 30,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 59,
+      "product_id": 20,
+      "price": 59,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 60,
+      "product_id": 20,
+      "price": 87,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 61,
+      "product_id": 21,
+      "price": 15,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 62,
+      "product_id": 22,
+      "price": 10,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 63,
+      "product_id": 22,
+      "price": 18,
+      "duration": "60 días",
+      "sort_order": 2
+    },
+    {
+      "id": 64,
+      "product_id": 22,
+      "price": 25,
+      "duration": "90 días",
+      "sort_order": 3
+    },
+    {
+      "id": 65,
+      "product_id": 23,
+      "price": 5,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 66,
+      "product_id": 23,
+      "price": 9,
+      "duration": "60 días",
+      "sort_order": 2
+    },
+    {
+      "id": 67,
+      "product_id": 23,
+      "price": 12,
+      "duration": "90 días",
+      "sort_order": 3
+    },
+    {
+      "id": 68,
+      "product_id": 24,
+      "price": 10,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 69,
+      "product_id": 24,
+      "price": 18,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 70,
+      "product_id": 24,
+      "price": 25,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 71,
+      "product_id": 25,
+      "price": 10,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 72,
+      "product_id": 25,
+      "price": 18,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 73,
+      "product_id": 25,
+      "price": 25,
+      "duration": "3 meses",
+      "sort_order": 3
+    }
+  ],
+  "settings": {
+    "admin_password": "$2a$10$xpTDrElNMNI/TVkeFsXlyuihfYlqiKQa0nZ15VTfmT.2lA.ZG/Z3C",
+    "business_name": "Fyis Catálogo",
+    "whatsapp_number": "639631207428"
+  },
+  "_nextId": {
+    "categories": 9,
+    "products": 26,
+    "plans": 74
+  }
+}

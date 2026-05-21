@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fyis Catálogo — Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-icon">🔐</div>
+            <h1>Fyis Catálogo Admin</h1>
+            <p>Ingresa tu contraseña para acceder</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Contraseña" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" id="loginBtn">Ingresar</button>
+                <p class="login-error" id="loginError"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div class="admin-panel" id="adminPanel" style="display:none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="hamburger" id="hamburgerBtn">☰</button>
+                <h1 class="admin-logo">Fyis<span>Catálogo</span> Admin</h1>
+            </div>
+            <div class="header-right">
+                <a href="/" target="_blank" class="btn btn-outline btn-sm">👁️ Ver Catálogo</a>
+                <button class="btn btn-outline btn-sm" id="logoutBtn">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <div class="admin-body">
+            <!-- Sidebar -->
+            <nav class="admin-sidebar" id="adminSidebar">
+                <button class="nav-item active" data-section="dashboard">📊 Dashboard</button>
+                <button class="nav-item" data-section="categories">📂 Categorías</button>
+                <button class="nav-item" data-section="products">📦 Productos</button>
+                <button class="nav-item" data-section="settings">⚙️ Configuración</button>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="admin-main">
+                <!-- Dashboard Section -->
+                <section class="section" id="section-dashboard">
+                    <h2>Dashboard</h2>
+                    <div class="stats-grid" id="statsGrid"></div>
+                </section>
+
+                <!-- Categories Section -->
+                <section class="section" id="section-categories" style="display:none;">
+                    <div class="section-header">
+                        <h2>Categorías</h2>
+                        <button class="btn btn-primary" id="addCategoryBtn">+ Nueva Categoría</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="categoriesTable">
+                            <thead>
+                                <tr><th>Orden</th><th>Icono</th><th>Nombre</th><th>Productos</th><th>Acciones</th></tr>
+                            </thead>
+                            <tbody id="categoriesBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Products Section -->
+                <section class="section" id="section-products" style="display:none;">
+                    <div class="section-header">
+                        <h2>Productos</h2>
+                        <div class="section-actions">
+                            <select id="filterCategory" class="select-input"><option value="">Todas las categorías</option></select>
+                            <button class="btn btn-primary" id="addProductBtn">+ Nuevo Producto</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="productsTable">
+                            <thead>
+                                <tr><th>Emoji</th><th>Nombre</th><th>Categoría</th><th>Planes</th><th>Estado</th><th>Acciones</th></tr>
+                            </thead>
+                            <tbody id="productsBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section class="section" id="section-settings" style="display:none;">
+                    <h2>Configuración</h2>
+                    <div class="settings-form">
+                        <div class="form-card">
+                            <h3>Datos del Negocio</h3>
+                            <div class="form-group">
+                                <label>Nombre del Negocio</label>
+                                <input type="text" id="settingBusinessName" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Número de WhatsApp (sin +, sin espacios)</label>
+                                <input type="text" id="settingWhatsapp" class="form-input" placeholder="639631207428">
+                            </div>
+                            <button class="btn btn-primary" id="saveSettingsBtn">Guardar Configuración</button>
+                        </div>
+                        <div class="form-card">
+                            <h3>Cambiar Contraseña</h3>
+                            <div class="form-group">
+                                <label>Contraseña Actual</label>
+                                <input type="password" id="currentPassword" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Nueva Contraseña</label>
+                                <input type="password" id="newPassword" class="form-input">
+                            </div>
+                            <button class="btn btn-primary" id="changePasswordBtn">Cambiar Contraseña</button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div class="modal-overlay" id="modalOverlay" style="display:none;">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/admin/js/admin.js"></script>
+</body>
+</html>

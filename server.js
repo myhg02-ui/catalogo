@@ -320,9 +320,13 @@ app.put('/api/admin/password', requireAuth, function(req, res) {
 // INICIO
 // ════════════════════════════════════
 
-app.listen(PORT, function() {
-  console.log('\n🚀 Servidor iniciado en http://localhost:' + PORT);
-  console.log('📋 Catálogo público: http://localhost:' + PORT);
-  console.log('🔐 Panel admin: http://localhost:' + PORT + '/admin');
-  console.log('   Contraseña: fyis\n');
-});
+if (require.main === module) {
+  app.listen(PORT, function() {
+    console.log('\n🚀 Servidor iniciado en http://localhost:' + PORT);
+    console.log('📋 Catálogo público: http://localhost:' + PORT);
+    console.log('🔐 Panel admin: http://localhost:' + PORT + '/admin');
+    console.log('   Contraseña: fyis\n');
+  });
+}
+
+module.exports = app;

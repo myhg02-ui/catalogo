@@ -1093,3 +1093,135 @@ textarea.form-input {
 .mb-2 { margin-bottom: 8px; }
 .mb-4 { margin-bottom: 16px; }
 .flex-gap { display: flex; gap: 8px; }
+
+/* --- Portal Selector Screen --- */
+.portal-selector-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+    padding: 40px 20px;
+    position: relative;
+    overflow-y: auto;
+}
+
+.portal-container {
+    width: 100%;
+    max-width: 960px;
+    text-align: center;
+    animation: loginCardIn 0.6s ease-out;
+}
+
+.portal-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff, #8892b0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.portal-title .gradient-text {
+    background: linear-gradient(135deg, #a8d0fc, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.portal-subtitle {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin-bottom: 48px;
+    font-weight: 500;
+}
+
+.portal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.portal-card {
+    background: rgba(22, 27, 34, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+}
+
+.portal-card-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--glow-color);
+    opacity: 0.8;
+    transition: height 0.3s ease;
+}
+
+.portal-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 15px var(--glow-color);
+}
+
+.portal-card:hover .portal-card-glow {
+    height: 8px;
+}
+
+.portal-card-content {
+    padding: 40px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    height: 100%;
+}
+
+.portal-icon {
+    font-size: 3.5rem;
+    margin-bottom: 8px;
+    animation: loginIconBounce 3s ease-in-out infinite;
+}
+
+.portal-card h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.portal-card p {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    flex-grow: 1;
+}
+
+.btn-portal {
+    margin-top: auto;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+}
+
+@media (max-width: 900px) {
+    .portal-grid {
+        grid-template-columns: 1fr;
+        max-width: 420px;
+        margin: 0 auto;
+        gap: 20px;
+    }
+    
+    .portal-card-content {
+        padding: 30px 24px;
+    }
+}
+

@@ -1,5 +1,5 @@
 /* ============================================
-   StreamZone Admin Panel — JavaScript
+   Fyis Catálogo Admin Panel — JavaScript
    ============================================ */
 
 (function () {
@@ -10,9 +10,10 @@
     ------------------------------------------ */
     const state = {
         categories: [],
-        settings: { business_name: '', whatsapp_number: '' },
+        settings: {},
         currentSection: 'dashboard',
-        filterCategory: '',
+        activeCatalog: '', // Selected catalog post-login ('streaming', 'doxeo', 'seguidores')
+        filterCatalogCategory: '',
     };
 
     /* ------------------------------------------
@@ -27,17 +28,18 @@
         loginPassword: $('#loginPassword'),
         loginError: $('#loginError'),
         loginBtn: $('#loginBtn'),
+        portalSelector: $('#portalSelector'),
         adminPanel: $('#adminPanel'),
         logoutBtn: $('#logoutBtn'),
         hamburgerBtn: $('#hamburgerBtn'),
         sidebar: $('#adminSidebar'),
         navItems: $$('.nav-item'),
         statsGrid: $('#statsGrid'),
-        categoriesBody: $('#categoriesBody'),
-        productsBody: $('#productsBody'),
-        filterCategory: $('#filterCategory'),
-        addCategoryBtn: $('#addCategoryBtn'),
-        addProductBtn: $('#addProductBtn'),
+        categoriesBody: $('#catalogCategoriesBody'),
+        productsBody: $('#catalogProductsBody'),
+        filterCategory: $('#catalogFilterCategory'),
+        catalogAddCategoryBtn: $('#catalogAddCategoryBtn'),
+        catalogAddProductBtn: $('#catalogAddProductBtn'),
         saveSettingsBtn: $('#saveSettingsBtn'),
         changePasswordBtn: $('#changePasswordBtn'),
         settingBusinessName: $('#settingBusinessName'),
@@ -145,13 +147,32 @@
     });
 
     /* ------------------------------------------
-       Auth
+       Adaptive Terminology Helper
+    ------------------------------------------ */
+    function getPlanLabel(catalogType) {
+        if (catalogType === 'doxeo') return 'Detalle / Consulta';
+        if (catalogType === 'seguidores') return 'Cantidad / Paquete';
+        return 'Duración';
+    }
+
+    function getPlanPlaceholder(catalogType) {
+        if (catalogType === 'doxeo') return 'Ej: Consulta Básica, RUC, etc.';
+        if (catalogType === 'seguidores') return 'Ej: 1000 Seguidores, 500 Likes';
+        return 'Ej: 1 mes, 30 días, 12 horas';
+    }
+
+    function getCurrencySymbol() {
+        return state.settings[`currency_symbol_${state.activeCatalog}`] || 'S/';
+    }
+
+    /* ------------------------------------------
+       Auth Lifecycle & Portal Selection
     ------------------------------------------ */
     async function checkAuth() {
         try {
             await api('/api/admin/check');
-            showAdmin();
             await loadData();
+            showPortalSelector();
         } catch {
             showLogin();
         }
@@ -159,14 +180,74 @@
 
     function showLogin() {
         dom.loginScreen.style.display = 'flex';
+        if (dom.portalSelector) dom.portalSelector.style.display = 'none';
         dom.adminPanel.style.display = 'none';
         dom.loginPassword.value = '';
         dom.loginError.textContent = '';
     }
 
+    function showPortalSelector() {
+        dom.loginScreen.style.display = 'none';
+        if (dom.portalSelector) dom.portalSelector.style.display = 'flex';
+        dom.adminPanel.style.display = 'none';
+        state.activeCatalog = '';
+    }
+
     function showAdmin() {
         dom.loginScreen.style.display = 'none';
+        if (dom.portalSelector) dom.portalSelector.style.display = 'none';
         dom.adminPanel.style.display = 'block';
+    }
+
+    // Attach click events to portal cards
+    $$('.portal-card').forEach((card) => {
+        card.addEventListener('click', () => {
+            const catalog = card.dataset.portalCatalog;
+            selectCatalogPanel(catalog);
+        });
+    });
+
+    function selectCatalogPanel(catalog) {
+        state.activeCatalog = catalog;
+        
+        // Show panel badge in header
+        const activeCatalogName = catalog === 'streaming' ? '🎬 Streaming' 
+                                : (catalog === 'doxeo' ? '🔍 Doxeo' : '👥 Seguidores');
+        const badge = $('#headerPanelBadge');
+        if (badge) {
+            badge.textContent = activeCatalogName;
+            
+            // Dynamic badge color matching the catalog styling
+            if (catalog === 'streaming') {
+                badge.style.borderColor = '#7c3aed';
+                badge.style.color = '#7c3aed';
+            } else if (catalog === 'doxeo') {
+                badge.style.borderColor = '#a8d0fc';
+                badge.style.color = '#a8d0fc';
+            } else {
+                badge.style.borderColor = '#faabbd';
+                badge.style.color = '#faabbd';
+            }
+        }
+
+        // Update Products Table Header terminology based on activeCatalog
+        const productsTableHeader = $('#productsTableHeader');
+        if (productsTableHeader) {
+            const label = getPlanLabel(catalog);
+            productsTableHeader.innerHTML = `<th>Emoji</th><th>Nombre</th><th>Categoría</th><th>${label} (Planes)</th><th>Estado</th><th>Acciones</th>`;
+        }
+
+        showAdmin();
+        switchSection('dashboard');
+        showToast(`Ingresaste al ${activeCatalogName}`, 'success');
+    }
+
+    const btnBackToPortal = $('#btnBackToPortal');
+    if (btnBackToPortal) {
+        btnBackToPortal.addEventListener('click', () => {
+            showPortalSelector();
+            showToast('Regresaste al selector de paneles', 'info');
+        });
     }
 
     dom.loginForm.addEventListener('submit', async (e) => {
@@ -180,9 +261,9 @@
                 method: 'POST',
                 body: { password: dom.loginPassword.value },
             });
-            showAdmin();
             await loadData();
-            showToast('Bienvenido al panel de administración', 'success');
+            showPortalSelector();
+            showToast('Sesión iniciada correctamente', 'success');
         } catch (err) {
             dom.loginError.textContent = err.message || 'Contraseña incorrecta';
         } finally {
@@ -195,7 +276,7 @@
         try {
             await api('/api/logout', { method: 'POST' });
         } catch {
-            // Ignore errors during logout
+            // Ignore logout errors
         }
         showLogin();
         showToast('Sesión cerrada', 'info');
@@ -207,6 +288,7 @@
     dom.navItems.forEach((btn) => {
         btn.addEventListener('click', () => {
             const section = btn.dataset.section;
+            if (!section) return; // Skip back to portal button
             switchSection(section);
             // Close mobile sidebar
             dom.sidebar.classList.remove('open');
@@ -217,21 +299,23 @@
 
     function switchSection(section) {
         state.currentSection = section;
-        dom.navItems.forEach((b) => b.classList.toggle('active', b.dataset.section === section));
+        dom.navItems.forEach((b) => {
+            b.classList.toggle('active', b.dataset.section === section);
+        });
+        
         $$('.section').forEach((s) => (s.style.display = 'none'));
         const target = $(`#section-${section}`);
         if (target) target.style.display = 'block';
 
         if (section === 'dashboard') renderDashboard();
-        if (section === 'categories') renderCategories();
-        if (section === 'products') renderProducts();
+        if (section === 'categories') renderCatalogCategories();
+        if (section === 'products') renderCatalogProducts();
         if (section === 'settings') renderSettings();
     }
 
     /* ------------------------------------------
        Hamburger / Mobile Sidebar
     ------------------------------------------ */
-    // Create overlay
     const sidebarOverlay = document.createElement('div');
     sidebarOverlay.className = 'sidebar-overlay';
     document.body.appendChild(sidebarOverlay);
@@ -256,8 +340,7 @@
                 api('/api/settings'),
             ]);
             state.categories = Array.isArray(categories) ? categories : [];
-            state.settings = settings || { business_name: '', whatsapp_number: '' };
-            renderCurrentSection();
+            state.settings = settings || {};
         } catch (err) {
             showToast('Error cargando datos: ' + err.message, 'error');
         }
@@ -268,20 +351,21 @@
     }
 
     /* ------------------------------------------
-       Dashboard
+       Dashboard (Scoped to Active Catalog)
     ------------------------------------------ */
     function renderDashboard() {
-        const totalCategories = state.categories.length;
-        const allProducts = state.categories.flatMap((c) => c.products || []);
+        const filteredCats = state.categories.filter((c) => c.type === state.activeCatalog);
+        const totalCategories = filteredCats.length;
+        const allProducts = filteredCats.flatMap((c) => c.products || []);
         const totalProducts = allProducts.length;
         const totalPlans = allProducts.reduce((sum, p) => sum + (p.plans ? p.plans.length : 0), 0);
         const activeProducts = allProducts.filter((p) => p.active).length;
 
         const stats = [
-            { icon: '📂', number: totalCategories, label: 'Total Categorías' },
-            { icon: '📦', number: totalProducts, label: 'Total Productos' },
-            { icon: '💰', number: totalPlans, label: 'Total Planes' },
-            { icon: '✅', number: activeProducts, label: 'Productos Activos' },
+            { icon: '📂', number: totalCategories, label: 'Categorías' },
+            { icon: '📦', number: totalProducts, label: 'Productos' },
+            { icon: '💰', number: totalPlans, label: 'Planes' },
+            { icon: '✅', number: activeProducts, label: 'Activos' },
         ];
 
         dom.statsGrid.innerHTML = stats
@@ -297,15 +381,17 @@
     }
 
     /* ------------------------------------------
-       Categories
+       Categories Table Renderer & Operations
     ------------------------------------------ */
-    function renderCategories() {
-        if (state.categories.length === 0) {
-            dom.categoriesBody.innerHTML = `<tr><td colspan="5" class="table-empty">No hay categorías. Crea la primera.</td></tr>`;
+    function renderCatalogCategories() {
+        const filteredCats = state.categories.filter((c) => c.type === state.activeCatalog);
+
+        if (filteredCats.length === 0) {
+            dom.categoriesBody.innerHTML = `<tr><td colspan="5" class="table-empty">No hay categorías en este catálogo. Crea una nueva.</td></tr>`;
             return;
         }
 
-        dom.categoriesBody.innerHTML = state.categories
+        dom.categoriesBody.innerHTML = filteredCats
             .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
             .map(
                 (cat) => `
@@ -315,33 +401,40 @@
                 <td><strong>${escapeHTML(cat.name)}</strong></td>
                 <td>${(cat.products || []).length}</td>
                 <td>
-                    <div class="table-actions">
-                        <button class="btn btn-outline btn-sm" onclick="AdminApp.editCategory(${cat.id})">✏️ Editar</button>
-                        <button class="btn btn-danger btn-sm" onclick="AdminApp.deleteCategory(${cat.id})">🗑️</button>
-                    </div>
+                     <div class="table-actions">
+                          <button class="btn btn-outline btn-sm" onclick="AdminApp.editCategory(${cat.id})">✏️ Editar</button>
+                          <button class="btn btn-danger btn-sm" onclick="AdminApp.deleteCategory(${cat.id})">🗑️</button>
+                     </div>
                 </td>
             </tr>`
             )
             .join('');
     }
 
-    dom.addCategoryBtn.addEventListener('click', () => openCategoryModal());
-
     function openCategoryModal(category = null) {
         const isEdit = category !== null;
         const title = isEdit ? 'Editar Categoría' : 'Nueva Categoría';
 
+        const activeCatalogName = state.activeCatalog === 'streaming' ? '🎬 Streaming' 
+                                : (state.activeCatalog === 'doxeo' ? '🔍 Doxeo' : '👥 Seguidores');
+
         const bodyHTML = `
             <div class="form-group">
-                <label>Nombre</label>
-                <input type="text" class="form-input" id="catName" value="${isEdit ? escapeAttr(category.name) : ''}" placeholder="Ej: Streaming de Video">
+                <label>Catálogo Destino</label>
+                <div style="background: rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); font-weight: 600; display: inline-flex; align-items: center; gap: 8px; color: #f0f0f5;">
+                    ${activeCatalogName}
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Nombre de la Categoría</label>
+                <input type="text" class="form-input" id="catName" value="${isEdit ? escapeAttr(category.name) : ''}" placeholder="Ej: Herramientas IA">
             </div>
             <div class="form-group">
                 <label>Icono (emoji)</label>
-                <input type="text" class="form-input" id="catIcon" value="${isEdit ? escapeAttr(category.icon || '') : ''}" placeholder="Ej: 🎬">
+                <input type="text" class="form-input" id="catIcon" value="${isEdit ? escapeAttr(category.icon || '') : ''}" placeholder="Ej: 🧠">
             </div>
             <div class="form-group">
-                <label>Orden</label>
+                <label>Orden de Visualización</label>
                 <input type="number" class="form-input" id="catOrder" value="${isEdit ? category.sort_order || 0 : 0}" min="0">
             </div>
         `;
@@ -357,6 +450,7 @@
             const name = $('#catName').value.trim();
             const icon = $('#catIcon').value.trim();
             const sort_order = parseInt($('#catOrder').value) || 0;
+            const type = state.activeCatalog;
 
             if (!name) {
                 showToast('El nombre es obligatorio', 'error');
@@ -367,18 +461,19 @@
                 if (isEdit) {
                     await api(`/api/admin/categories/${category.id}`, {
                         method: 'PUT',
-                        body: { name, icon, sort_order },
+                        body: { name, icon, sort_order, type },
                     });
                     showToast('Categoría actualizada', 'success');
                 } else {
                     await api('/api/admin/categories', {
                         method: 'POST',
-                        body: { name, icon, sort_order },
+                        body: { name, icon, sort_order, type },
                     });
                     showToast('Categoría creada', 'success');
                 }
                 closeModal();
                 await loadData();
+                renderCatalogCategories();
             } catch (err) {
                 showToast(err.message, 'error');
             }
@@ -403,6 +498,7 @@
                     showToast('Categoría eliminada', 'success');
                     closeModal();
                     await loadData();
+                    renderCatalogCategories();
                 } catch (err) {
                     showToast(err.message, 'error');
                 }
@@ -410,33 +506,38 @@
         );
     }
 
+    if (dom.catalogAddCategoryBtn) {
+        dom.catalogAddCategoryBtn.addEventListener('click', () => openCategoryModal());
+    }
+
     /* ------------------------------------------
-       Products
+       Products Table Renderer & Operations
     ------------------------------------------ */
-    function renderProducts() {
-        // Populate filter dropdown
+    function renderCatalogProducts() {
         const filterSelect = dom.filterCategory;
-        const currentFilter = filterSelect.value;
+        const currentFilter = state.filterCatalogCategory;
+        
+        const activeCats = state.categories.filter((c) => c.type === state.activeCatalog);
+        
         filterSelect.innerHTML = '<option value="">Todas las categorías</option>';
-        state.categories.forEach((cat) => {
+        activeCats.forEach((cat) => {
             filterSelect.innerHTML += `<option value="${cat.id}" ${String(cat.id) === currentFilter ? 'selected' : ''}>${escapeHTML(cat.icon || '')} ${escapeHTML(cat.name)}</option>`;
         });
 
-        // Flatten products
         let allProducts = [];
-        state.categories.forEach((cat) => {
+        activeCats.forEach((cat) => {
             (cat.products || []).forEach((p) => {
                 allProducts.push({ ...p, categoryName: cat.name, categoryIcon: cat.icon || '' });
             });
         });
 
-        // Filter
-        if (state.filterCategory) {
-            allProducts = allProducts.filter((p) => String(p.category_id) === String(state.filterCategory));
+        // Filter by category
+        if (state.filterCatalogCategory) {
+            allProducts = allProducts.filter((p) => String(p.category_id) === String(state.filterCatalogCategory));
         }
 
         if (allProducts.length === 0) {
-            dom.productsBody.innerHTML = `<tr><td colspan="6" class="table-empty">No hay productos${state.filterCategory ? ' en esta categoría' : ''}.</td></tr>`;
+            dom.productsBody.innerHTML = `<tr><td colspan="6" class="table-empty">No hay productos${state.filterCatalogCategory ? ' en esta categoría' : ''}.</td></tr>`;
             return;
         }
 
@@ -470,21 +571,32 @@
             .join('');
     }
 
-    dom.filterCategory.addEventListener('change', (e) => {
-        state.filterCategory = e.target.value;
-        renderProducts();
-    });
+    if (dom.filterCategory) {
+        dom.filterCategory.addEventListener('change', (e) => {
+            state.filterCatalogCategory = e.target.value;
+            renderCatalogProducts();
+        });
+    }
 
-    dom.addProductBtn.addEventListener('click', () => openProductModal());
+    if (dom.catalogAddProductBtn) {
+        dom.catalogAddProductBtn.addEventListener('click', () => openProductModal());
+    }
 
     function openProductModal(product = null) {
         const isEdit = product !== null;
         const title = isEdit ? 'Editar Producto' : 'Nuevo Producto';
 
-        const categoriesOptions = state.categories
+        const activeCats = state.categories.filter((c) => c.type === state.activeCatalog);
+        
+        if (activeCats.length === 0) {
+            showToast('Primero debes crear al menos una categoría en este catálogo', 'error');
+            return;
+        }
+
+        const categoriesOptions = activeCats
+            .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
             .map(
-                (c) =>
-                    `<option value="${c.id}" ${isEdit && product.category_id === c.id ? 'selected' : ''}>${escapeHTML(c.icon || '')} ${escapeHTML(c.name)}</option>`
+                (c) => `<option value="${c.id}" ${isEdit && product.category_id === c.id ? 'selected' : ''}>${escapeHTML(c.icon || '')} ${escapeHTML(c.name)}</option>`
             )
             .join('');
 
@@ -492,16 +604,15 @@
             <div class="form-group">
                 <label>Categoría</label>
                 <select class="form-input" id="prodCategory" style="cursor:pointer;">
-                    <option value="">— Selecciona —</option>
                     ${categoriesOptions}
                 </select>
             </div>
             <div class="form-group">
-                <label>Nombre</label>
-                <input type="text" class="form-input" id="prodName" value="${isEdit ? escapeAttr(product.name) : ''}" placeholder="Ej: Netflix">
+                <label>Nombre del Producto</label>
+                <input type="text" class="form-input" id="prodName" value="${isEdit ? escapeAttr(product.name) : ''}" placeholder="Ej: Netflix Premium">
             </div>
             <div class="form-group">
-                <label>Emoji</label>
+                <label>Emoji del Producto</label>
                 <input type="text" class="form-input" id="prodEmoji" value="${isEdit ? escapeAttr(product.emoji || '') : ''}" placeholder="Ej: 🎬">
             </div>
             <div class="form-group">
@@ -509,18 +620,22 @@
                 <textarea class="form-input" id="prodDescription" rows="3" placeholder="Descripción del producto...">${isEdit ? escapeHTML(product.description || '') : ''}</textarea>
             </div>
             <div class="form-group">
-                <label>Imagen (Subir archivo o pegar enlace URL)</label>
-                <input type="text" class="form-input" id="prodImageUrl" value="${isEdit && product.image ? escapeAttr(product.image) : ''}" placeholder="Pega el enlace de la imagen (ej: de imgbb o postimages) o sube una abajo..." style="margin-bottom: 8px;">
+                <label>Imagen o PDF Muestra (Subir archivo o pegar enlace URL)</label>
+                <input type="text" class="form-input" id="prodImageUrl" value="${isEdit && product.image ? escapeAttr(product.image) : ''}" placeholder="Pega el enlace de la imagen/PDF o sube uno abajo..." style="margin-bottom: 8px;">
                 <div class="image-upload-area" id="imageUploadArea">
-                    <p>📷 Haz clic para subir una imagen</p>
-                    <input type="file" id="prodImageFile" accept="image/*" style="display:none;">
+                    <p>📷 Haz clic para subir una imagen o PDF</p>
+                    <input type="file" id="prodImageFile" accept="image/*,.pdf" style="display:none;">
                 </div>
-                <div class="image-preview" id="imagePreview" style="${isEdit && product.image ? '' : 'display:none'}">
-                    <img id="imagePreviewImg" src="${isEdit && product.image ? escapeAttr(product.image) : ''}" alt="Preview">
+                <div class="image-preview" id="imagePreview" style="${isEdit && product.image && !product.image.endsWith('.pdf') ? '' : 'display:none'}">
+                    <img id="imagePreviewImg" src="${isEdit && product.image && !product.image.endsWith('.pdf') ? escapeAttr(product.image) : ''}" alt="Preview">
+                </div>
+                <div class="pdf-preview-box" id="pdfPreviewBox" style="${isEdit && product.image && product.image.endsWith('.pdf') ? 'display:flex' : 'display:none'}; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:15px; background:rgba(255,255,255,0.03); border:1px dashed rgba(255,255,255,0.15); border-radius:8px; margin-top:8px;">
+                    <span style="font-size:2.5rem; margin-bottom:8px;">📄</span>
+                    <strong id="pdfPreviewName" style="font-size:0.85rem; color:#fff; word-break:break-all;">${isEdit && product.image && product.image.endsWith('.pdf') ? escapeHTML(product.image.split('/').pop()) : 'documento.pdf'}</strong>
                 </div>
             </div>
             <div class="form-group">
-                <label>Orden</label>
+                <label>Orden de Visualización</label>
                 <input type="number" class="form-input" id="prodOrder" value="${isEdit ? product.sort_order || 0 : 0}" min="0">
             </div>
             <div class="form-group">
@@ -556,7 +671,6 @@
 
         openModal(title, bodyHTML, footerHTML);
 
-        // Image upload handlers
         const uploadArea = $('#imageUploadArea');
         const fileInput = $('#prodImageFile');
         const previewDiv = $('#imagePreview');
@@ -569,31 +683,43 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            // Show local preview
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                previewImg.src = ev.target.result;
-                previewDiv.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
+            const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
 
-            // Upload
+            if (isPdf) {
+                previewDiv.style.display = 'none';
+                const pdfBox = $('#pdfPreviewBox');
+                const pdfName = $('#pdfPreviewName');
+                if (pdfBox) pdfBox.style.display = 'flex';
+                if (pdfName) pdfName.textContent = file.name;
+            } else {
+                const pdfBox = $('#pdfPreviewBox');
+                if (pdfBox) pdfBox.style.display = 'none';
+                
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    previewImg.src = ev.target.result;
+                    previewDiv.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+
             try {
                 const formData = new FormData();
                 formData.append('image', file);
-                const result = await api('/api/admin/upload', {
+                const result = await api(`/api/admin/upload?catalog=${state.activeCatalog}`, {
                     method: 'POST',
                     body: formData,
                 });
                 imageUrlInput.value = result.url;
-                previewImg.src = result.url;
-                showToast('Imagen subida', 'success');
+                if (!isPdf) {
+                    previewImg.src = result.url;
+                }
+                showToast(`${isPdf ? 'PDF' : 'Imagen'} subido exitosamente al catálogo de ${state.activeCatalog}`, 'success');
             } catch (err) {
-                showToast('Error subiendo imagen: ' + err.message, 'error');
+                showToast('Error subiendo archivo: ' + err.message, 'error');
             }
         });
 
-        // Save handler
         $('#saveProductBtn').addEventListener('click', async () => {
             const category_id = parseInt($('#prodCategory').value);
             const name = $('#prodName').value.trim();
@@ -601,8 +727,8 @@
             const description = $('#prodDescription').value.trim();
             const image = imageUrlInput.value;
             const sort_order = parseInt($('#prodOrder').value) || 0;
-            const highlight = $('#prodHighlight').checked;
-            const active = $('#prodActive').checked;
+            const highlight = $('#prodHighlight').checked ? 1 : 0;
+            const active = $('#prodActive').checked ? 1 : 0;
             const out_of_stock = $('#prodOutOfStock').checked;
 
             if (!category_id) {
@@ -626,6 +752,7 @@
                 }
                 closeModal();
                 await loadData();
+                renderCatalogProducts();
             } catch (err) {
                 showToast(err.message, 'error');
             }
@@ -659,6 +786,7 @@
                     showToast('Producto eliminado', 'success');
                     closeModal();
                     await loadData();
+                    renderCatalogProducts();
                 } catch (err) {
                     showToast(err.message, 'error');
                 }
@@ -667,21 +795,23 @@
     }
 
     /* ------------------------------------------
-       Plans Management
+       Plans Management (Adaptive labels)
     ------------------------------------------ */
     function managePlans(productId) {
         const product = findProduct(productId);
         if (!product) return;
 
         const plans = product.plans || [];
+        const planLabel = getPlanLabel(state.activeCatalog);
+        const planPlaceholder = getPlanPlaceholder(state.activeCatalog);
 
         const renderPlansTable = () => {
             let tableHTML = '';
             if (plans.length > 0) {
-                const currencySymbol = state.settings.currency_symbol || 'S/';
+                const currencySymbol = getCurrencySymbol();
                 tableHTML = `
                     <table class="plans-mini-table">
-                        <thead><tr><th>Duración</th><th>Precio</th><th>Orden</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>${planLabel}</th><th>Precio</th><th>Orden</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${plans
                                 .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
@@ -710,15 +840,15 @@
         };
 
         const renderModal = () => {
-            const currencySymbol = state.settings.currency_symbol || 'S/';
+            const currencySymbol = getCurrencySymbol();
             const bodyHTML = `
                 <div class="plans-section" style="border-top:none; padding-top:0; margin-top:0;">
                     <div id="plansTableArea">${renderPlansTable()}</div>
                     <h4 class="mt-4">Agregar Nuevo Plan</h4>
                     <div class="plan-form-inline">
                         <div class="form-group" style="margin-bottom:0">
-                            <label>Duración</label>
-                            <input type="text" class="form-input" id="planDuration" placeholder="Ej: 1 Mes">
+                            <label>${planLabel}</label>
+                            <input type="text" class="form-input" id="planDuration" placeholder="${planPlaceholder}">
                         </div>
                         <div class="form-group" style="margin-bottom:0">
                             <label>Precio (${currencySymbol})</label>
@@ -744,7 +874,7 @@
                 const sort_order = parseInt($('#planOrder').value) || 0;
 
                 if (!duration) {
-                    showToast('La duración es obligatoria', 'error');
+                    showToast(`El valor de ${planLabel} es obligatorio`, 'error');
                     return;
                 }
                 if (isNaN(price) || price < 0) {
@@ -802,10 +932,11 @@
         const plan = (product.plans || []).find((p) => p.id === planId);
         if (!plan) return;
 
-        const currencySymbol = state.settings.currency_symbol || 'S/';
+        const currencySymbol = getCurrencySymbol();
+        const planLabel = getPlanLabel(state.activeCatalog);
         const bodyHTML = `
             <div class="form-group">
-                <label>Duración</label>
+                <label>${planLabel}</label>
                 <input type="text" class="form-input" id="editPlanDuration" value="${escapeAttr(plan.duration)}">
             </div>
             <div class="form-group">
@@ -831,7 +962,7 @@
             const sort_order = parseInt($('#editPlanOrder').value) || 0;
 
             if (!duration) {
-                showToast('La duración es obligatoria', 'error');
+                showToast(`El valor de ${planLabel} es obligatorio`, 'error');
                 return;
             }
             if (isNaN(price) || price < 0) {
@@ -855,18 +986,20 @@
     }
 
     /* ------------------------------------------
-       Settings
+       Settings (Catalog-specific keys saving)
     ------------------------------------------ */
     function renderSettings() {
-        dom.settingBusinessName.value = state.settings.business_name || '';
-        dom.settingWhatsapp.value = state.settings.whatsapp_number || '';
-        dom.settingCurrency.value = state.settings.currency_symbol || 'S/';
-        dom.settingWhatsappTemplate.value = state.settings.whatsapp_message_template || '';
+        const cat = state.activeCatalog;
+        dom.settingBusinessName.value = state.settings[`business_name_${cat}`] || '';
+        dom.settingWhatsapp.value = state.settings[`whatsapp_number_${cat}`] || '';
+        dom.settingCurrency.value = state.settings[`currency_symbol_${cat}`] || 'S/';
+        dom.settingWhatsappTemplate.value = state.settings[`whatsapp_message_template_${cat}`] || '';
         dom.currentPassword.value = '';
         dom.newPassword.value = '';
     }
 
     dom.saveSettingsBtn.addEventListener('click', async () => {
+        const cat = state.activeCatalog;
         const business_name = dom.settingBusinessName.value.trim();
         const whatsapp_number = dom.settingWhatsapp.value.trim();
         const currency_symbol = dom.settingCurrency.value.trim() || 'S/';
@@ -877,16 +1010,22 @@
             return;
         }
 
+        const body = {};
+        body[`business_name_${cat}`] = business_name;
+        body[`whatsapp_number_${cat}`] = whatsapp_number;
+        body[`currency_symbol_${cat}`] = currency_symbol;
+        body[`whatsapp_message_template_${cat}`] = whatsapp_message_template;
+
         try {
             await api('/api/admin/settings', {
                 method: 'PUT',
-                body: { business_name, whatsapp_number, currency_symbol, whatsapp_message_template },
+                body: body,
             });
-            state.settings.business_name = business_name;
-            state.settings.whatsapp_number = whatsapp_number;
-            state.settings.currency_symbol = currency_symbol;
-            state.settings.whatsapp_message_template = whatsapp_message_template;
-            showToast('Configuración guardada', 'success');
+            state.settings[`business_name_${cat}`] = business_name;
+            state.settings[`whatsapp_number_${cat}`] = whatsapp_number;
+            state.settings[`currency_symbol_${cat}`] = currency_symbol;
+            state.settings[`whatsapp_message_template_${cat}`] = whatsapp_message_template;
+            showToast('Configuración guardada para este panel', 'success');
         } catch (err) {
             showToast(err.message, 'error');
         }

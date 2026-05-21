@@ -4,49 +4,127 @@
       "id": 1,
       "name": "Perfiles Individuales",
       "icon": "📌",
-      "sort_order": 1
+      "sort_order": 1,
+      "type": "streaming"
     },
     {
       "id": 2,
       "name": "Ofertas Sin Netflix",
       "icon": "💥",
-      "sort_order": 2
+      "sort_order": 2,
+      "type": "streaming"
     },
     {
       "id": 3,
       "name": "Dúo — Netflix + 1 app",
       "icon": "👥",
-      "sort_order": 3
+      "sort_order": 3,
+      "type": "streaming"
     },
     {
       "id": 4,
       "name": "Trío — Netflix + 2 apps",
       "icon": "👨‍👩‍👦",
-      "sort_order": 4
+      "sort_order": 4,
+      "type": "streaming"
     },
     {
       "id": 5,
       "name": "Full — Netflix + 3 apps",
       "icon": "👑",
-      "sort_order": 5
+      "sort_order": 5,
+      "type": "streaming"
     },
     {
       "id": 6,
       "name": "2 Netflix — Promo Temporal",
       "icon": "🔥",
-      "sort_order": 6
+      "sort_order": 6,
+      "type": "streaming"
     },
     {
       "id": 7,
       "name": "IA y Herramientas",
       "icon": "🧠",
-      "sort_order": 7
+      "sort_order": 7,
+      "type": "streaming"
     },
     {
       "id": 8,
       "name": "⚽ Mundial 2026 & Canales",
       "icon": "⚽",
-      "sort_order": 8
+      "sort_order": 8,
+      "type": "streaming"
+    },
+    {
+      "id": 9,
+      "name": "RENIEC",
+      "icon": "🪪",
+      "sort_order": 1,
+      "type": "doxeo"
+    },
+    {
+      "id": 10,
+      "name": "TELEFONIA",
+      "icon": "📞",
+      "sort_order": 2,
+      "type": "doxeo"
+    },
+    {
+      "id": 11,
+      "name": "FINANCIERO",
+      "icon": "💳",
+      "sort_order": 3,
+      "type": "doxeo"
+    },
+    {
+      "id": 12,
+      "name": "DELITOS",
+      "icon": "🚨",
+      "sort_order": 4,
+      "type": "doxeo"
+    },
+    {
+      "id": 13,
+      "name": "VEHICULOS",
+      "icon": "🚗",
+      "sort_order": 5,
+      "type": "doxeo"
+    },
+    {
+      "id": 14,
+      "name": "SUNAT",
+      "icon": "🏢",
+      "sort_order": 6,
+      "type": "doxeo"
+    },
+    {
+      "id": 15,
+      "name": "SUNARP",
+      "icon": "📜",
+      "sort_order": 7,
+      "type": "doxeo"
+    },
+    {
+      "id": 16,
+      "name": "MIGRACIONES",
+      "icon": "🛂",
+      "sort_order": 8,
+      "type": "doxeo"
+    },
+    {
+      "id": 17,
+      "name": "CERTIFICADOS",
+      "icon": "🎓",
+      "sort_order": 9,
+      "type": "doxeo"
+    },
+    {
+      "id": 18,
+      "name": "DOXEO COMPLETO",
+      "icon": "🔍",
+      "sort_order": 10,
+      "type": "doxeo"
     }
   ],
   "products": [
@@ -310,10 +388,11 @@
       "name": "Disney Premium — Mundial 2026",
       "emoji": "🏰",
       "description": "Incluye todos los canales de ESPN para disfrutar de todo el Mundial 2026 en vivo con calidad Ultra HD.",
-      "image": null,
+      "image": "/uploads/streaming/1779377852263-y6awvyjug.png",
       "highlight": 0,
       "sort_order": 1,
-      "active": 1
+      "active": 1,
+      "out_of_stock": false
     },
     {
       "id": 25,
@@ -324,6 +403,149 @@
       "image": "/images/iptv.png",
       "highlight": true,
       "sort_order": 2,
+      "active": true
+    },
+    {
+      "id": 26,
+      "category_id": 9,
+      "name": "Consulta Basica",
+      "emoji": "🪪",
+      "description": "⚡ <strong>Consulta rápida</strong><br>📦 <strong>Entrega:</strong> Texto + Foto<br>🔑 <strong>Requerimientos:</strong> Nombre completo o número de DNI<br><br>➕ <em>S/2 adicionales si aportas datos extra (teléfono, red social, etc.)</em>",
+      "image": "/uploads/doxeo/reniec_mockup.png",
+      "highlight": 0,
+      "sort_order": 1,
+      "active": true
+    },
+    {
+      "id": 27,
+      "category_id": 9,
+      "name": "Consulta RENIEC Completo",
+      "emoji": "📂",
+      "description": "Búsqueda avanzada con foto de firma digital oficial, datos de filiación (padres), y ficha RENIEC en formato PDF.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 2,
+      "active": true
+    },
+    {
+      "id": 28,
+      "category_id": 10,
+      "name": "Búsqueda de Líneas Activas",
+      "emoji": "📞",
+      "description": "Identifica de forma instantánea todos los números móviles y operadores (Claro, Movistar, Entel, Bitel) registrados a un DNI o RUC.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 3,
+      "active": true
+    },
+    {
+      "id": 29,
+      "category_id": 10,
+      "name": "Identificar Titular de Número",
+      "emoji": "👤",
+      "description": "Encuentra el titular, nombres completos, DNI, dirección y operador actual de un número móvil específico.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 4,
+      "active": true
+    },
+    {
+      "id": 30,
+      "category_id": 11,
+      "name": "Reporte SBS & Sentinel",
+      "emoji": "💳",
+      "description": "Historial crediticio detallado, calificación de riesgo, deudas activas en bancos e historial financiero de los últimos 12 meses.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 5,
+      "active": true
+    },
+    {
+      "id": 31,
+      "category_id": 12,
+      "name": "Antecedentes Penales y Policiales",
+      "emoji": "🚨",
+      "description": "Verificación formal de antecedentes judiciales, penales y policiales vigentes en bases oficiales a nivel nacional.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 6,
+      "active": true
+    },
+    {
+      "id": 32,
+      "category_id": 13,
+      "name": "Búsqueda por Placa",
+      "emoji": "🚗",
+      "description": "Datos completos del vehículo, marca, modelo, número de motor/chasis, gravámenes, y propietario actual.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 7,
+      "active": true
+    },
+    {
+      "id": 33,
+      "category_id": 14,
+      "name": "Reporte SUNAT Avanzado",
+      "emoji": "🏢",
+      "description": "Consulta de RUC, deudas tributarias coactivas, representantes legales y domicilio fiscal registrado.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 8,
+      "active": true
+    },
+    {
+      "id": 34,
+      "category_id": 15,
+      "name": "Búsqueda de Propiedades",
+      "emoji": "📜",
+      "description": "Identifica todas las propiedades, bienes inmuebles y terrenos registrados a nombre de una persona o empresa a nivel nacional.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 9,
+      "active": true
+    },
+    {
+      "id": 35,
+      "category_id": 16,
+      "name": "Movimiento Migratorio",
+      "emoji": "🛂",
+      "description": "Reporte oficial de entradas y salidas del país del ciudadano consultado (fechas, destinos, aeropuertos y números de pasaporte).",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "id": 36,
+      "category_id": 17,
+      "name": "Verificación SUNEDU",
+      "emoji": "🎓",
+      "description": "Búsqueda y descarga del registro oficial de grados, bachilleres y títulos universitarios inscritos en SUNEDU.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 11,
+      "active": true
+    },
+    {
+      "id": 37,
+      "category_id": 18,
+      "name": "Doxeo Digital Integrado",
+      "emoji": "🔍",
+      "description": "⚡ <strong>Doxeo Completo e Integrado</strong><br>🔍 <strong>Incluye:</strong> SEMÁFORO, HISTORIAL CREDITICIO, TELÉFONOS, DIRECCIONES, DELITOS, TRABAJOS, SEGUROS, FAMILIARES, CORREOS, PROPIEDADES, ETC.<br>📦 <strong>Entrega:</strong> PDF Muestra + Reporte Completo",
+      "image": "/uploads/doxeo/Reporte-08167022.pdf",
+      "highlight": 1,
+      "sort_order": 12,
+      "active": true
+    },
+    {
+      "id": 38,
+      "category_id": 9,
+      "name": "C4 AZUL o BLANCO",
+      "emoji": "🪪",
+      "description": "⚡ <strong>Consulta rápida</strong><br>📦 <strong>Entrega:</strong> PDF<br>🔑 <strong>Requerimientos:</strong> Nombre completo o número de DNI<br><br>➕ <em>S/2 adicionales si aportas datos extra (teléfono, red social, etc.)</em>",
+      "image": "/uploads/doxeo/c4_azul.png",
+      "highlight": 0,
+      "sort_order": 3,
       "active": true
     }
   ],
@@ -838,16 +1060,117 @@
       "price": 25,
       "duration": "3 meses",
       "sort_order": 3
+    },
+    {
+      "id": 74,
+      "product_id": 26,
+      "price": 1,
+      "duration": "Por Consulta",
+      "sort_order": 1
+    },
+    {
+      "id": 75,
+      "product_id": 27,
+      "price": 10,
+      "duration": "Por Consulta",
+      "sort_order": 1
+    },
+    {
+      "id": 76,
+      "product_id": 28,
+      "price": 6,
+      "duration": "Por DNI",
+      "sort_order": 1
+    },
+    {
+      "id": 77,
+      "product_id": 29,
+      "price": 6,
+      "duration": "Por Número",
+      "sort_order": 1
+    },
+    {
+      "id": 78,
+      "product_id": 30,
+      "price": 12,
+      "duration": "Por DNI",
+      "sort_order": 1
+    },
+    {
+      "id": 79,
+      "product_id": 31,
+      "price": 10,
+      "duration": "Por Consulta",
+      "sort_order": 1
+    },
+    {
+      "id": 80,
+      "product_id": 32,
+      "price": 7,
+      "duration": "Por Placa",
+      "sort_order": 1
+    },
+    {
+      "id": 81,
+      "product_id": 33,
+      "price": 8,
+      "duration": "Por RUC",
+      "sort_order": 1
+    },
+    {
+      "id": 82,
+      "product_id": 34,
+      "price": 15,
+      "duration": "Por Persona",
+      "sort_order": 1
+    },
+    {
+      "id": 83,
+      "product_id": 35,
+      "price": 15,
+      "duration": "Por Persona",
+      "sort_order": 1
+    },
+    {
+      "id": 84,
+      "product_id": 36,
+      "price": 8,
+      "duration": "Por DNI",
+      "sort_order": 1
+    },
+    {
+      "id": 85,
+      "product_id": 37,
+      "price": 15,
+      "duration": "Reporte Completo",
+      "sort_order": 1
+    },
+    {
+      "id": 86,
+      "product_id": 38,
+      "price": 4,
+      "duration": "Por Consulta",
+      "sort_order": 1
     }
   ],
   "settings": {
     "admin_password": "$2a$10$le27cA0EXSd6PY5czBuJeOh7KshQM8BUOzg5fRiJ3htoWeb0M0jxu",
-    "business_name": "Fyis Catálogo",
-    "whatsapp_number": "639631207428"
+    "business_name_streaming": "Fyis Streaming",
+    "whatsapp_number_streaming": "639631207428",
+    "currency_symbol_streaming": "S/",
+    "whatsapp_message_template_streaming": "Hola! Me interesa *{productName}* por *{duration}* ({currencySymbol}{price}) desde tu Catálogo.",
+    "business_name_doxeo": "Fyis Doxeo",
+    "whatsapp_number_doxeo": "639631207428",
+    "currency_symbol_doxeo": "S/",
+    "whatsapp_message_template_doxeo": "Hola! Me interesa la consulta *{productName}* (*{duration}*) por ({currencySymbol}{price}) desde tu Catálogo. 🔍",
+    "business_name_seguidores": "Fyis Seguidores",
+    "whatsapp_number_seguidores": "639631207428",
+    "currency_symbol_seguidores": "S/",
+    "whatsapp_message_template_seguidores": "Hola! Me interesa comprar *{duration}* de *{productName}* por ({currencySymbol}{price}) desde tu Catálogo. 👥"
   },
   "_nextId": {
-    "categories": 9,
-    "products": 26,
-    "plans": 74
+    "categories": 19,
+    "products": 39,
+    "plans": 87
   }
 }

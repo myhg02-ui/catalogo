@@ -54,9 +54,9 @@ function saveDatabase(db) {
 }
 
 // Helpers para simular operaciones tipo SQL
-function insertCategory(db, name, icon, sort_order) {
+function insertCategory(db, name, icon, sort_order, type) {
   var id = db._nextId.categories++;
-  db.categories.push({ id: id, name: name, icon: icon, sort_order: sort_order });
+  db.categories.push({ id: id, name: name, icon: icon, sort_order: sort_order, type: type || 'streaming' });
   return id;
 }
 

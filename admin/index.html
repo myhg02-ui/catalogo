@@ -24,6 +24,48 @@
                 <button type="submit" class="btn btn-primary btn-full" id="loginBtn">Ingresar</button>
                 <p class="login-error" id="loginError"></p>
             </form>
+        </div>    </div>
+
+    <!-- PORTAL SELECTOR SCREEN -->
+    <div class="portal-selector-screen" id="portalSelector" style="display:none;">
+        <div class="portal-container">
+            <h1 class="portal-title">Selecciona un <span class="gradient-text">Panel</span></h1>
+            <p class="portal-subtitle">Elige el catálogo que deseas gestionar hoy</p>
+            
+            <div class="portal-grid">
+                <!-- Streaming Card -->
+                <div class="portal-card" data-portal-catalog="streaming">
+                    <div class="portal-card-glow" style="--glow-color: #7c3aed;"></div>
+                    <div class="portal-card-content">
+                        <div class="portal-icon">🎬</div>
+                        <h3>Panel Streaming</h3>
+                        <p>Gestiona categorías, productos y planes de cuentas de streaming (Netflix, Disney, combos, etc.).</p>
+                        <button class="btn btn-primary btn-full btn-portal">Gestionar Streaming</button>
+                    </div>
+                </div>
+
+                <!-- Doxeo Card -->
+                <div class="portal-card" data-portal-catalog="doxeo">
+                    <div class="portal-card-glow" style="--glow-color: #a8d0fc;"></div>
+                    <div class="portal-card-content">
+                        <div class="portal-icon">🔍</div>
+                        <h3>Panel Doxeo</h3>
+                        <p>Gestiona consultas de datos personales, financieros, vehiculares, antecedentes y delitos.</p>
+                        <button class="btn btn-primary btn-full btn-portal" style="background: linear-gradient(135deg, #a8d0fc, #7c3aed);">Gestionar Doxeo</button>
+                    </div>
+                </div>
+
+                <!-- Seguidores Card -->
+                <div class="portal-card" data-portal-catalog="seguidores">
+                    <div class="portal-card-glow" style="--glow-color: #faabbd;"></div>
+                    <div class="portal-card-content">
+                        <div class="portal-icon">👥</div>
+                        <h3>Panel Seguidores</h3>
+                        <p>Gestiona servicios de crecimiento social, recarga de seguidores, likes y reproducciones.</p>
+                        <button class="btn btn-primary btn-full btn-portal" style="background: linear-gradient(135deg, #faabbd, #7c3aed);">Gestionar Seguidores</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -33,7 +75,7 @@
         <header class="admin-header">
             <div class="header-left">
                 <button class="hamburger" id="hamburgerBtn">☰</button>
-                <h1 class="admin-logo">Fyis<span>Catálogo</span> Admin</h1>
+                <h1 class="admin-logo">Fyis<span>Catálogo</span> Admin <span id="headerPanelBadge" style="font-size:0.75rem; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px; margin-left:8px; border:1px solid rgba(255,255,255,0.08); vertical-align:middle; text-transform:uppercase;"></span></h1>
             </div>
             <div class="header-right">
                 <a href="/" target="_blank" class="btn btn-outline btn-sm">👁️ Ver Catálogo</a>
@@ -48,47 +90,54 @@
                 <button class="nav-item" data-section="categories">📂 Categorías</button>
                 <button class="nav-item" data-section="products">📦 Productos</button>
                 <button class="nav-item" data-section="settings">⚙️ Configuración</button>
+                <button class="nav-item" id="btnBackToPortal" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; color: var(--accent);">🔄 Cambiar Panel</button>
             </nav>
 
             <!-- Main Content -->
             <main class="admin-main">
                 <!-- Dashboard Section -->
                 <section class="section" id="section-dashboard">
-                    <h2>Dashboard</h2>
+                    <h2 id="dashboardTitle">Dashboard</h2>
                     <div class="stats-grid" id="statsGrid"></div>
                 </section>
 
                 <!-- Categories Section -->
                 <section class="section" id="section-categories" style="display:none;">
-                    <div class="section-header">
-                        <h2>Categorías</h2>
-                        <button class="btn btn-primary" id="addCategoryBtn">+ Nueva Categoría</button>
+                    <div class="section-header-main" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 16px;">
+                        <h2 id="categoriesTitle" style="margin: 0; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #a8d0fc, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Categorías</h2>
+                    </div>
+                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h3 id="categoriesSubTitle" style="margin: 0; font-size: 1.3rem;">Listado de Categorías</h3>
+                        <button class="btn btn-primary" id="catalogAddCategoryBtn">+ Nueva Categoría</button>
                     </div>
                     <div class="table-container">
-                        <table class="data-table" id="categoriesTable">
+                        <table class="data-table" id="catalogCategoriesTable">
                             <thead>
                                 <tr><th>Orden</th><th>Icono</th><th>Nombre</th><th>Productos</th><th>Acciones</th></tr>
                             </thead>
-                            <tbody id="categoriesBody"></tbody>
+                            <tbody id="catalogCategoriesBody"></tbody>
                         </table>
                     </div>
                 </section>
 
                 <!-- Products Section -->
                 <section class="section" id="section-products" style="display:none;">
-                    <div class="section-header">
-                        <h2>Productos</h2>
-                        <div class="section-actions">
-                            <select id="filterCategory" class="select-input"><option value="">Todas las categorías</option></select>
-                            <button class="btn btn-primary" id="addProductBtn">+ Nuevo Producto</button>
+                    <div class="section-header-main" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 16px;">
+                        <h2 id="productsTitle" style="margin: 0; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #a8d0fc, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Productos</h2>
+                    </div>
+                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                        <h3 id="productsSubTitle" style="margin: 0; font-size: 1.3rem;">Listado de Productos</h3>
+                        <div class="section-actions" style="display: flex; gap: 12px;">
+                            <select id="catalogFilterCategory" class="select-input" style="cursor: pointer;"><option value="">Todas las categorías</option></select>
+                            <button class="btn btn-primary" id="catalogAddProductBtn">+ Nuevo Producto</button>
                         </div>
                     </div>
                     <div class="table-container">
-                        <table class="data-table" id="productsTable">
+                        <table class="data-table" id="catalogProductsTable">
                             <thead>
-                                <tr><th>Emoji</th><th>Nombre</th><th>Categoría</th><th>Planes</th><th>Estado</th><th>Acciones</th></tr>
+                                <tr id="productsTableHeader"><th>Emoji</th><th>Nombre</th><th>Categoría</th><th>Planes</th><th>Estado</th><th>Acciones</th></tr>
                             </thead>
-                            <tbody id="productsBody"></tbody>
+                            <tbody id="catalogProductsBody"></tbody>
                         </table>
                     </div>
                 </section>

@@ -25,15 +25,29 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// Directorio de uploads
+// Directorio de uploads y subcarpetas
 var uploadsDir = path.join(__dirname, 'public', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+var catalogTypes = ['streaming', 'doxeo', 'seguidores'];
+catalogTypes.forEach(function(type) {
+  var dir = path.join(uploadsDir, type);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
 // Multer
 var storage = multer.diskStorage({
-  destination: function(req, file, cb) { cb(null, uploadsDir); },
+  destination: function(req, file, cb) {
+    var catalog = req.query.catalog || 'streaming';
+    if (catalogTypes.indexOf(catalog) === -1) {
+      catalog = 'streaming';
+    }
+    var destDir = path.join(uploadsDir, catalog);
+    if (!fs.existsSync(destDir)) {
+      fs.mkdirSync(destDir, { recursive: true });
+    }
+    cb(null, destDir);
+  },
   filename: function(req, file, cb) {
     var ext = path.extname(file.originalname);
     cb(null, Date.now() + '-' + Math.random().toString(36).substr(2, 9) + ext);
@@ -43,10 +57,10 @@ var upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: function(req, file, cb) {
-    if (/\.(jpg|jpeg|png|gif|webp|svg)$/i.test(file.originalname)) {
+    if (/\.(jpg|jpeg|png|gif|webp|svg|pdf)$/i.test(file.originalname)) {
       cb(null, true);
     } else {
-      cb(new Error('Solo se permiten imágenes'));
+      cb(new Error('Solo se permiten imágenes o PDFs'));
     }
   }
 });
@@ -160,18 +174,27 @@ app.get('/api/admin/categories', requireAuth, function(req, res) {
 });
 
 app.post('/api/admin/categories', requireAuth, function(req, res) {
-  var id = dbModule.insertCategory(db, req.body.name, req.body.icon || '', req.body.sort_order || 0);
+  var type = req.body.type || 'streaming';
+  if (['streaming', 'doxeo', 'seguidores'].indexOf(type) === -1) {
+    type = 'streaming';
+  }
+  var id = dbModule.insertCategory(db, req.body.name, req.body.icon || '', req.body.sort_order || 0, type);
   dbModule.saveDatabase(db);
-  res.json({ id: id, name: req.body.name, icon: req.body.icon || '', sort_order: req.body.sort_order || 0 });
+  res.json({ id: id, name: req.body.name, icon: req.body.icon || '', sort_order: req.body.sort_order || 0, type: type });
 });
 
 app.put('/api/admin/categories/:id', requireAuth, function(req, res) {
   var id = parseInt(req.params.id);
   var cat = db.categories.find(function(c) { return c.id === id; });
   if (!cat) return res.status(404).json({ error: 'Categoría no encontrada' });
+  var type = req.body.type || 'streaming';
+  if (['streaming', 'doxeo', 'seguidores'].indexOf(type) === -1) {
+    type = 'streaming';
+  }
   cat.name = req.body.name;
   cat.icon = req.body.icon || '';
   cat.sort_order = req.body.sort_order || 0;
+  cat.type = type;
   dbModule.saveDatabase(db);
   res.json({ success: true });
 });
@@ -265,7 +288,11 @@ app.delete('/api/admin/plans/:id', requireAuth, function(req, res) {
 
 app.post('/api/admin/upload', requireAuth, upload.single('image'), function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No se subió ningún archivo' });
-  res.json({ url: '/uploads/' + req.file.filename });
+  var catalog = req.query.catalog || 'streaming';
+  if (['streaming', 'doxeo', 'seguidores'].indexOf(catalog) === -1) {
+    catalog = 'streaming';
+  }
+  res.json({ url: '/uploads/' + catalog + '/' + req.file.filename });
 });
 
 app.put('/api/admin/settings', requireAuth, function(req, res) {

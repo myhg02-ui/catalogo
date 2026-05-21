@@ -28,8 +28,8 @@
     <section class="main-sections-nav-container">
         <div class="main-sections-nav">
             <button class="section-tab active" data-section="streaming">🎬 Streaming</button>
-            <button class="section-tab" data-section="doxeo">🔍 Doxeo <span class="badge-soon">Próximamente</span></button>
-            <button class="section-tab" data-section="seguidores">👥 Seguidores <span class="badge-soon">Próximamente</span></button>
+            <button class="section-tab" data-section="doxeo">🔍 Doxeo</button>
+            <button class="section-tab" data-section="seguidores">👥 Seguidores</button>
         </div>
     </section>
 
@@ -104,46 +104,68 @@
             </section>
         </div>
 
-        <!-- SECTION 2: DOXEO (Coming Soon) -->
+        <!-- SECTION 2: DOXEO -->
         <div id="doxeo-view" class="section-view">
-            <div class="soon-container fade-in">
-                <div class="soon-card">
-                    <span class="soon-icon">🔍</span>
-                    <h2 class="soon-title">Fyis <span class="gradient-text-alt">Doxeo</span></h2>
-                    <p class="soon-desc">Servicio de investigación avanzada, obtención de información pública y auditorías digitales con total confidencialidad y rapidez.</p>
-                    <div class="soon-status">
-                        <span class="pulse-indicator"></span>
-                        Estado: Compra Anticipada Disponible
-                    </div>
-                    <div class="soon-contact-box">
-                        <p>¿Tienes dudas o deseas realizar una compra anticipada?</p>
-                        <a href="https://t.me/Fyis2" target="_blank" rel="noopener" class="btn-contact-soon telegram">
-                            Escríbenos a Telegram
-                        </a>
-                    </div>
+            <!-- Search bar -->
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="doxeoSearch" placeholder="Buscar en Doxeo (ej: Investigación, Auditoría)...">
                 </div>
             </div>
+
+            <!-- Category Navigation (sticky) -->
+            <nav class="category-nav" id="doxeoCategoryNav">
+                <div class="nav-container">
+                    <div class="nav-scroll" id="doxeoNavScroll">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Catalog -->
+            <main class="catalog" id="doxeoCatalog">
+                <!-- Categories and cards rendered by JS -->
+                <div class="loading-spinner" id="doxeoLoadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Cargando catálogo de Doxeo...</p>
+                </div>
+            </main>
         </div>
 
-        <!-- SECTION 3: SEGUIDORES (Coming Soon) -->
+        <!-- SECTION 3: SEGUIDORES -->
         <div id="seguidores-view" class="section-view">
-            <div class="soon-container fade-in">
-                <div class="soon-card">
-                    <span class="soon-icon">👥</span>
-                    <h2 class="soon-title">Fyis <span class="gradient-text-alt2">Seguidores</span></h2>
-                    <p class="soon-desc">Potencia tu presencia en redes sociales. Seguidores, likes, vistas e interacciones de alta retención para Instagram, TikTok, Facebook y más.</p>
-                    <div class="soon-status">
-                        <span class="pulse-indicator"></span>
-                        Estado: Compra Anticipada Disponible
-                    </div>
-                    <div class="soon-contact-box">
-                        <p>¿Tienes dudas o deseas realizar una compra anticipada?</p>
-                        <a href="https://t.me/Fyis2" target="_blank" rel="noopener" class="btn-contact-soon telegram">
-                            Escríbenos a Telegram
-                        </a>
-                    </div>
+            <!-- Search bar -->
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="seguidoresSearch" placeholder="Buscar en Seguidores (ej: Instagram, TikTok)...">
                 </div>
             </div>
+
+            <!-- Category Navigation (sticky) -->
+            <nav class="category-nav" id="seguidoresCategoryNav">
+                <div class="nav-container">
+                    <div class="nav-scroll" id="seguidoresNavScroll">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Main Catalog -->
+            <main class="catalog" id="seguidoresCatalog">
+                <!-- Categories and cards rendered by JS -->
+                <div class="loading-spinner" id="seguidoresLoadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Cargando catálogo de Seguidores...</p>
+                </div>
+            </main>
         </div>
 
     </div>
@@ -222,6 +244,27 @@
             </div>
             <div class="premium-modal-footer">
                 <button class="btn-modal-action" id="closeNetflixGuideBtn">Entendido, cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Image Preview Modal -->
+    <div class="modal-overlay" id="productImageModal" style="display:none;">
+        <div class="premium-modal image-preview-modal">
+            <div class="premium-modal-header">
+                <div class="premium-modal-title-group">
+                    <span class="premium-modal-icon">🔎</span>
+                    <h3 class="premium-modal-title" id="productImageModalTitle">Muestra del Producto</h3>
+                </div>
+                <button class="premium-modal-close" id="closeProductImageModal">&times;</button>
+            </div>
+            <div class="premium-modal-body" id="productImageModalBody" style="text-align:center; padding:10px; background: rgba(0,0,0,0.2);">
+                <img id="productImageModalImg" src="" alt="Vista Previa" style="max-width:100%; max-height:68vh; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); object-fit:contain;">
+                <div id="productImageModalCustom" style="display:none; text-align:left;"></div>
+                <iframe id="productImageModalIframe" src="" style="display:none; width:100%; height:68vh; border:none; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.6); background:#fff;"></iframe>
+            </div>
+            <div class="premium-modal-footer">
+                <button class="btn-modal-action" id="closeProductImageModalBtn">Cerrar Vista Previa</button>
             </div>
         </div>
     </div>

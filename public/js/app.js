@@ -2,6 +2,119 @@
    Fyis Catálogo — Public Application Script
    ============================================================ */
 
+// --- Unicode Helper to prevent character corruption ---
+const toMathBold = (str) => {
+    return str.split('').map(c => {
+        const code = c.charCodeAt(0);
+        if (code >= 65 && code <= 90) { // A-Z
+            return String.fromCodePoint(0x1D5D4 + (code - 65));
+        }
+        return c;
+    }).join('');
+};
+
+// --- RENIEC Premium Mockup Text Constants ---
+const RENIEC_PREMIUM_TEXT = `➣ ${toMathBold('RENIEC')}
+
+${toMathBold('DNI')} ➟ 06256217 - 5
+${toMathBold('NOMBRE')} ➟ DINA ERCILIA
+${toMathBold('APELLIDO PATERNO')} ➟ BOLUARTE
+${toMathBold('APELLIDO MATERNO')} ➟  ZEGARRA
+${toMathBold('SEXO')} ➟  FEMENINO
+
+[📅] ${toMathBold('NACIMIENTO')}
+
+${toMathBold('FECHA DE NACIMIENTO')} ➟ 31/05/1962
+${toMathBold('DEPARTAMENTO')} ➟ APURIMAC
+${toMathBold('PROVINCIA')} ➟ AYMARAES
+${toMathBold('DISTRITO')} ➟ CHALHUANCA
+
+[📝] ${toMathBold('INFO')}
+
+${toMathBold('GRADO DE INSTRUCCION')} ➟  SUPERIOR COMPLETA
+${toMathBold('ESTADO CIVIL')} ➟ DIVORCIADO
+${toMathBold('EDAD')} ➟ 63 AÑOS
+${toMathBold('ESTATURA')} ➟ 1.62 MT.
+${toMathBold('FECHA DE INSCRIPCION')} ➟  25/01/2023
+${toMathBold('FECHA DE EMISION')} ➟ 11/06/2025
+${toMathBold('FECHA DE CADUCIDAD')} ➟ 19/07/2029
+${toMathBold('RESTRICCION')}: NINGUNA
+${toMathBold('DONACION DE ORGANOS')} ➟  NO
+
+[👨‍👨‍👦‍👦] ${toMathBold('PADRES')}
+
+${toMathBold('PADRE')} ➟ NICANOR
+${toMathBold('DNI DEL PADRE')} ➟ 
+${toMathBold('MADRE')}:  ERCILIA
+${toMathBold('DNI DE LA MADRE')} ➟ 
+
+[📍] ${toMathBold('UBICACION')}: 
+
+${toMathBold('DEPARTAMENTO')} ➟ LIMA
+${toMathBold('PROVINCIA')} ➟ LIMA
+${toMathBold('DISTRITO')} ➟  SURQUILLO
+${toMathBold('DIRECCION')} ➟ CALLE LOS HALCONES 326 
+
+[🌐] ${toMathBold('UBIGEO')} : 
+
+${toMathBold('UBIGEO INEI')} ➟ 145751
+${toMathBold('UBIGEO RENIEC')} ➟ 145751
+${toMathBold('UBIGEO SUNAT')} ➟ 145751`;
+
+// --- Experian / Infocorp Premium Mockup Text Constants ---
+const EXPERIAN_PREMIUM_TEXT = `➣ ${toMathBold('REPORTE FINANCIERO EXPERIAN')}
+ 
+${toMathBold('TITULAR')} ➟ BOLUARTE ZEGARRA DINA ERCILIA
+${toMathBold('DNI')} ➟ 06256217
+${toMathBold('CALIFICACION')} ➟ NORM (100% NORMAL)
+${toMathBold('SCORE EXPERIAN')} ➟ 845 / 1000 (RIESGO BAJO)
+
+[📊] ${toMathBold('DEUDAS SBS')}
+
+${toMathBold('CALIFICACION BANCOS')} ➟ NORMAL
+${toMathBold('DEUDA TOTAL SBS')} ➟ S/ 0.00
+${toMathBold('DEUDA VENCIDA / IMPAGA')} ➟ S/ 0.00
+${toMathBold('CANTIDAD DE ENTIDADES')} ➟ 0 bancos
+
+[🚨] ${toMathBold('ALERTAS Y MOROSIDAD')}
+
+${toMathBold('DEUDAS EN INFOCORP')} ➟ S/ 0.00
+${toMathBold('DEUDAS TRIBUTARIAS SUNAT')} ➟ S/ 0.00
+${toMathBold('LETRAS PROTESTADAS')} ➟ NINGUNA
+${toMathBold('JUICIOS Y DEMANDAS')} ➟ NINGUNA
+
+[🏢] ${toMathBold('CONSULTAS DE CREDITO')}
+
+${toMathBold('CONSULTAS ULTIMOS 3 MESES')} ➟ 0
+${toMathBold('LINEA CREDITOCALC')} ➟ S/ 0.00 (SIN USO)
+
+[📅] ${toMathBold('FECHA DE CONSULTA')} ➟ 21/05/2026`;
+
+window.copyDoxeoTerminalText = (e) => {
+    if (e) e.stopPropagation();
+    const pre = document.getElementById('doxeoTerminalPre');
+    if (!pre) return;
+    const text = pre.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('btnCopyTerminal');
+        if (btn) {
+            btn.innerHTML = '<span class="copy-icon">✅</span> ¡Copiado!';
+            btn.style.background = 'rgba(16, 185, 129, 0.2)';
+            btn.style.borderColor = '#10b981';
+            btn.style.color = '#10b981';
+            setTimeout(() => {
+                btn.innerHTML = '<span class="copy-icon">📋</span> Copiar';
+                btn.style.background = '';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+            }, 2000);
+        }
+    }).catch(err => {
+        console.error('Error al copiar:', err);
+    });
+};
+
+
 // --- SVGs for Official Brand Icons ---
 const BRAND_ICONS = {
     netflix: `<svg class="brand-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#0c0d14"/><path d="M28 15V85H39V49L61 85H72V15H61V51L39 15H28Z" fill="#E50914"/></svg>`,
@@ -51,9 +164,9 @@ const getBrandColor = (productName) => {
  * Automatically parses a product name to determine which brands it contains
  * and returns the appropriate circular brand logo stack or single logo.
  */
-const getBrandLogoHtml = (product, productName) => {
-    // If a custom image is uploaded via the admin panel, use it
-    if (product.image) {
+const getBrandLogoHtml = (product, productName, catalogType = 'streaming') => {
+    // If a custom image is uploaded via the admin panel, use it (for streaming only as main logo)
+    if (product.image && catalogType === 'streaming') {
         const imgSrc = product.image.startsWith('/') ? product.image : `/uploads/${product.image}`;
         return `<div class="card-logo-container"><img src="${imgSrc}" class="card-brand-logo-img" alt="${productName}"></div>`;
     }
@@ -128,15 +241,14 @@ const getBrandLogoHtml = (product, productName) => {
     return stackHtml;
 };
 
-
 /**
- * Generates a WhatsApp link with a pre-filled message.
+ * Generates a WhatsApp link with a pre-filled message based on specific catalog type.
  */
-const buildWhatsAppLink = (settings, productName, duration, price) => {
-    const whatsappNumber = settings.whatsapp_number || '639631207428';
-    const currencySymbol = settings.currency_symbol || 'S/';
+const buildWhatsAppLink = (settings, productName, duration, price, catalogType) => {
+    const whatsappNumber = settings[`whatsapp_number_${catalogType}`] || settings.whatsapp_number || '639631207428';
+    const currencySymbol = settings[`currency_symbol_${catalogType}`] || settings.currency_symbol || 'S/';
     
-    let messageTemplate = settings.whatsapp_message_template || 'Hola! Me interesa *{productName}* por *{duration}* ({currencySymbol}{price}) desde tu Catálogo.';
+    let messageTemplate = settings[`whatsapp_message_template_${catalogType}`] || settings.whatsapp_message_template || 'Hola! Me interesa *{productName}* por *{duration}* ({currencySymbol}{price}) desde tu Catálogo.';
     
     const message = messageTemplate
         .replace(/{productName}/g, productName)
@@ -150,7 +262,7 @@ const buildWhatsAppLink = (settings, productName, duration, price) => {
 /**
  * Creates a single product card DOM element.
  */
-const createProductCard = (product, settings) => {
+const createProductCard = (product, settings, catalogType) => {
     const card = document.createElement('div');
     card.className = 'product-card fade-in' + (product.out_of_stock ? ' out-of-stock' : '');
 
@@ -161,8 +273,8 @@ const createProductCard = (product, settings) => {
     const plans = [...product.plans].sort((a, b) => a.sort_order - b.sort_order);
     const defaultPlan = plans[0];
 
-    const whatsappNumber = settings.whatsapp_number || '639631207428';
-    const currencySymbol = settings.currency_symbol || 'S/';
+    const whatsappNumber = settings[`whatsapp_number_${catalogType}`] || settings.whatsapp_number || '639631207428';
+    const currencySymbol = settings[`currency_symbol_${catalogType}`] || settings.currency_symbol || 'S/';
 
     // Build inner HTML
     let html = '';
@@ -175,7 +287,7 @@ const createProductCard = (product, settings) => {
     }
 
     // Dynamic brand logo stack or single logo
-    html += getBrandLogoHtml(product, product.name);
+    html += getBrandLogoHtml(product, product.name, catalogType);
 
     // Name
     html += `<h3 class="card-name">${product.name}</h3>`;
@@ -185,6 +297,163 @@ const createProductCard = (product, settings) => {
         html += `<p class="card-description">${product.description}</p>`;
     } else {
         html += `<p class="card-description">Entrega rápida y garantía completa durante el tiempo contratado.</p>`;
+    }
+
+    // Large product mockup preview (especially for Doxeo & Seguidores sample search result)
+    if (product.image && catalogType === 'doxeo') {
+        const imgSrc = product.image.startsWith('/') ? product.image : `/uploads/${product.image}`;
+        const isPdf = product.image.endsWith('.pdf');
+
+        if (isPdf) {
+            html += `
+                <div class="product-preview-mockup doxeo-mockup-card pdf-mockup-card" style="border-color: #ef4444 !important;" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}')">
+                    <div class="preview-overlay">
+                        <span class="preview-badge">📄 Ver Ejemplo PDF</span>
+                    </div>
+                    <div class="doxeo-card-split" style="height: 100%;">
+                        <div class="doxeo-card-photo-frame" style="width: 80px; background: rgba(239, 68, 68, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-right: 1px solid rgba(255, 255, 255, 0.08); flex-shrink: 0;">
+                            <span style="font-size: 2.2rem;">📄</span>
+                            <span style="font-size: 0.65rem; color: #ef4444; font-weight: 700; margin-top: 4px; font-family: monospace;">PDF MUESTRA</span>
+                        </div>
+                        <div class="doxeo-card-terminal" style="display: flex; flex-direction: column; justify-content: center; padding: 15px; text-align: left;">
+                            <span style="font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 4px; display: block; font-family: monospace;">DOCUMENTO OFICIAL</span>
+                            <span style="font-size: 0.72rem; color: var(--text-secondary); display: block; line-height: 1.4;">Haz clic aquí para abrir y visualizar el reporte real de muestra en formato PDF.</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (product.name === 'Consulta Basica') {
+            html += `
+                <div class="product-preview-mockup doxeo-mockup-card" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}')">
+                    <div class="preview-overlay">
+                        <span class="preview-badge">👁️ Ver Ejemplo (Zoom)</span>
+                    </div>
+                    <div class="doxeo-card-split">
+                        <div class="doxeo-card-photo-frame">
+                            <div class="doxeo-photo-label">FOTO DNI</div>
+                            <img src="${imgSrc}" class="doxeo-card-photo" alt="Foto DNI">
+                        </div>
+                        <div class="doxeo-card-terminal">
+                            <pre class="doxeo-terminal-text-mini">➣ ${toMathBold('RENIEC')}
+
+${toMathBold('DNI')} ➟ 06256217 - 5
+${toMathBold('NOMBRE')} ➟ DINA ERCILIA
+${toMathBold('APELLIDO PATERNO')} ➟ BOLUARTE
+${toMathBold('APELLIDO MATERNO')} ➟  ZEGARRA
+${toMathBold('SEXO')} ➟  FEMENINO
+
+[📅] ${toMathBold('NACIMIENTO')}
+
+${toMathBold('FECHA DE NACIMIENTO')} ➟ 31/05/1962
+${toMathBold('DEPARTAMENTO')} ➟ APURIMAC...</pre>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (product.name === 'REPORTE FINANCIERO EXPERIAN (INFOCORP)') {
+            html += `
+                <div class="product-preview-mockup doxeo-mockup-card" style="border-color: #10b981 !important;" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}', true)">
+                    <div class="preview-overlay">
+                        <span class="preview-badge">👁️ Ver Ejemplo (Zoom)</span>
+                    </div>
+                    <div class="doxeo-card-split">
+                        <div class="doxeo-card-photo-frame" style="width: 120px; background: rgba(16, 185, 129, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; border-right: 1px solid rgba(255, 255, 255, 0.08);">
+                            <div class="doxeo-photo-label" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: none; width: 100%; margin-bottom: 8px;">CALIFICACIÓN</div>
+                            <div style="font-size: 2.2rem; margin: 4px 0;">🟢</div>
+                            <div style="font-size: 0.95rem; font-weight: 800; color: #10b981; font-family: monospace;">NORMAL</div>
+                            <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px;">Score: <strong style="color: #fff;">845</strong></div>
+                        </div>
+                        <div class="doxeo-card-terminal">
+                            <pre class="doxeo-terminal-text-mini" style="color: #38bdf8;">➣ ${toMathBold('REPORTE FINANCIERO')}
+ 
+${toMathBold('TITULAR')} ➟ BOLUARTE ZEGARRA DINA ERCILIA
+${toMathBold('DNI')} ➟ 06256217
+${toMathBold('SCORE')} ➟ 845 / 1000
+${toMathBold('RIESGO')} ➟ BAJO (VERDE)
+${toMathBold('DEUDAS SBS')} ➟ S/ 0.00
+${toMathBold('MORAS')} ➟ NINGUNA (S/ 0.00)</pre>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else if (product.name === 'C4 AZUL o BLANCO') {
+            const imgAzul = '/uploads/doxeo/c4_azul.png';
+            const imgBlanco = '/uploads/doxeo/c4_blanco.png';
+            html += `
+                <div class="product-preview-mockup c4-double-preview" style="background: rgba(0, 0, 0, 0.4); padding: 8px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: var(--spacing-sm) 0 var(--spacing-lg) 0; height: 180px; display: flex; gap: 8px; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);">
+                    
+                    <!-- Formato Azul -->
+                    <div class="c4-preview-item" style="flex: 1; height: 100%; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgAzul}', 'C4 Formato Azul')">
+                        <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.1) 50%, rgba(7, 7, 13, 0.85) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; z-index: 2; opacity: 0.9; transition: all var(--transition-base);">
+                            <span class="preview-badge" style="font-size: 0.62rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-full); background: rgba(0, 100, 255, 0.85); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.5);">💙 Zoom Azul</span>
+                        </div>
+                        <img src="${imgAzul}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="C4 Azul">
+                    </div>
+                    
+                    <!-- Formato Blanco -->
+                    <div class="c4-preview-item" style="flex: 1; height: 100%; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgBlanco}', 'C4 Formato Blanco')">
+                        <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.1) 50%, rgba(7, 7, 13, 0.85) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; z-index: 2; opacity: 0.9; transition: all var(--transition-base);">
+                            <span class="preview-badge" style="font-size: 0.62rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.9); color: #000; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.5);">🤍 Zoom Blanco</span>
+                        </div>
+                        <img src="${imgBlanco}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="C4 Blanco">
+                    </div>
+                </div>
+            `;
+        } else if (product.name === 'Doxeo Digital Integrado') {
+            const img1 = '/uploads/doxeo/doxeo_completo_1.png';
+            const img2 = '/uploads/doxeo/doxeo_completo_2.png';
+            const img3 = '/uploads/doxeo/doxeo_completo_3.png';
+            const img4 = '/uploads/doxeo/doxeo_completo_4.png';
+            const pdfFile = '/uploads/doxeo/Reporte-08167022.pdf';
+            
+            html += `
+                <div class="product-preview-mockup doxeo-completo-preview" style="background: rgba(0, 0, 0, 0.4); padding: 8px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: var(--spacing-sm) 0 var(--spacing-lg) 0; height: auto; display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);">
+                    
+                    <!-- Grid 2x2 de Muestras -->
+                    <div class="doxeo-completo-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; height: 160px; width: 100%;">
+                        <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img1}', 'Doxeo Completo - Info Reniec')">
+                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 1</span>
+                            </div>
+                            <img src="${img1}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Doxeo Completo 1">
+                        </div>
+                        <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img2}', 'Doxeo Completo - Direcciones Registradas')">
+                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 2</span>
+                            </div>
+                            <img src="${img2}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Doxeo Completo 2">
+                        </div>
+                        <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img3}', 'Doxeo Completo - Vehículos y Trabajos')">
+                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 3</span>
+                            </div>
+                            <img src="${img3}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Doxeo Completo 3">
+                        </div>
+                        <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img4}', 'Doxeo Completo - Denuncias Policiales')">
+                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 4</span>
+                            </div>
+                            <img src="${img4}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Doxeo Completo 4">
+                        </div>
+                    </div>
+                    
+                    <!-- Botón para ver el PDF completo -->
+                    <button class="btn-view-pdf" style="width: 100%; padding: 10px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all var(--transition-base); display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="event.stopPropagation(); window.openProductImageModal('${pdfFile}', 'Doxeo Completo - Reporte Completo')">
+                        📄 Ver Reporte Muestra Completo (PDF 33 Págs)
+                    </button>
+                    
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="product-preview-mockup" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}')">
+                    <div class="preview-overlay">
+                        <span class="preview-badge">👁️ Ver Ejemplo (Zoom)</span>
+                    </div>
+                    <img src="${imgSrc}" class="preview-img" alt="Muestra de ${product.name}">
+                </div>
+            `;
+        }
     }
 
     // Duration pills
@@ -212,7 +481,7 @@ const createProductCard = (product, settings) => {
         if (product.out_of_stock) {
             html += `<button class="btn-buy btn-out-of-stock" disabled>Agotado / Sin Stock</button>`;
         } else {
-            const whatsappLink = buildWhatsAppLink(settings, product.name, defaultPlan.duration, defaultPlan.price);
+            const whatsappLink = buildWhatsAppLink(settings, product.name, defaultPlan.duration, defaultPlan.price, catalogType);
             html += `<a class="btn-buy" href="${whatsappLink}" target="_blank" rel="noopener">Comprar por WhatsApp</a>`;
         }
     }
@@ -257,7 +526,7 @@ const createProductCard = (product, settings) => {
 
             // Update buy button link
             if (buyBtn && buyBtn.tagName === 'A') {
-                buyBtn.href = buildWhatsAppLink(settings, product.name, duration, price);
+                buyBtn.href = buildWhatsAppLink(settings, product.name, duration, price, catalogType);
             }
         });
     });
@@ -268,12 +537,23 @@ const createProductCard = (product, settings) => {
 /**
  * Renders the full catalog from categories data.
  */
-const renderCatalog = (categories, settings) => {
-    const catalog = document.getElementById('catalog');
-    catalog.innerHTML = ''; // Clear prior loading
+const renderCatalog = (categories, settings, catalogType = 'streaming') => {
+    let targetId = 'catalog';
+    if (catalogType === 'doxeo') targetId = 'doxeoCatalog';
+    if (catalogType === 'seguidores') targetId = 'seguidoresCatalog';
+
+    const catalog = document.getElementById(targetId);
+    if (!catalog) return;
+    catalog.innerHTML = ''; // Clear prior content
+
+    // Filter categories by type
+    const filteredCategories = categories.filter(cat => {
+        const type = cat.type || 'streaming';
+        return type === catalogType;
+    });
 
     // Sort categories by sort_order
-    const sorted = [...categories].sort((a, b) => a.sort_order - b.sort_order);
+    const sorted = [...filteredCategories].sort((a, b) => a.sort_order - b.sort_order);
 
     sorted.forEach(category => {
         // Filter only active products
@@ -302,7 +582,7 @@ const renderCatalog = (categories, settings) => {
         grid.className = 'products-grid';
 
         activeProducts.forEach((product, index) => {
-            const card = createProductCard(product, settings);
+            const card = createProductCard(product, settings, catalogType);
             // Stagger animation delay
             card.style.transitionDelay = `${index * 0.05}s`;
             grid.appendChild(card);
@@ -316,12 +596,22 @@ const renderCatalog = (categories, settings) => {
 /**
  * Renders the category navigation pills.
  */
-const renderNavigation = (categories) => {
-    const navScroll = document.getElementById('navScroll');
+const renderNavigation = (categories, catalogType = 'streaming') => {
+    let scrollId = 'navScroll';
+    if (catalogType === 'doxeo') scrollId = 'doxeoNavScroll';
+    if (catalogType === 'seguidores') scrollId = 'seguidoresNavScroll';
+
+    const navScroll = document.getElementById(scrollId);
     if (!navScroll) return;
     navScroll.innerHTML = ''; // Clear prior content
 
-    const sorted = [...categories].sort((a, b) => a.sort_order - b.sort_order);
+    // Filter categories by type
+    const filteredCategories = categories.filter(cat => {
+        const type = cat.type || 'streaming';
+        return type === catalogType;
+    });
+
+    const sorted = [...filteredCategories].sort((a, b) => a.sort_order - b.sort_order);
 
     sorted.forEach(category => {
         // Only show categories that have active products
@@ -339,7 +629,7 @@ const renderNavigation = (categories) => {
             clearTimeout(scrollTimeout);
 
             // Highlight pill immediately
-            document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+            navScroll.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
             pill.classList.add('active');
 
             const target = document.getElementById(`cat-${category.id}`);
@@ -431,13 +721,29 @@ const setupScrollAnimations = () => {
 /**
  * Sets up the search bar to filter products and hide empty categories dynamically.
  */
-const setupSearch = () => {
-    const searchInput = document.getElementById('platformSearch');
+const setupSearch = (catalogType = 'streaming') => {
+    let searchId = 'platformSearch';
+    let navId = 'categoryNav';
+    let catalogId = 'catalog';
+    if (catalogType === 'doxeo') {
+        searchId = 'doxeoSearch';
+        navId = 'doxeoCategoryNav';
+        catalogId = 'doxeoCatalog';
+    } else if (catalogType === 'seguidores') {
+        searchId = 'seguidoresSearch';
+        navId = 'seguidoresCategoryNav';
+        catalogId = 'seguidoresCatalog';
+    }
+
+    const searchInput = document.getElementById(searchId);
     if (!searchInput) return;
 
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
-        const sections = document.querySelectorAll('.catalog-section');
+        const catalogContainer = document.getElementById(catalogId);
+        if (!catalogContainer) return;
+
+        const sections = catalogContainer.querySelectorAll('.catalog-section');
 
         sections.forEach(section => {
             const cards = section.querySelectorAll('.product-card');
@@ -467,7 +773,7 @@ const setupSearch = () => {
         });
 
         // Toggle category navigation visibility if search is active
-        const categoryNav = document.getElementById('categoryNav');
+        const categoryNav = document.getElementById(navId);
         if (categoryNav) {
             if (query !== '') {
                 categoryNav.style.opacity = '0.5';
@@ -546,16 +852,14 @@ const setupNetflixModal = () => {
 
     const openModal = () => {
         modal.style.display = 'flex';
-        // Allow DOM to register display: flex before adding active class for animation
         setTimeout(() => {
             modal.classList.add('active');
         }, 10);
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
     };
 
     const closeModal = () => {
         modal.classList.remove('active');
-        // Wait for transition before hiding display
         setTimeout(() => {
             modal.style.display = 'none';
         }, 300);
@@ -567,7 +871,217 @@ const setupNetflixModal = () => {
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
     if (closeBtnFooter) closeBtnFooter.addEventListener('click', closeModal);
 
-    // Close when clicking outside of modal content
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+};
+
+/**
+ * Sets up Product Image preview modal open/close functionality.
+ */
+const setupProductImageModal = () => {
+    const modal = document.getElementById('productImageModal');
+    const closeBtn = document.getElementById('closeProductImageModal');
+    const closeBtnFooter = document.getElementById('closeProductImageModalBtn');
+    const modalImg = document.getElementById('productImageModalImg');
+    const modalTitle = document.getElementById('productImageModalTitle');
+    const modalIframe = document.getElementById('productImageModalIframe');
+
+    if (!modal) return;
+
+    window.openProductImageModal = (imgSrc, productName) => {
+        const customDiv = document.getElementById('productImageModalCustom');
+        
+        // Remove any existing pdf link
+        const existingLink = document.getElementById('pdfFullOpenLink');
+        if (existingLink) existingLink.remove();
+
+        const isPdf = imgSrc.endsWith('.pdf');
+
+        if (isPdf) {
+            if (modalImg) modalImg.style.display = 'none';
+            if (customDiv) customDiv.style.display = 'none';
+            if (modalIframe) {
+                modalIframe.style.display = 'block';
+                modalIframe.src = imgSrc;
+            }
+            if (modalTitle) {
+                modalTitle.textContent = `Documento Muestra: ${productName}`;
+                
+                // Add "🔗 Abrir completo" button next to the title
+                const link = document.createElement('a');
+                link.id = 'pdfFullOpenLink';
+                link.href = imgSrc;
+                link.target = '_blank';
+                link.rel = 'noopener';
+                link.innerHTML = '🔗 Abrir completo';
+                link.style.cssText = 'font-size: 0.8rem; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; padding: 4px 10px; border-radius: 6px; text-decoration: none; margin-left: 12px; font-weight: 700; transition: all 0.2s ease; display: inline-block; vertical-align: middle;';
+                
+                link.onmouseover = () => {
+                    link.style.background = '#ef4444';
+                    link.style.color = '#fff';
+                };
+                link.onmouseout = () => {
+                    link.style.background = 'rgba(239, 68, 68, 0.15)';
+                    link.style.color = '#ef4444';
+                };
+                modalTitle.parentElement.appendChild(link);
+            }
+        } else if (productName === 'Consulta Basica') {
+            if (modalIframe) {
+                modalIframe.style.display = 'none';
+                modalIframe.src = '';
+            }
+            if (modalImg) modalImg.style.display = 'none';
+            if (customDiv) {
+                customDiv.style.display = 'block';
+                customDiv.innerHTML = `
+                    <div class="modal-doxeo-layout">
+                        <div class="doxeo-modal-photo-col">
+                            <div class="doxeo-photo-header">
+                                <span class="doxeo-radar-dot"></span> REGISTRO FOTOGRÁFICO RENIEC
+                            </div>
+                            <div class="doxeo-photo-container">
+                                <img src="${imgSrc}" class="doxeo-photo-img" alt="Foto de Identidad">
+                                <div class="doxeo-photo-overlay-grid"></div>
+                                <div class="doxeo-scan-bar"></div>
+                            </div>
+                            <div class="doxeo-photo-footer">
+                                <span>DNI CONSULTADO</span>
+                                <strong class="doxeo-id-highlight">06256217 - 5</strong>
+                            </div>
+                        </div>
+                        <div class="doxeo-modal-text-col">
+                            <div class="doxeo-terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                </div>
+                                <span class="terminal-title">🪪 Consulta RENIEC</span>
+                                <button class="btn-copy-terminal" id="btnCopyTerminal" onclick="window.copyDoxeoTerminalText(event)">
+                                    <span class="copy-icon">📋</span> Copiar
+                                </button>
+                            </div>
+                            <div class="doxeo-terminal-body">
+                                <pre id="doxeoTerminalPre" class="doxeo-terminal-pre">${RENIEC_PREMIUM_TEXT}</pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            if (modalTitle) modalTitle.textContent = `Resultado Muestra: ${productName}`;
+        } else if (productName === 'REPORTE FINANCIERO EXPERIAN (INFOCORP)') {
+            if (modalIframe) {
+                modalIframe.style.display = 'none';
+                modalIframe.src = '';
+            }
+            if (modalImg) modalImg.style.display = 'none';
+            if (customDiv) {
+                customDiv.style.display = 'block';
+                customDiv.innerHTML = `
+                    <div class="modal-doxeo-layout">
+                        <div class="doxeo-modal-photo-col" style="width: 280px; background: rgba(16, 185, 129, 0.02); border-color: rgba(16, 185, 129, 0.2); flex-shrink: 0;">
+                            <div class="doxeo-photo-header">
+                                <span class="doxeo-radar-dot" style="background: #10b981; box-shadow: 0 0 8px #10b981;"></span> INDICADORES EXPERIAN
+                            </div>
+                            
+                            <!-- Financial Gauge Visual -->
+                            <div style="background: rgba(0, 0, 0, 0.4); border-radius: var(--radius-md); padding: 15px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.05); margin-top: 10px;">
+                                <div style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 8px; font-weight: 700; letter-spacing: 0.05em;">HISTORIAL CREDITICIO</div>
+                                
+                                <div style="position: relative; width: 140px; height: 75px; margin: 0 auto 10px auto; overflow: hidden;">
+                                    <div style="position: absolute; width: 140px; height: 140px; border-radius: 50%; border: 12px solid rgba(255, 255, 255, 0.05); border-bottom-color: #10b981; border-left-color: #10b981; transform: rotate(45deg); box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);"></div>
+                                    <div style="position: absolute; top: 38px; left: 0; right: 0; text-align: center;">
+                                        <span style="font-size: 1.6rem; font-weight: 900; color: #fff; font-family: monospace;">845</span>
+                                        <div style="font-size: 0.55rem; color: var(--text-secondary); font-weight: 600; margin-top: -2px;">EXCELENTE</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; font-size: 0.62rem; color: var(--text-secondary); font-family: monospace; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px;">
+                                    <span>Rango: 0 - 1000</span>
+                                    <span style="color: #10b981; font-weight: bold;">Riesgo: 1.8%</span>
+                                </div>
+                            </div>
+
+                            <!-- Financial Status Indicators -->
+                            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 1.25rem;">✅</span>
+                                    <div style="text-align: left;">
+                                        <div style="font-size: 0.72rem; font-weight: 700; color: #fff;">Calificación SBS</div>
+                                        <div style="font-size: 0.65rem; color: #10b981; font-weight: 600;">100% Normal</div>
+                                    </div>
+                                </div>
+                                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 1.25rem;">🛡️</span>
+                                    <div style="text-align: left;">
+                                        <div style="font-size: 0.72rem; font-weight: 700; color: #fff;">Deudas Infocorp</div>
+                                        <div style="font-size: 0.65rem; color: #10b981; font-weight: 600;">Sin Reportes (S/ 0)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="doxeo-modal-text-col">
+                            <div class="doxeo-terminal-header">
+                                <div class="terminal-dots">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                </div>
+                                <span class="terminal-title">💳 Reporte Experian (Infocorp)</span>
+                                <button class="btn-copy-terminal" id="btnCopyTerminal" onclick="window.copyDoxeoTerminalText(event)">
+                                    <span class="copy-icon">📋</span> Copiar
+                                </button>
+                            </div>
+                            <div class="doxeo-terminal-body">
+                                <pre id="doxeoTerminalPre" class="doxeo-terminal-pre" style="color: #38bdf8;">${EXPERIAN_PREMIUM_TEXT}</pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            if (modalTitle) modalTitle.textContent = `Resultado Muestra: ${productName}`;
+        } else {
+            if (modalIframe) {
+                modalIframe.style.display = 'none';
+                modalIframe.src = '';
+            }
+            if (customDiv) customDiv.style.display = 'none';
+            if (modalImg) {
+                modalImg.style.display = 'block';
+                modalImg.src = imgSrc;
+            }
+            if (modalTitle) modalTitle.textContent = `Muestra: ${productName}`;
+        }
+        
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            if (modalIframe) {
+                modalIframe.src = '';
+                modalIframe.style.display = 'none';
+            }
+            const existingLink = document.getElementById('pdfFullOpenLink');
+            if (existingLink) existingLink.remove();
+        }, 300);
+        document.body.style.overflow = '';
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (closeBtnFooter) closeBtnFooter.addEventListener('click', closeModal);
+
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             closeModal();
@@ -580,6 +1094,8 @@ const setupNetflixModal = () => {
  */
 const init = async () => {
     const spinner = document.getElementById('loadingSpinner');
+    const doxeoSpinner = document.getElementById('doxeoLoadingSpinner');
+    const seguidoresSpinner = document.getElementById('seguidoresLoadingSpinner');
 
     try {
         // Fetch categories and settings in parallel
@@ -593,17 +1109,19 @@ const init = async () => {
         }
 
         const categories = await categoriesRes.json();
-        let whatsappNumber = '639631207428'; // Default fallback
-        let settings = { whatsapp_number: whatsappNumber, currency_symbol: 'S/' };
-
+        
+        let settings = {};
         if (settingsRes.ok) {
-            const fetchedSettings = await settingsRes.json();
-            settings = Object.assign(settings, fetchedSettings);
-            whatsappNumber = settings.whatsapp_number || whatsappNumber;
+            settings = await settingsRes.json();
         }
 
-        // Hide loading spinner
+        // Global whatsapp fallback
+        const whatsappNumber = settings.whatsapp_number_streaming || settings.whatsapp_number || '639631207428';
+
+        // Hide loading spinners
         if (spinner) spinner.classList.add('hidden');
+        if (doxeoSpinner) doxeoSpinner.classList.add('hidden');
+        if (seguidoresSpinner) seguidoresSpinner.classList.add('hidden');
 
         // Set up WhatsApp float and footer link
         const whatsappFloat = document.getElementById('whatsappFloat');
@@ -616,16 +1134,25 @@ const init = async () => {
             footerWhatsApp.href = `https://wa.me/${whatsappNumber}?text=Hola%20Fyis!%20Vengo%20de%20tu%20Catálogo...`;
         }
 
-        // Render contents
-        renderNavigation(categories);
-        renderCatalog(categories, settings);
+        // Render contents for all three catalogs dynamically passing catalogType
+        renderNavigation(categories, 'streaming');
+        renderCatalog(categories, settings, 'streaming');
+
+        renderNavigation(categories, 'doxeo');
+        renderCatalog(categories, settings, 'doxeo');
+
+        renderNavigation(categories, 'seguidores');
+        renderCatalog(categories, settings, 'seguidores');
 
         // Set up interactions
         setupMainTabs();
-        setupSearch();
+        setupSearch('streaming');
+        setupSearch('doxeo');
+        setupSearch('seguidores');
         setupNavHighlighting();
         setupScrollAnimations();
         setupNetflixModal();
+        setupProductImageModal();
 
     } catch (error) {
         console.error('Fyis Catálogo init error:', error);

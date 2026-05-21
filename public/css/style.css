@@ -112,15 +112,16 @@ body {
     z-index: 0;
 }
 
-/* Animated blobs */
+/* Animated blobs — reduced blur for GPU performance */
 .hero-bg::before,
 .hero-bg::after {
     content: '';
     position: absolute;
     border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.35;
-    animation: blobFloat 12s ease-in-out infinite;
+    filter: blur(40px);
+    opacity: 0.3;
+    animation: blobFloat 20s ease-in-out infinite;
+    will-change: transform;
 }
 
 .hero-bg::before {
@@ -168,13 +169,14 @@ body {
     height: 250px;
     object-fit: contain;
     border-radius: 24px;
-    filter: drop-shadow(0 4px 20px rgba(168, 208, 252, 0.45));
-    animation: logoPulse 4s ease-in-out infinite;
+    filter: drop-shadow(0 4px 15px rgba(168, 208, 252, 0.35));
+    animation: logoPulse 6s ease-in-out infinite;
+    will-change: transform;
 }
 
 @keyframes logoPulse {
-    0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 4px 20px rgba(168, 208, 252, 0.45)); }
-    50% { transform: translateY(-5px) scale(1.03); filter: drop-shadow(0 6px 30px rgba(250, 171, 189, 0.55)); }
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-4px) scale(1.02); }
 }
 
 .hero-title {
@@ -219,12 +221,10 @@ body {
 
 .main-sections-nav {
     display: flex;
-    background: rgba(12, 16, 30, 0.7);
+    background: rgba(12, 16, 30, 0.9);
     border: 1px solid var(--border);
     padding: 6px;
     border-radius: var(--radius-xl);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     gap: 6px;
     max-width: 600px;
     width: 100%;
@@ -306,14 +306,12 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    background: var(--bg-card);
+    background: rgba(12, 16, 30, 0.9);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 0 var(--spacing-xl);
-    transition: all var(--transition-base);
+    transition: border-color var(--transition-base), box-shadow var(--transition-base);
     box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
 }
 
 .search-wrapper:focus-within {
@@ -329,7 +327,7 @@ body {
     flex-shrink: 0;
 }
 
-#platformSearch {
+#platformSearch, #doxeoSearch, #seguidoresSearch {
     width: 100%;
     padding: 16px 0;
     background: transparent;
@@ -340,7 +338,7 @@ body {
     font-size: 1rem;
 }
 
-#platformSearch::placeholder {
+#platformSearch::placeholder, #doxeoSearch::placeholder, #seguidoresSearch::placeholder {
     color: var(--text-secondary);
     opacity: 0.65;
 }
@@ -352,9 +350,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(5, 7, 15, 0.85);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: rgba(5, 7, 15, 0.96);
     border-bottom: 1px solid var(--border);
     padding: var(--spacing-md) 0;
     transition: opacity var(--transition-base);
@@ -372,6 +368,21 @@ body {
     justify-content: center;
     gap: var(--spacing-sm);
     padding: var(--spacing-xs) 0;
+}
+
+@media (max-width: 768px) {
+    .nav-scroll {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+    .nav-scroll::-webkit-scrollbar {
+        display: none;
+    }
 }
 
 .nav-scroll::-webkit-scrollbar {
@@ -454,13 +465,11 @@ body {
    ============================================================ */
 .product-card {
     position: relative;
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(12, 16, 30, 0.75);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
-    transition: all var(--transition-base);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     overflow: hidden;
     --brand-color: var(--accent);
     display: flex;
@@ -480,11 +489,10 @@ body {
 }
 
 .product-card:hover {
-    background: var(--bg-card-hover);
-    border-color: rgba(168, 208, 252, 0.2);
-    transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4),
-                0 0 20px color-mix(in srgb, var(--brand-color) 25%, transparent);
+    background: rgba(18, 24, 45, 0.85);
+    border-color: rgba(168, 208, 252, 0.18);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .product-card:hover::before {
@@ -504,12 +512,6 @@ body {
     border-radius: var(--radius-full);
     letter-spacing: 0.05em;
     box-shadow: 0 2px 8px rgba(168, 208, 252, 0.35);
-    animation: badgePulse 2.5s ease-in-out infinite;
-}
-
-@keyframes badgePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
 }
 
 /* Logos & Icons inside Cards */
@@ -744,14 +746,12 @@ body {
 }
 
 .soon-card {
-    background: var(--bg-card);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(12, 16, 30, 0.85);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
     padding: var(--spacing-3xl) var(--spacing-2xl);
     text-align: center;
-    box-shadow: var(--shadow-lg), 0 0 30px rgba(168, 208, 252, 0.04);
+    box-shadow: var(--shadow-lg);
     position: relative;
     overflow: hidden;
 }
@@ -899,36 +899,20 @@ body {
 
 .whatsapp-float {
     background: #25D366;
-    animation: whatsappPulse 2.5s ease-in-out infinite;
 }
 
 .telegram-float {
     background: #0088cc;
-    animation: telegramPulse 2.5s ease-in-out infinite;
 }
 
 .whatsapp-float:hover {
     transform: scale(1.1) translateY(-2px);
-    box-shadow: 0 6px 24px rgba(37, 211, 102, 0.45),
-                0 0 0 8px rgba(37, 211, 102, 0.15);
+    box-shadow: 0 6px 24px rgba(37, 211, 102, 0.45);
 }
 
 .telegram-float:hover {
     transform: scale(1.1) translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 136, 204, 0.45),
-                0 0 0 8px rgba(0, 136, 204, 0.15);
-}
-
-@keyframes whatsappPulse {
-    0% { box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3), 0 0 0 0 rgba(37, 211, 102, 0.4); }
-    50% { box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3), 0 0 0 12px rgba(37, 211, 102, 0); }
-    100% { box-shadow: 0 4px 16px rgba(37, 211, 102, 0.3), 0 0 0 0 rgba(37, 211, 102, 0); }
-}
-
-@keyframes telegramPulse {
-    0% { box-shadow: 0 4px 16px rgba(0, 136, 204, 0.3), 0 0 0 0 rgba(0, 136, 204, 0.4); }
-    50% { box-shadow: 0 4px 16px rgba(0, 136, 204, 0.3), 0 0 0 12px rgba(0, 136, 204, 0); }
-    100% { box-shadow: 0 4px 16px rgba(0, 136, 204, 0.3), 0 0 0 0 rgba(0, 136, 204, 0); }
+    box-shadow: 0 6px 24px rgba(0, 136, 204, 0.45);
 }
 
 /* ============================================================
@@ -1048,7 +1032,223 @@ body {
    RESPONSIVE BREAKPOINTS
    ============================================================ */
 
-/* Small phones */
+/* Very small phones (< 360px) */
+@media (max-width: 359px) {
+    .hero {
+        min-height: 28vh;
+        padding: var(--spacing-xl) var(--spacing-sm) var(--spacing-md);
+    }
+    .hero-logo {
+        width: 100px;
+        height: 100px;
+    }
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    .hero-subtitle {
+        font-size: 0.85rem;
+    }
+    .main-sections-nav {
+        padding: 4px;
+        gap: 3px;
+    }
+    .section-tab {
+        padding: 8px 6px;
+        font-size: 0.72rem;
+        gap: 4px;
+    }
+    .product-card {
+        padding: var(--spacing-md);
+    }
+    .card-name {
+        font-size: 1rem;
+    }
+    .price-amount {
+        font-size: 1.8rem;
+    }
+    .catalog {
+        padding: var(--spacing-md) var(--spacing-sm) var(--spacing-xl);
+    }
+    .catalog-section {
+        margin-bottom: var(--spacing-xl);
+    }
+    .section-header {
+        margin-bottom: var(--spacing-md);
+    }
+    .section-title {
+        font-size: 1.1rem;
+    }
+    .doxeo-mockup-card {
+        height: 140px !important;
+    }
+    .c4-double-preview,
+    .doxeo-completo-preview {
+        height: auto !important;
+    }
+    .doxeo-completo-grid {
+        height: 120px !important;
+    }
+    .floating-buttons-container {
+        bottom: 12px;
+        right: 12px;
+    }
+    .whatsapp-float, .telegram-float {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* Small phones (360-479px) */
+@media (max-width: 479px) {
+    .hero {
+        min-height: 30vh;
+        padding: var(--spacing-xl) var(--spacing-md) var(--spacing-md);
+    }
+    .hero-logo {
+        width: 120px;
+        height: 120px;
+    }
+    .hero-title {
+        font-size: 2rem;
+    }
+    .hero-subtitle {
+        font-size: 0.9rem;
+    }
+    .main-sections-nav-container {
+        padding: 0 var(--spacing-sm);
+    }
+    .main-sections-nav {
+        padding: 4px;
+        gap: 4px;
+    }
+    .section-tab {
+        padding: 10px 8px;
+        font-size: 0.78rem;
+        gap: 4px;
+    }
+    .search-container {
+        padding: 0 var(--spacing-sm);
+    }
+    .search-wrapper {
+        padding: 0 var(--spacing-md);
+    }
+    #platformSearch, #doxeoSearch, #seguidoresSearch {
+        font-size: 0.88rem;
+        padding: 12px 0;
+    }
+    .product-card {
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    .card-name {
+        font-size: 1.05rem;
+    }
+    .card-description {
+        font-size: 0.8rem;
+    }
+    .price-amount {
+        font-size: 2rem;
+    }
+    .price-currency {
+        font-size: 1rem;
+    }
+    .btn-buy, .btn-trial {
+        padding: 11px var(--spacing-lg);
+        font-size: 0.88rem;
+    }
+    .catalog {
+        padding: var(--spacing-md) var(--spacing-sm) var(--spacing-xl);
+    }
+    .catalog-section {
+        margin-bottom: var(--spacing-xl);
+    }
+    .section-header {
+        margin-bottom: var(--spacing-md);
+    }
+    .section-title {
+        font-size: 1.2rem;
+    }
+    .section-icon {
+        font-size: 1.4rem;
+    }
+    .nav-pill {
+        padding: var(--spacing-xs) var(--spacing-md);
+        font-size: 0.78rem;
+    }
+    .duration-pill {
+        padding: 5px 10px;
+        font-size: 0.72rem;
+    }
+    .doxeo-mockup-card {
+        height: 160px !important;
+    }
+    .doxeo-terminal-text-mini {
+        font-size: 0.55rem;
+    }
+    .c4-double-preview {
+        height: 140px !important;
+    }
+    .doxeo-completo-grid {
+        height: 130px !important;
+    }
+    .rules-card, .netflix-guide-card {
+        padding: var(--spacing-md);
+    }
+    .rules-title, .guide-title {
+        font-size: 1.1rem;
+    }
+    .rules-list li {
+        font-size: 0.82rem;
+    }
+    .guide-desc {
+        font-size: 0.85rem;
+    }
+    .soon-card {
+        padding: var(--spacing-xl) var(--spacing-lg);
+    }
+    .soon-title {
+        font-size: 1.6rem;
+    }
+    .floating-buttons-container {
+        bottom: 14px;
+        right: 14px;
+        gap: 10px;
+    }
+    .whatsapp-float, .telegram-float {
+        width: 48px;
+        height: 48px;
+    }
+    .footer {
+        padding: var(--spacing-xl) var(--spacing-sm);
+    }
+    .footer-contacts-grid {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    .btn-contact {
+        min-width: 180px;
+        padding: 12px 20px;
+        font-size: 0.88rem;
+    }
+    /* Modal mobile overrides */
+    .premium-modal {
+        max-height: 95vh;
+        border-radius: var(--radius-lg);
+    }
+    .premium-modal-header {
+        padding: var(--spacing-md);
+    }
+    .premium-modal-title {
+        font-size: 1rem;
+    }
+    .premium-modal-body {
+        padding: var(--spacing-md);
+    }
+    .premium-modal-footer {
+        padding: var(--spacing-md);
+    }
+}
+
+/* Small phones landscape + mid-range */
 @media (min-width: 480px) {
     .products-grid {
         gap: var(--spacing-xl);
@@ -1155,13 +1355,11 @@ a {
 
 .rules-card, .netflix-guide-card {
     position: relative;
-    background: var(--bg-card);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(12, 16, 30, 0.8);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: var(--spacing-xl);
-    transition: all var(--transition-base);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -1313,9 +1511,7 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(5, 7, 15, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(5, 7, 15, 0.92);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1575,5 +1771,628 @@ a {
     opacity: 0.55;
     pointer-events: none;
 }
+/* ============================================================
+   PRODUCT PREVIEW MOCKUP (Doxeo & Seguidores)
+   ============================================================ */
+.product-preview-mockup {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    margin: var(--spacing-sm) 0 var(--spacing-lg) 0;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+    transition: all var(--transition-base);
+}
 
+.product-preview-mockup:hover {
+    border-color: var(--brand-color);
+    box-shadow: 0 4px 15px color-mix(in srgb, var(--brand-color) 20%, transparent);
+}
 
+.product-preview-mockup .preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+}
+
+.product-preview-mockup:hover .preview-img {
+    transform: scale(1.05);
+}
+
+.product-preview-mockup .preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(7, 7, 13, 0.2) 60%, rgba(7, 7, 13, 0.85) 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 12px;
+    z-index: 2;
+    opacity: 0.9;
+    transition: all var(--transition-base);
+}
+
+.product-preview-mockup:hover .preview-overlay {
+    opacity: 1;
+    background: linear-gradient(180deg, rgba(7, 7, 13, 0.3) 40%, rgba(7, 7, 13, 0.9) 100%);
+}
+
+.product-preview-mockup .preview-badge {
+    background: rgba(12, 15, 24, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.product-preview-mockup:hover .preview-badge {
+    background: var(--brand-color);
+    color: #05070f;
+    border-color: transparent;
+    box-shadow: 0 2px 15px color-mix(in srgb, var(--brand-color) 40%, transparent);
+}
+
+/* Image preview modal override for wide images */
+.image-preview-modal {
+    max-width: 750px !important;
+}
+
+@media (max-width: 768px) {
+    .product-preview-mockup {
+        height: 160px;
+    }
+}
+
+/* ============================================================
+   DOXEO CUSTOM RESULTS CARD & LIGHTBOX MOCKUP
+   ============================================================ */
+
+/* Mini Card Split Mockup */
+.doxeo-mockup-card {
+    height: 200px !important;
+    background: rgba(5, 7, 15, 0.9) !important;
+    border: 1px solid rgba(168, 208, 252, 0.15) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+    overflow: hidden;
+}
+
+.doxeo-card-split {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(168, 208, 252, 0.03) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.doxeo-card-photo-frame {
+    width: 110px;
+    height: 100%;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.01);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.doxeo-photo-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 6px 0;
+    letter-spacing: 0.1em;
+    background: rgba(168, 208, 252, 0.1);
+    color: var(--accent);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.doxeo-card-photo {
+    width: 100%;
+    height: calc(100% - 25px);
+    object-fit: cover;
+    filter: grayscale(20%) contrast(1.1) brightness(0.9);
+}
+
+.doxeo-card-terminal {
+    flex-grow: 1;
+    padding: var(--spacing-sm);
+    background: #020308;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.doxeo-terminal-text-mini {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.62rem;
+    line-height: 1.25;
+    color: #4ade80; /* Neo-green style */
+    text-align: left;
+    margin: 0;
+    overflow: hidden;
+    white-space: pre-wrap;
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+/* Advanced Modal Split Screen Mockup */
+.modal-doxeo-layout {
+    display: flex;
+    gap: 20px;
+    padding: 10px;
+    text-align: left;
+}
+
+.doxeo-modal-photo-col {
+    width: 250px;
+    background: rgba(12, 16, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+}
+
+.doxeo-photo-header {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.doxeo-radar-dot {
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #ef4444;
+    animation: radarPulse 1.5s ease-out infinite;
+}
+
+@keyframes radarPulse {
+    0% { transform: scale(0.9); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.6; }
+    100% { transform: scale(0.9); opacity: 1; }
+}
+
+.doxeo-photo-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    border-radius: 8px;
+    border: 2px solid #00f2fe;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
+}
+
+.doxeo-photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.8) contrast(1.1) brightness(0.95);
+}
+
+.doxeo-photo-overlay-grid {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(0, 242, 254, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 254, 0.07) 1px, transparent 1px);
+    background-size: 15px 15px;
+    pointer-events: none;
+}
+
+.doxeo-scan-bar {
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(180deg, transparent, #00f2fe, transparent);
+    box-shadow: 0 0 12px #00f2fe;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+    animation: doxeoScanner 3s linear infinite;
+}
+
+@keyframes doxeoScanner {
+    0% { top: 0%; }
+    50% { top: 100%; }
+    100% { top: 0%; }
+}
+
+.doxeo-photo-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.doxeo-photo-footer span {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+}
+
+.doxeo-id-highlight {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #00f2fe;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 8px rgba(0, 242, 254, 0.3);
+}
+
+/* Terminal Column */
+.doxeo-modal-text-col {
+    flex-grow: 1;
+    background: #030409;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.doxeo-terminal-header {
+    background: rgba(12, 16, 30, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.terminal-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.terminal-dots .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.terminal-dots .dot.red { background: #ff5f56; }
+.terminal-dots .dot.yellow { background: #ffbd2e; }
+.terminal-dots .dot.green { background: #27c93f; }
+
+.terminal-title {
+    font-family: monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.03em;
+}
+
+.btn-copy-terminal {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-family: var(--font-main);
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all var(--transition-fast);
+}
+
+.btn-copy-terminal:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.doxeo-terminal-body {
+    padding: 15px;
+    overflow-y: auto;
+    max-height: 380px;
+    flex-grow: 1;
+}
+
+.doxeo-terminal-pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: #38bdf8; /* Soft Terminal Sky Blue */
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+    text-align: left;
+}
+
+/* Scrollbar styling for terminal */
+.doxeo-terminal-body::-webkit-scrollbar {
+    width: 5px;
+}
+.doxeo-terminal-body::-webkit-scrollbar-track {
+    background: #030409;
+}
+.doxeo-terminal-body::-webkit-scrollbar-thumb {
+    background: rgba(0, 242, 254, 0.2);
+    border-radius: 4px;
+}
+.doxeo-terminal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 242, 254, 0.4);
+}
+
+/* Make modal larger for split screen */
+#productImageModal .image-preview-modal {
+    max-width: 820px !important;
+    width: 90%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-doxeo-layout {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .doxeo-modal-photo-col {
+        width: 100%;
+        align-items: center;
+    }
+    
+    .doxeo-photo-container {
+        width: 180px;
+        height: 180px;
+    }
+    
+    .doxeo-terminal-body {
+        max-height: 250px;
+    }
+}
+
+/* ============================================================
+   C4 DOUBLE PREVIEW STYLING & PREMIUM HOVER EFFECTS
+   ============================================================ */
+.c4-preview-item {
+    transition: border-color var(--transition-base), box-shadow var(--transition-base) !important;
+}
+
+.c4-preview-item img {
+    transition: transform var(--transition-slow) !important;
+}
+
+.c4-preview-item:hover img {
+    transform: scale(1.08) !important;
+}
+
+.c4-preview-item:hover {
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+.c4-preview-item .preview-overlay {
+    transition: opacity var(--transition-base), background var(--transition-base) !important;
+}
+
+.c4-preview-item:hover .preview-overlay {
+    opacity: 1 !important;
+    background: linear-gradient(180deg, rgba(7, 7, 13, 0.2) 30%, rgba(7, 7, 13, 0.95) 100%) !important;
+}
+
+.c4-preview-item .preview-badge {
+    transition: transform var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast) !important;
+}
+
+.c4-preview-item:hover .preview-badge {
+    transform: translateY(-2px) scale(1.05) !important;
+}
+
+/* Specific button/badge hover colors for C4 formats */
+.c4-preview-item:first-of-type:hover .preview-badge {
+    background: rgba(0, 132, 255, 1) !important;
+    box-shadow: 0 0 15px rgba(0, 100, 255, 0.6) !important;
+}
+
+.c4-preview-item:last-of-type:hover .preview-badge {
+    background: rgba(255, 255, 255, 1) !important;
+    color: #000 !important;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ============================================================
+   DOXEO COMPLETO PREVIEW STYLING & PREMIUM HOVER EFFECTS
+   ============================================================ */
+.doxeo-completo-item {
+    transition: border-color var(--transition-base), box-shadow var(--transition-base) !important;
+}
+
+.doxeo-completo-item img {
+    transition: transform var(--transition-slow) !important;
+}
+
+.doxeo-completo-item:hover img {
+    transform: scale(1.08) !important;
+}
+
+.doxeo-completo-item:hover {
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15) !important;
+}
+
+.doxeo-completo-item .preview-overlay {
+    transition: opacity var(--transition-base), background var(--transition-base) !important;
+}
+
+.doxeo-completo-item:hover .preview-overlay {
+    opacity: 1 !important;
+    background: linear-gradient(180deg, rgba(7, 7, 13, 0.2) 30%, rgba(7, 7, 13, 0.9) 100%) !important;
+}
+
+.doxeo-completo-item:hover .preview-badge {
+    background: rgba(239, 68, 68, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+}
+
+.btn-view-pdf {
+    transition: all var(--transition-base) !important;
+}
+
+.btn-view-pdf:hover {
+    background: rgba(239, 68, 68, 0.3) !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.35) !important;
+    transform: translateY(-2px);
+}
+
+.btn-view-pdf:active {
+    transform: translateY(0);
+}
+
+/* ============================================================
+   ACCESSIBILITY: Reduced Motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ============================================================
+   MOBILE GPU PERFORMANCE: Disable heavy effects on touch devices
+   ============================================================ */
+@media (max-width: 768px) and (pointer: coarse) {
+    /* Kill hero blobs entirely on mobile — they burn GPU */
+    .hero-bg::before,
+    .hero-bg::after {
+        display: none !important;
+    }
+    
+    /* Simplify hero logo animation */
+    .hero-logo {
+        animation: none !important;
+        filter: none !important;
+    }
+    
+    /* Kill gradient text animation on mobile */
+    .gradient-text {
+        animation: none !important;
+        background-size: 100% 100% !important;
+    }
+    
+    /* No card hover transforms on touch (no hover on mobile) */
+    .product-card:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    .product-card:hover::before {
+        opacity: 0 !important;
+    }
+    
+    /* No hover effects on rules cards */
+    .rules-card:hover,
+    .netflix-guide-card:hover {
+        transform: none !important;
+    }
+    
+    /* Simplify soon icon animation */
+    .soon-icon {
+        animation: none !important;
+    }
+    
+    /* Kill scanner animation */
+    .doxeo-scan-bar {
+        display: none !important;
+    }
+    
+    /* Kill radar pulse */
+    .doxeo-radar-dot {
+        animation: none !important;
+    }
+    
+    /* Reduce pulse indicator */
+    .pulse-indicator {
+        animation: none !important;
+    }
+    
+    /* Simplify scroll animations */
+    .fade-in {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+    
+    /* No hover zoom on preview images */
+    .product-preview-mockup:hover .preview-img {
+        transform: none !important;
+    }
+    .c4-preview-item:hover img,
+    .doxeo-completo-item:hover img {
+        transform: none !important;
+    }
+    
+    /* Simplify floating buttons */
+    .whatsapp-float:hover,
+    .telegram-float:hover {
+        transform: none !important;
+    }
+    
+    /* Modal — full screen on mobile for better UX */
+    .modal-overlay {
+        padding: 0;
+    }
+    .premium-modal {
+        max-height: 100vh;
+        height: 100%;
+        border-radius: 0;
+        max-width: 100%;
+    }
+    
+    /* Doxeo modal layout stacks vertically on mobile */
+    .modal-doxeo-layout {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .doxeo-modal-photo-col {
+        width: 100% !important;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+    .doxeo-photo-container {
+        width: 120px;
+        height: 120px;
+    }
+    .doxeo-terminal-body {
+        max-height: 220px;
+    }
+}
+
+/* Even on desktop — reduce will-change to only animated elements */
+@media (min-width: 769px) {
+    .product-card {
+        will-change: transform;
+    }
+}

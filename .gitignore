@@ -9,3 +9,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+discord_run*.log
+patch_app.js
+read_transcript.js
+search.js

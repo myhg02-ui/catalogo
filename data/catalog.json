@@ -432,7 +432,7 @@
       "category_id": 10,
       "name": "Búsqueda de Líneas Activas",
       "emoji": "📞",
-      "description": "Identifica de forma instantánea todos los números móviles y operadores (Claro, Movistar, Entel, Bitel) registrados a un DNI o RUC.",
+      "description": "⚡ <strong>Búsqueda de Líneas Activas (Todos sus números)</strong><br>🔍 <strong>¿Quieres saber todos los números registrados de una persona? Si te bloquearon y quieres seguir llamándole, ¡te sacamos todos sus números activos!</strong><br>📦 <strong>Entrega:</strong> Texto + Captura en Tiempo Real<br>🔑 <strong>Requerimiento:</strong> Número de DNI o Nombre Completo<br><br><strong>Ejemplo de lo que recibes:</strong><br><pre class=\"example-box\">[📞] PAGINA 1/1 TELEFONIA TIEMPO REAL\n=============================================\nTITULAR   : NONE\nTELEFONO  : 955007661\nDOCUMENTO : 72281763\nLINEA     : PREPAGO\nOPERADORA : ENTEL\nPLAN      : Entel Prepago Power 5\nACTIVADO  : 02/12/2021 00:00:00\n---------------------------------------------\nTITULAR   : NONE\nTELEFONO  : 998304390\nDOCUMENTO : 72281763\nLINEA     : PREPAGO\nOPERADORA : ENTEL\nPLAN      : Entel Prepago Power 5\nACTIVADO  : 03/06/2024 00:00:00\n---------------------------------------------\nTITULAR   : NONE\nTELEFONO  : 923598224\nDOCUMENTO : 72281763\nLINEA     : PREPAGO\nOPERADORA : ENTEL\nPLAN      : Plan Flexible\nACTIVADO  : 04/06/2022 00:00:00\n---------------------------------------------\nTITULAR   : JUNIOR ANDERSON CASTILLO ALVINES\nTELEFONO  : 918741775\nDOCUMENTO : 72281763\nLINEA     : POSTPAGO\nOPERADORA : CLARO\nPLAN      : Max Ilim 69.90\nACTIVADO  : None\n---------------------------------------------\nTITULAR   : JUNIOR ANDERSON CASTILLO ALVINES\nTELEFONO  : 950572132\nDOCUMENTO : 72281763\nLINEA     : POSTPAGO\nOPERADORA : CLARO\nPLAN      : Max Ilim 69.90\nACTIVADO  : None\n---------------------------------------------\nTITULAR   : JUNIOR ANDERSON CASTILLO ALVINES\nTELEFONO  : 922279235\nDOCUMENTO : 72281763\nLINEA     : POSTPAGO\nOPERADORA : CLARO\nPLAN      : Max 29.90\nACTIVADO  : None\n=============================================</pre>",
       "image": null,
       "highlight": 0,
       "sort_order": 3,
@@ -443,7 +443,7 @@
       "category_id": 10,
       "name": "Identificar Titular de Número",
       "emoji": "👤",
-      "description": "Encuentra el titular, nombres completos, DNI, dirección y operador actual de un número móvil específico.",
+      "description": "⚡ <strong>Búsqueda de Titular por Número</strong><br>🔍 <strong>¿Quieres saber el titular de una persona? ¿Te extorsionan o quieres saber quién te llama?</strong><br>📦 <strong>Entrega:</strong> Texto + Captura en Tiempo Real<br>🔑 <strong>Requerimiento:</strong> Número de teléfono celular<br><br><strong>Ejemplo de lo que recibes:</strong><br><pre class=\"example-box\">[📞] PAGINA 1/1 TELEFONIA TIEMPO REAL\n=============================================\nTITULAR   : NONE\nTELEFONO  : 906663894\nDOCUMENTO : 47545163\nLINEA     : PREPAGO\nOPERADORA : ENTEL\nPLAN      : Plan Flexible\nACTIVADO  : 19/10/2023\nACTUALIZ. : 05/01/2025\nEMPRESA   : ENTEL PERU S.A.\nCORREO    : francisgarrido19@gmail.com\n=============================================</pre>",
       "image": null,
       "highlight": 0,
       "sort_order": 4,
@@ -507,10 +507,10 @@
     {
       "id": 35,
       "category_id": 16,
-      "name": "Movimiento Migratorio",
+      "name": "📑✅ CERTIFICADO MOVIMIENTOS MIGRATORIOS",
       "emoji": "🛂",
-      "description": "Reporte oficial de entradas y salidas del país del ciudadano consultado (fechas, destinos, aeropuertos y números de pasaporte).",
-      "image": null,
+      "description": "⚡ <strong>Reporte de Movimiento Migratorio Oficial</strong><br>🔍 <strong>¿Quieres saber las entradas y salidas del país de una persona? Registros oficiales de aeropuertos, fronteras, pasaportes y fechas de viaje.</strong><br>📦 <strong>Entrega:</strong> PDF Certificado Oficial + Captura en Tiempo Real<br>🔑 <strong>Requerimiento:</strong> Nombre Completo o N° de DNI<br><br>➕ <em>S/2 adicionales si aportas datos extra (teléfono, red social, etc.)</em><br><br><strong>Ejemplo de lo que recibes:</strong><br><pre class=\"example-box\">[🛂] MOVIMIENTO MIGRATORIO TIEMPO REAL\n=============================================\nDNI                   : 10258502\nNOMBRE                : CARLOS ALBERTO AYALA HUAMAN\nAP. PATERNO           : AYALA\nAP. MATERNO           : HUAMAN\nNACIONALIDAD          : PERU\nNUMERO DE MOVIMIENTOS : 21\nENTRADAS              : 10\nSALIDAS               : 11\n=============================================</pre>",
+      "image": "/uploads/doxeo/Reporte_Migratorio_10258502.pdf",
       "highlight": 0,
       "sort_order": 10,
       "active": true
@@ -543,10 +543,76 @@
       "name": "C4 AZUL o BLANCO",
       "emoji": "🪪",
       "description": "⚡ <strong>Consulta rápida</strong><br>📦 <strong>Entrega:</strong> PDF<br>🔑 <strong>Requerimientos:</strong> Nombre completo o número de DNI<br><br>➕ <em>S/2 adicionales si aportas datos extra (teléfono, red social, etc.)</em>",
-      "image": "/uploads/doxeo/c4_azul.png",
+      "image": "/uploads/doxeo/c4_azul.png, /uploads/doxeo/c4_blanco.png",
       "highlight": 0,
       "sort_order": 3,
       "active": true
+    },
+    {
+      "id": 39,
+      "category_id": 9,
+      "name": "DNI VIRTUAL O DNI ELECTRONICO",
+      "emoji": "🪪",
+      "description": "⚡ <strong>DNI Virtual (Azul) o DNI Electrónico (Blanco)</strong><br>📦 <strong>Entrega:</strong> JPG de alta calidad (Ambas Caras)<br>🔑 <strong>Requerimientos:</strong> Nombre completo o número de DNI<br><br>➕ <em>S/2 adicionales si aportas datos extra (teléfono, red social, etc.)</em>",
+      "image": "/uploads/doxeo/dni_electronico.jpg, /uploads/doxeo/dni_azul.jpg",
+      "highlight": 0,
+      "sort_order": 4,
+      "active": true
+    },
+    {
+      "id": 40,
+      "category_id": 17,
+      "name": "Constancia de Estudio con QR",
+      "emoji": "🎓",
+      "description": "⚡ <strong>Duplicado de Constancia de Estudios (Copia Original)</strong><br>📄 <strong>¿Perdiste tu documento de colegio o necesitas un duplicado original para tus trámites?</strong> Te extraemos tus constancias oficiales con firma digital y código QR válidas a nivel nacional.<br>👶 Nivel Inicial<br>👦 Nivel Primaria<br>🧑 Nivel Secundaria<br>⚠️ <em>Nosotros no creamos ni inventamos datos; extraemos de los sistemas oficiales la copia 100% real tal como está registrada.</em><br>📦 <strong>Entrega:</strong> Archivo PDF oficial listo para imprimir con QR verificado<br>🔑 <strong>Requerimientos:</strong> Nombre completo o número de DNI<br><br>➕ <em>S/2 adicionales si aportas datos extra (teléfono, red social, etc.)</em>",
+      "image": "/uploads/doxeo/Constancia_Estudios_Inicial.pdf, /uploads/doxeo/Constancia_Estudios_Primaria.pdf, /uploads/doxeo/Constancia_Estudios_Secundaria.pdf",
+      "highlight": 0,
+      "sort_order": 12,
+      "active": true
+    },
+    {
+      "id": 41,
+      "category_id": 3,
+      "name": "Netflix + Crunchyroll",
+      "emoji": "🎌",
+      "description": "Combo Dúo interactivo premium: Disfruta del catálogo de películas y series de Netflix más todo el anime de Crunchyroll sin anuncios.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 5,
+      "active": 1
+    },
+    {
+      "id": 42,
+      "category_id": 3,
+      "name": "Netflix + Paramount",
+      "emoji": "⭐",
+      "description": "Combo Dúo interactivo premium: Disfruta del catálogo de películas y series de Netflix más todo el cine y deportes en vivo de Paramount+.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 6,
+      "active": 1
+    },
+    {
+      "id": 43,
+      "category_id": 5,
+      "name": "Netflix + Disney Premium + HBO Max + Paramount",
+      "emoji": "👑",
+      "description": "Combo Full Premium de 4 aplicaciones: Todo Netflix Premium, Disney Premium, HBO Max (Max) y Paramount+ en tu misma suscripción.",
+      "image": null,
+      "highlight": 1,
+      "sort_order": 2,
+      "active": 1
+    },
+    {
+      "id": 44,
+      "category_id": 5,
+      "name": "Netflix + Disney Premium + Prime Video + Paramount",
+      "emoji": "👑",
+      "description": "Combo Full Premium de 4 aplicaciones: Todo Netflix Premium, Disney Premium, Prime Video y Paramount+ en tu misma suscripción.",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 3,
+      "active": 1
     }
   ],
   "plans": [
@@ -1078,14 +1144,14 @@
     {
       "id": 76,
       "product_id": 28,
-      "price": 6,
+      "price": 4,
       "duration": "Por DNI",
       "sort_order": 1
     },
     {
       "id": 77,
       "product_id": 29,
-      "price": 6,
+      "price": 3,
       "duration": "Por Número",
       "sort_order": 1
     },
@@ -1127,7 +1193,7 @@
     {
       "id": 83,
       "product_id": 35,
-      "price": 15,
+      "price": 10,
       "duration": "Por Persona",
       "sort_order": 1
     },
@@ -1151,6 +1217,104 @@
       "price": 4,
       "duration": "Por Consulta",
       "sort_order": 1
+    },
+    {
+      "id": 87,
+      "product_id": 39,
+      "price": 4,
+      "duration": "Por DNI",
+      "sort_order": 1
+    },
+    {
+      "id": 88,
+      "product_id": 40,
+      "price": 12,
+      "duration": "Copia Original",
+      "sort_order": 1
+    },
+    {
+      "id": 89,
+      "product_id": 41,
+      "price": 17,
+      "duration": "1 mes",
+      "sort_order": 1
+    },
+    {
+      "id": 90,
+      "product_id": 41,
+      "price": 33,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 91,
+      "product_id": 41,
+      "price": 48,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 92,
+      "product_id": 42,
+      "price": 18,
+      "duration": "1 mes",
+      "sort_order": 1
+    },
+    {
+      "id": 93,
+      "product_id": 42,
+      "price": 35,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 94,
+      "product_id": 42,
+      "price": 51,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 95,
+      "product_id": 43,
+      "price": 27,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 96,
+      "product_id": 43,
+      "price": 53,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 97,
+      "product_id": 43,
+      "price": 78,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 98,
+      "product_id": 44,
+      "price": 27,
+      "duration": "30 días",
+      "sort_order": 1
+    },
+    {
+      "id": 99,
+      "product_id": 44,
+      "price": 53,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 100,
+      "product_id": 44,
+      "price": 78,
+      "duration": "3 meses",
+      "sort_order": 3
     }
   ],
   "settings": {
@@ -1170,7 +1334,7 @@
   },
   "_nextId": {
     "categories": 19,
-    "products": 39,
-    "plans": 87
+    "products": 45,
+    "plans": 101
   }
 }

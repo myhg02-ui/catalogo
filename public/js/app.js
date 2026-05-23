@@ -301,12 +301,13 @@ const createProductCard = (product, settings, catalogType) => {
 
     // Large product mockup preview (especially for Doxeo & Seguidores sample search result)
     if (product.image && catalogType === 'doxeo') {
-        const imgSrc = product.image.startsWith('/') ? product.image : `/uploads/${product.image}`;
-        const isPdf = product.image.endsWith('.pdf');
-
+        const isPdf = product.image.endsWith('.pdf') && !product.image.includes(',');
+        
         if (isPdf) {
+            // PDF Preview Layout
+            const pdfFile = product.image.startsWith('/') ? product.image : `/uploads/${product.image}`;
             html += `
-                <div class="product-preview-mockup doxeo-mockup-card pdf-mockup-card" style="border-color: #ef4444 !important;" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}')">
+                <div class="product-preview-mockup doxeo-mockup-card pdf-mockup-card" style="border-color: #ef4444 !important;" onclick="event.stopPropagation(); window.openProductImageModal('${pdfFile}', '${product.name}')">
                     <div class="preview-overlay">
                         <span class="preview-badge">📄 Ver Ejemplo PDF</span>
                     </div>
@@ -322,129 +323,154 @@ const createProductCard = (product, settings, catalogType) => {
                     </div>
                 </div>
             `;
-        } else if (product.name === 'Consulta Basica') {
-            html += `
-                <div class="product-preview-mockup doxeo-mockup-card" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}')">
-                    <div class="preview-overlay">
-                        <span class="preview-badge">👁️ Ver Ejemplo (Zoom)</span>
-                    </div>
-                    <div class="doxeo-card-split">
-                        <div class="doxeo-card-photo-frame">
-                            <div class="doxeo-photo-label">FOTO DNI</div>
-                            <img src="${imgSrc}" class="doxeo-card-photo" alt="Foto DNI">
-                        </div>
-                        <div class="doxeo-card-terminal">
-                            <pre class="doxeo-terminal-text-mini">➣ ${toMathBold('RENIEC')}
-
-${toMathBold('DNI')} ➟ 06256217 - 5
-${toMathBold('NOMBRE')} ➟ DINA ERCILIA
-${toMathBold('APELLIDO PATERNO')} ➟ BOLUARTE
-${toMathBold('APELLIDO MATERNO')} ➟  ZEGARRA
-${toMathBold('SEXO')} ➟  FEMENINO
-
-[📅] ${toMathBold('NACIMIENTO')}
-
-${toMathBold('FECHA DE NACIMIENTO')} ➟ 31/05/1962
-${toMathBold('DEPARTAMENTO')} ➟ APURIMAC...</pre>
-                        </div>
-                    </div>
-                </div>
-            `;
-        } else if (product.name === 'REPORTE FINANCIERO EXPERIAN (INFOCORP)') {
-            html += `
-                <div class="product-preview-mockup doxeo-mockup-card" style="border-color: #10b981 !important;" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}', true)">
-                    <div class="preview-overlay">
-                        <span class="preview-badge">👁️ Ver Ejemplo (Zoom)</span>
-                    </div>
-                    <div class="doxeo-card-split">
-                        <div class="doxeo-card-photo-frame" style="width: 120px; background: rgba(16, 185, 129, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; border-right: 1px solid rgba(255, 255, 255, 0.08);">
-                            <div class="doxeo-photo-label" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: none; width: 100%; margin-bottom: 8px;">CALIFICACIÓN</div>
-                            <div style="font-size: 2.2rem; margin: 4px 0;">🟢</div>
-                            <div style="font-size: 0.95rem; font-weight: 800; color: #10b981; font-family: monospace;">NORMAL</div>
-                            <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px;">Score: <strong style="color: #fff;">845</strong></div>
-                        </div>
-                        <div class="doxeo-card-terminal">
-                            <pre class="doxeo-terminal-text-mini" style="color: #38bdf8;">➣ ${toMathBold('REPORTE FINANCIERO')}
- 
-${toMathBold('TITULAR')} ➟ BOLUARTE ZEGARRA DINA ERCILIA
-${toMathBold('DNI')} ➟ 06256217
-${toMathBold('SCORE')} ➟ 845 / 1000
-${toMathBold('RIESGO')} ➟ BAJO (VERDE)
-${toMathBold('DEUDAS SBS')} ➟ S/ 0.00
-${toMathBold('MORAS')} ➟ NINGUNA (S/ 0.00)</pre>
-                        </div>
-                    </div>
-                </div>
-            `;
-        } else if (product.name === 'C4 AZUL o BLANCO') {
-            const imgAzul = '/uploads/doxeo/c4_azul.png';
-            const imgBlanco = '/uploads/doxeo/c4_blanco.png';
-            html += `
-                <div class="product-preview-mockup c4-double-preview" style="background: rgba(0, 0, 0, 0.4); padding: 8px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: var(--spacing-sm) 0 var(--spacing-lg) 0; height: 180px; display: flex; gap: 8px; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);">
+        } else if (product.image.includes(',')) {
+            // Multiple Images (Double or Grid)
+            const imgs = product.image.split(',').map(s => s.trim().startsWith('/') ? s.trim() : `/uploads/${s.trim()}`);
+            if (imgs.length === 2) {
+                // Double layout (e.g., C4 form)
+                const getBadgeHtml = (imgUrl, direction) => {
+                    const urlLower = imgUrl.toLowerCase();
+                    const isBlue = urlLower.includes('azul') || urlLower.includes('blue');
+                    const isWhite = urlLower.includes('blanco') || urlLower.includes('white') || urlLower.includes('electronico');
                     
-                    <!-- Formato Azul -->
-                    <div class="c4-preview-item" style="flex: 1; height: 100%; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgAzul}', 'C4 Formato Azul')">
-                        <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.1) 50%, rgba(7, 7, 13, 0.85) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; z-index: 2; opacity: 0.9; transition: all var(--transition-base);">
-                            <span class="preview-badge" style="font-size: 0.62rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-full); background: rgba(0, 100, 255, 0.85); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.5);">💙 Zoom Azul</span>
-                        </div>
-                        <img src="${imgAzul}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="C4 Azul">
-                    </div>
+                    if (isBlue) {
+                        return `<span class="preview-badge" style="font-size: 0.62rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-full); background: rgba(0, 100, 255, 0.85); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.5);">💙 Zoom ${direction}</span>`;
+                    } else if (isWhite) {
+                        return `<span class="preview-badge" style="font-size: 0.62rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.9); color: #000; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.5);">🤍 Zoom ${direction}</span>`;
+                    }
                     
-                    <!-- Formato Blanco -->
-                    <div class="c4-preview-item" style="flex: 1; height: 100%; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgBlanco}', 'C4 Formato Blanco')">
-                        <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.1) 50%, rgba(7, 7, 13, 0.85) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; z-index: 2; opacity: 0.9; transition: all var(--transition-base);">
-                            <span class="preview-badge" style="font-size: 0.62rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.9); color: #000; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.5);">🤍 Zoom Blanco</span>
+                    if (direction === 'Izq') {
+                        return `<span class="preview-badge" style="font-size: 0.62rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-full); background: rgba(0, 100, 255, 0.85); color: #fff; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.5);">💙 Zoom Izq</span>`;
+                    } else {
+                        return `<span class="preview-badge" style="font-size: 0.62rem; font-weight: 700; padding: 4px 8px; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.9); color: #000; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 10px rgba(0,0,0,0.5);">🤍 Zoom Der</span>`;
+                    }
+                };
+
+                html += `
+                    <div class="product-preview-mockup c4-double-preview" style="background: rgba(0, 0, 0, 0.4); padding: 8px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: var(--spacing-sm) 0 var(--spacing-lg) 0; height: 180px; display: flex; gap: 8px; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);">
+                        <div class="c4-preview-item" style="flex: 1; height: 100%; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[0]}', '${product.name} - Formato 1')">
+                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.1) 50%, rgba(7, 7, 13, 0.85) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; z-index: 2; opacity: 0.9; transition: all var(--transition-base);">
+                                ${getBadgeHtml(imgs[0], 'Izq')}
+                            </div>
+                            <img src="${imgs[0]}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Muestra Izq">
                         </div>
-                        <img src="${imgBlanco}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="C4 Blanco">
+                        <div class="c4-preview-item" style="flex: 1; height: 100%; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[1]}', '${product.name} - Formato 2')">
+                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.1) 50%, rgba(7, 7, 13, 0.85) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; z-index: 2; opacity: 0.9; transition: all var(--transition-base);">
+                                ${getBadgeHtml(imgs[1], 'Der')}
+                            </div>
+                            <img src="${imgs[1]}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Muestra Der">
+                        </div>
                     </div>
-                </div>
-            `;
-        } else if (product.name === 'Doxeo Digital Integrado') {
-            const img1 = '/uploads/doxeo/doxeo_completo_1.png';
-            const img2 = '/uploads/doxeo/doxeo_completo_2.png';
-            const img3 = '/uploads/doxeo/doxeo_completo_3.png';
-            const img4 = '/uploads/doxeo/doxeo_completo_4.png';
-            const pdfFile = '/uploads/doxeo/Reporte-08167022.pdf';
+                `;
+            } else if (imgs.length === 3) {
+                // Triple PDF / Document layout (e.g. Constancia de Estudios)
+                const isAllPdf = imgs.every(f => f.toLowerCase().endsWith('.pdf'));
+                if (isAllPdf) {
+                    html += `
+                        <div class="product-preview-mockup triple-pdf-preview" style="background: rgba(0, 0, 0, 0.4); padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: var(--spacing-sm) 0 var(--spacing-lg) 0; height: auto; display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);">
+                            <div style="font-size: 0.72rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 2px; font-family: monospace; text-align: left; padding-left: 2px;">📑 MUESTRAS EN PDF (COPIAS ORIGINALES)</div>
+                            <div class="triple-pdf-container" style="display: flex; flex-direction: column; gap: 6px; width: 100%;">
+                                <button class="btn-view-pdf" style="width: 100%; padding: 10px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); color: #fff; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: all var(--transition-base); display: flex; align-items: center; justify-content: space-between; text-align: left;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[0]}', '${product.name} - Inicial')">
+                                    <span style="display: flex; align-items: center; gap: 8px;">👶 <strong style="color: #fff;">Nivel Inicial</strong> (PDF)</span> <span style="color: #ef4444; font-size: 0.75rem; font-weight: 800; background: rgba(239,68,68,0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(239,68,68,0.2);">👁️ Ver</span>
+                                </button>
+                                <button class="btn-view-pdf" style="width: 100%; padding: 10px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); color: #fff; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: all var(--transition-base); display: flex; align-items: center; justify-content: space-between; text-align: left;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[1]}', '${product.name} - Primaria')">
+                                    <span style="display: flex; align-items: center; gap: 8px;">👦 <strong style="color: #fff;">Nivel Primaria</strong> (PDF)</span> <span style="color: #ef4444; font-size: 0.75rem; font-weight: 800; background: rgba(239,68,68,0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(239,68,68,0.2);">👁️ Ver</span>
+                                </button>
+                                <button class="btn-view-pdf" style="width: 100%; padding: 10px 14px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.25); color: #fff; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: all var(--transition-base); display: flex; align-items: center; justify-content: space-between; text-align: left;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[2]}', '${product.name} - Secundaria')">
+                                    <span style="display: flex; align-items: center; gap: 8px;">🧑 <strong style="color: #fff;">Nivel Secundaria</strong> (PDF)</span> <span style="color: #ef4444; font-size: 0.75rem; font-weight: 800; background: rgba(239,68,68,0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(239,68,68,0.2);">👁️ Ver</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Standard 3-image grid layout
+                    html += `
+                        <div class="product-preview-mockup triple-image-preview" style="background: rgba(0, 0, 0, 0.4); padding: 8px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: var(--spacing-sm) 0 var(--spacing-lg) 0; height: 120px; display: flex; gap: 6px; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);">
+                            ${imgs.map((img, i) => `
+                                <div class="triple-preview-item" style="flex: 1; height: 100%; position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img}', '${product.name} - Muestra ${i+1}')">
+                                    <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                        <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Ver</span>
+                                    </div>
+                                    <img src="${img}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Muestra ${i+1}">
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+            } else if (imgs.length >= 4) {
+                // Grid 2x2 layout (e.g. Doxeo Completo)
+                const gridPdf = imgs.find(f => f.endsWith('.pdf')) || '';
+                html += `
+                    <div class="product-preview-mockup doxeo-completo-preview" style="background: rgba(0, 0, 0, 0.4); padding: 8px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: var(--spacing-sm) 0 var(--spacing-lg) 0; height: auto; display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);">
+                        <div class="doxeo-completo-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; height: 160px; width: 100%;">
+                            <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[0]}', '${product.name} - Muestra 1')">
+                                <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                    <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 1</span>
+                                </div>
+                                <img src="${imgs[0]}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Muestra 1">
+                            </div>
+                            <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[1]}', '${product.name} - Muestra 2')">
+                                <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                    <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 2</span>
+                                </div>
+                                <img src="${imgs[1]}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Muestra 2">
+                            </div>
+                            <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[2]}', '${product.name} - Muestra 3')">
+                                <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                    <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 3</span>
+                                </div>
+                                <img src="${imgs[2]}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Muestra 3">
+                            </div>
+                            <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${imgs[3]}', '${product.name} - Muestra 4')">
+                                <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
+                                    <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 4</span>
+                                </div>
+                                <img src="${imgs[3]}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Muestra 4">
+                            </div>
+                        </div>
+                        ${gridPdf ? `
+                            <button class="btn-view-pdf" style="width: 100%; padding: 10px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all var(--transition-base); display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="event.stopPropagation(); window.openProductImageModal('${gridPdf}', '${product.name} - Reporte Muestra')">
+                                📄 Ver Reporte Muestra Completo (PDF)
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        } else if (product.description && (product.description.includes('pre class="example-box"') || product.description.includes('doxeo-terminal-text-mini') || product.description.includes('doxeo-card-terminal') || product.name.includes('Consulta') || product.name.includes('EXPERIAN'))) {
+            // Split Terminal Layout (Photo on left, terminal preview on right)
+            const imgSrc = product.image.startsWith('/') ? product.image : `/uploads/${product.image}`;
+            const isExperian = product.name.toLowerCase().includes('experian') || product.name.toLowerCase().includes('financiero');
+            const borderCol = isExperian ? '#10b981' : '#00f2fe';
+            const textCol = isExperian ? '#38bdf8' : '#00ff66';
+            const labelText = isExperian ? 'CALIFICACIÓN' : 'FOTO DNI';
             
             html += `
-                <div class="product-preview-mockup doxeo-completo-preview" style="background: rgba(0, 0, 0, 0.4); padding: 8px; border-radius: var(--radius-md); border: 1px solid var(--border); margin: var(--spacing-sm) 0 var(--spacing-lg) 0; height: auto; display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; box-shadow: inset 0 0 15px rgba(0,0,0,0.6);">
-                    
-                    <!-- Grid 2x2 de Muestras -->
-                    <div class="doxeo-completo-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; height: 160px; width: 100%;">
-                        <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img1}', 'Doxeo Completo - Info Reniec')">
-                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
-                                <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 1</span>
-                            </div>
-                            <img src="${img1}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Doxeo Completo 1">
+                <div class="product-preview-mockup doxeo-mockup-card" style="border-color: ${borderCol} !important;" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}', ${isExperian})">
+                    <div class="preview-overlay">
+                        <span class="preview-badge">👁️ Ver Ejemplo (Zoom)</span>
+                    </div>
+                    <div class="doxeo-card-split">
+                        <div class="doxeo-card-photo-frame" ${isExperian ? 'style="width: 120px; background: rgba(16, 185, 129, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; text-align: center; border-right: 1px solid rgba(255, 255, 255, 0.08);"' : ''}>
+                            <div class="doxeo-photo-label" ${isExperian ? 'style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: none; width: 100%; margin-bottom: 8px;"' : ''}>${labelText}</div>
+                            ${isExperian ? `
+                                <div style="font-size: 2.2rem; margin: 4px 0;">🟢</div>
+                                <div style="font-size: 0.95rem; font-weight: 800; color: #10b981; font-family: monospace;">NORMAL</div>
+                                <div style="font-size: 0.65rem; color: var(--text-secondary); margin-top: 4px;">Score: <strong style="color: #fff;">845</strong></div>
+                            ` : `<img src="${imgSrc}" class="doxeo-card-photo" alt="Muestra">`}
                         </div>
-                        <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img2}', 'Doxeo Completo - Direcciones Registradas')">
-                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
-                                <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 2</span>
-                            </div>
-                            <img src="${img2}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Doxeo Completo 2">
-                        </div>
-                        <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img3}', 'Doxeo Completo - Vehículos y Trabajos')">
-                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
-                                <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 3</span>
-                            </div>
-                            <img src="${img3}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Doxeo Completo 3">
-                        </div>
-                        <div class="doxeo-completo-item" style="position: relative; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer;" onclick="event.stopPropagation(); window.openProductImageModal('${img4}', 'Doxeo Completo - Denuncias Policiales')">
-                            <div class="preview-overlay" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7, 7, 13, 0.05) 60%, rgba(7, 7, 13, 0.8) 100%); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; z-index: 2; opacity: 0.85; transition: all var(--transition-base);">
-                                <span class="preview-badge" style="font-size: 0.55rem; padding: 2px 6px; border-radius: var(--radius-full); background: rgba(0,0,0,0.7); color: #fff; border: 1px solid rgba(255,255,255,0.05);">🔎 Foto 4</span>
-                            </div>
-                            <img src="${img4}" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform var(--transition-slow);" alt="Doxeo Completo 4">
+                        <div class="doxeo-card-terminal">
+                            ${isExperian ? `
+                                <pre class="doxeo-terminal-text-mini" style="color: ${textCol};">➣ REPORTE FINANCIERO\n \nTITULAR ➟ BOLUARTE ZEGARRA DINA ERCILIA\nDNI ➟ 06256217\nSCORE ➟ 845 / 1000\nRIESGO ➟ BAJO (VERDE)\nDEUDAS SBS ➟ S/ 0.00\nMORAS ➟ NINGUNA (S/ 0.00)</pre>
+                            ` : `
+                                <pre class="doxeo-terminal-text-mini">➣ RENIEC\n\nDNI ➟ 06256217 - 5\nNOMBRE ➟ DINA ERCILIA\nAPELLIDO PATERNO ➟ BOLUARTE\nAPELLIDO MATERNO ➟  ZEGARRA\nSEXO ➟  FEMENINO\n\n[📅] NACIMIENTO\n\nFECHA DE NACIMIENTO ➟ 31/05/1962\nDEPARTAMENTO ➟ APURIMAC...</pre>
+                            `}
                         </div>
                     </div>
-                    
-                    <!-- Botón para ver el PDF completo -->
-                    <button class="btn-view-pdf" style="width: 100%; padding: 10px 12px; background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #ef4444; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: all var(--transition-base); display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="event.stopPropagation(); window.openProductImageModal('${pdfFile}', 'Doxeo Completo - Reporte Completo')">
-                        📄 Ver Reporte Muestra Completo (PDF 33 Págs)
-                    </button>
-                    
                 </div>
             `;
         } else {
+            // Standard single image zoom layout
+            const imgSrc = product.image.startsWith('/') ? product.image : `/uploads/${product.image}`;
             html += `
                 <div class="product-preview-mockup" onclick="event.stopPropagation(); window.openProductImageModal('${imgSrc}', '${product.name}')">
                     <div class="preview-overlay">

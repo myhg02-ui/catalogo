@@ -7,7 +7,7 @@ var fs = require('fs');
 var crypto = require('crypto');
 
 // Adaptador de Supabase que creamos antes
-var supabaseDb = require('./db.supabase');
+var supabaseDb = require('./db.supabase.js');
 
 var SESSION_SECRET = 'strmz-catalog-s3cr3t-k3y-2024';
 

@@ -6,7 +6,7 @@ var path = require('path');
 var fs = require('fs');
 var crypto = require('crypto');
 
-// Adaptador de Supabase que creamos antes
+// Adaptador de Supabase
 var supabaseDb = require('./db.supabase.js');
 
 var SESSION_SECRET = 'strmz-catalog-s3cr3t-k3y-2024';
@@ -14,24 +14,37 @@ var SESSION_SECRET = 'strmz-catalog-s3cr3t-k3y-2024';
 var app = express();
 var PORT = process.env.PORT || 3000;
 
-// Configuración predeterminada en memoria (ya que Supabase solo guarda categories y products)
+// Configuración predeterminada en memoria
 var defaultSettings = {
-    whatsapp: '1234567890',
-    telegram: 'username',
-    instagram: '',
-    facebook: '',
-    twitter: '',
-    title: 'Mi Catálogo de Streaming',
-    subtitle: 'Bienvenido al mejor servicio digital',
-    description: 'Encuentra las mejores ofertas y planes.',
-    admin_password: bcrypt.hashSync('fyis', 10),
-    about_title: 'Sobre Nosotros',
-    about_text: 'Somos una empresa dedicada a ofrecer el mejor entretenimiento.',
-    faq_1_q: '¿Cómo compro?',
-    faq_1_a: 'Contacta por WhatsApp.',
-    faq_2_q: '¿Qué métodos de pago aceptan?',
-    faq_2_a: 'Transferencia y Yape.'
+    whatsapp_streaming: '639631207428',
+    whatsapp_number_streaming: '639631207428',
+    whatsapp_doxeo: '639631207428',
+    whatsapp_number_doxeo: '639631207428',
+    whatsapp_seguidores: '639631207428',
+    whatsapp_number_seguidores: '639631207428',
+    business_name_streaming: 'Fyis Streaming',
+    business_name_doxeo: 'Fyis Doxeo',
+    business_name_seguidores: 'Fyis Seguidores',
+    currency_symbol_streaming: 'S/',
+    currency_symbol_doxeo: 'S/',
+    currency_symbol_seguidores: 'S/',
+    whatsapp_message_template_streaming: 'Hola! Me interesa *{productName}* por *{duration}* ({currencySymbol}{price}) desde tu Catálogo.',
+    whatsapp_message_template_doxeo: 'Hola! Me interesa la consulta *{productName}* (*{duration}*) por ({currencySymbol}{price}) desde tu Catálogo. 🔍',
+    whatsapp_message_template_seguidores: 'Hola! Me interesa comprar *{duration}* de *{productName}* por ({currencySymbol}{price}) desde tu Catálogo. 👥',
+    admin_password: bcrypt.hashSync('fyis', 10)
 };
+
+// Cargar settings y password iniciales de la base de datos de forma asíncrona
+async function initSettings() {
+  try {
+    const settings = await supabaseDb.getSettings();
+    Object.assign(defaultSettings, settings);
+    console.log('⚙️ DB ADAPTER: Ajustes de base de datos cargados con éxito.');
+  } catch (err) {
+    console.warn('⚠️ DB ADAPTER: No se pudieron precargar las settings en inicio:', err.message);
+  }
+}
+initSettings();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,7 +55,7 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// Directorio de uploads (Nota: en Vercel esto se borra en cada despliegue)
+// Directorio de uploads
 var uploadsDir = path.join(__dirname, 'public', 'uploads');
 var catalogTypes = ['streaming', 'doxeo', 'seguidores'];
 catalogTypes.forEach(function(type) {
@@ -102,25 +115,41 @@ app.get('/api/categories', async function(req, res) {
   try {
     const cats = await supabaseDb.getCategories();
     const prods = await supabaseDb.getProducts();
+    const plans = await supabaseDb.getPlans();
 
-    // Reconstruir el arbol como lo esperaba tu front-end
-    const result = cats.map(cat => {
-      const catProds = prods.filter(p => String(p.category_id) === String(cat.id));
-      catProds.forEach(p => p.plans = []); // temporal dummy plans (si no estan en base de datos)
-      return Object.assign({}, cat, { products: catProds });
-    });
+    // Reconstruir el arbol ordenando todo correctamente como lo espera el front-end
+    const result = cats
+      .slice()
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map(cat => {
+        const catProds = prods
+          .filter(p => String(p.category_id) === String(cat.id) && (p.active == 1 || p.active === true))
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map(prod => {
+            const prodPlans = plans
+              .filter(pl => String(pl.product_id) === String(prod.id))
+              .sort((a, b) => a.sort_order - b.sort_order);
+            return Object.assign({}, prod, { plans: prodPlans });
+          });
+        return Object.assign({}, cat, { products: catProds });
+      })
+      .filter(cat => cat.products.length > 0);
+
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.get('/api/settings', function(req, res) {
-  // Las settings se mantienen en memoria temporalmente. 
-  // (Para hacerlas persistentes, tendrian que agregarse como tabla en Supabase).
-  var settings = Object.assign({}, defaultSettings);
-  delete settings.admin_password;
-  res.json(settings);
+app.get('/api/settings', async function(req, res) {
+  try {
+    const settings = await supabaseDb.getSettings();
+    const mergedSettings = Object.assign({}, defaultSettings, settings);
+    delete mergedSettings.admin_password;
+    res.json(mergedSettings);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // ════════════════════════════════════
@@ -157,11 +186,23 @@ app.get('/api/admin/categories', requireAuth, async function(req, res) {
   try {
     const cats = await supabaseDb.getCategories();
     const prods = await supabaseDb.getProducts();
-    const result = cats.map(cat => {
-      const catProds = prods.filter(p => String(p.category_id) === String(cat.id));
-      catProds.forEach(p => p.plans = []);
-      return Object.assign({}, cat, { products: catProds });
-    });
+    const plans = await supabaseDb.getPlans();
+    
+    const result = cats
+      .slice()
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map(cat => {
+        const catProds = prods
+          .filter(p => String(p.category_id) === String(cat.id))
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map(prod => {
+            const prodPlans = plans
+              .filter(pl => String(pl.product_id) === String(prod.id))
+              .sort((a, b) => a.sort_order - b.sort_order);
+            return Object.assign({}, prod, { plans: prodPlans });
+          });
+        return Object.assign({}, cat, { products: catProds });
+      });
     res.json(result);
   } catch(e) { res.status(500).json({ error: e.message }) }
 });
@@ -183,7 +224,6 @@ app.delete('/api/admin/categories/:name', requireAuth, async function(req, res) 
 app.post('/api/admin/products', requireAuth, async function(req, res) {
   try {
     const b = req.body;
-    // Adaptar campos al formato de DB
     const prod = {
       category_id: b.category_id,
       name: b.name,
@@ -214,35 +254,68 @@ app.delete('/api/admin/products/:id', requireAuth, async function(req, res) {
   } catch(e) { res.status(500).json({ error: e.message }) }
 });
 
-// Enpoints de planes falsificados temporalmente para que el panel no rompa
-// (Lo ideal es guardarlos en otra tabla de base de datos)
-app.post('/api/admin/products/:productId/plans', requireAuth, function(req, res) {
-  res.json({ id: Date.now(), product_id: req.params.productId, price: req.body.price, duration: req.body.duration });
+// ════════════════════════════════════
+// ADMIN — Planes
+// ════════════════════════════════════
+
+app.post('/api/admin/products/:productId/plans', requireAuth, async function(req, res) {
+  try {
+    const b = req.body;
+    const plan = {
+      product_id: req.params.productId,
+      price: b.price,
+      duration: b.duration,
+      sort_order: b.sort_order || 0
+    };
+    const data = await supabaseDb.createPlan(plan);
+    res.json(data);
+  } catch(e) { res.status(500).json({ error: e.message }) }
 });
-app.put('/api/admin/plans/:id', requireAuth, function(req, res) { res.json({ success: true }); });
-app.delete('/api/admin/plans/:id', requireAuth, function(req, res) { res.json({ success: true }); });
 
+app.put('/api/admin/plans/:id', requireAuth, async function(req, res) {
+  try {
+    const data = await supabaseDb.updatePlan(req.params.id, req.body);
+    res.json(data);
+  } catch(e) { res.status(500).json({ error: e.message }) }
+});
 
-// Settings & subidas
+app.delete('/api/admin/plans/:id', requireAuth, async function(req, res) {
+  try {
+    await supabaseDb.deletePlan(req.params.id);
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }) }
+});
+
+// ════════════════════════════════════
+// Ajustes & Uploads
+// ════════════════════════════════════
+
 app.post('/api/admin/upload', requireAuth, upload.single('image'), function(req, res) {
   if (!req.file) return res.status(400).json({ error: 'No se subió ningún archivo' });
   var catalog = req.query.catalog || 'streaming';
   res.json({ url: '/uploads/' + catalog + '/' + req.file.filename });
 });
 
-app.put('/api/admin/settings', requireAuth, function(req, res) {
-  Object.keys(req.body).forEach(function(key) {
-    if (key !== 'admin_password') defaultSettings[key] = String(req.body[key]);
-  });
-  res.json({ success: true });
+app.put('/api/admin/settings', requireAuth, async function(req, res) {
+  try {
+    Object.keys(req.body).forEach(function(key) {
+      if (key !== 'admin_password') defaultSettings[key] = String(req.body[key]);
+    });
+    await supabaseDb.updateSettings(req.body);
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }) }
 });
 
-app.put('/api/admin/password', requireAuth, function(req, res) {
-  if (!bcrypt.compareSync(req.body.currentPassword, defaultSettings.admin_password)) {
-    return res.status(401).json({ error: 'Contraseña actual incorrecta' });
-  }
-  defaultSettings.admin_password = bcrypt.hashSync(req.body.newPassword, 10);
-  res.json({ success: true });
+app.put('/api/admin/password', requireAuth, async function(req, res) {
+  try {
+    if (!bcrypt.compareSync(req.body.currentPassword, defaultSettings.admin_password)) {
+      return res.status(401).json({ error: 'Contraseña actual incorrecta' });
+    }
+    const newHash = bcrypt.hashSync(req.body.newPassword, 10);
+    defaultSettings.admin_password = newHash;
+    await supabaseDb.updateSettings({ admin_password: newHash });
+    res.json({ success: true });
+  } catch(e) { res.status(500).json({ error: e.message }) }
 });
 
 if (require.main === module) {

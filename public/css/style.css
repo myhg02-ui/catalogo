@@ -593,7 +593,6 @@ body {
     color: var(--text-secondary);
     margin-bottom: var(--spacing-lg);
     line-height: 1.5;
-    flex-grow: 1;
 }
 
 /* Duration pills */

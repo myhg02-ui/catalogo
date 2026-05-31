@@ -126,7 +126,10 @@ const BRAND_ICONS = {
     crunchyroll: `<svg class="brand-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#F47521"/><circle cx="53" cy="50" r="28" fill="white"/><circle cx="48" cy="50" r="18" fill="#F47521"/><circle cx="44" cy="50" r="10" fill="white"/><circle cx="41" cy="50" r="5" fill="#F47521"/></svg>`,
     spotify: `<svg class="brand-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#1DB954"/><path d="M26 38C44 28 68 28 84 38" stroke="white" stroke-width="6" stroke-linecap="round" fill="none"/><path d="M30 51C45 43 63 43 76 51" stroke="white" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M34 64C45 58 59 58 70 64" stroke="white" stroke-width="4.2" stroke-linecap="round" fill="none"/></svg>`,
     chatgpt: `<svg class="brand-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#10A37F"/><path d="M50 22C41 22 36 29 36 37C36 42 42 47 50 47C58 47 64 42 64 37C64 29 59 22 50 22Z" fill="white"/><path d="M36 47C26 47 21 54 21 62C21 67 27 72 36 72C45 72 50 67 50 62C50 54 45 47 36 47Z" fill="white"/><path d="M64 47C55 47 50 54 50 62C50 67 55 72 64 72C73 72 79 67 79 62C79 54 73 47 64 47Z" fill="white"/></svg>`,
-    canva: `<svg class="brand-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="url(#canvaGrad)"/><circle cx="50" cy="50" r="22" stroke="white" stroke-width="6" fill="none"/><defs><linearGradient id="canvaGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C2AE8"/><stop offset="100%" stop-color="#00C4CC"/></linearGradient></defs></svg>`
+    canva: `<svg class="brand-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="url(#canvaGrad)"/><circle cx="50" cy="50" r="22" stroke="white" stroke-width="6" fill="none"/><defs><linearGradient id="canvaGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7C2AE8"/><stop offset="100%" stop-color="#00C4CC"/></linearGradient></defs></svg>`,
+    facebook: `<svg class="brand-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#1877F2"/><path d="M68 50H56V85H42V50H34V38H42V30C42 21 47 16 57 16H67V28H61C56 28 56 30 56 33V38H68L66 50Z" fill="white"/></svg>`,
+    instagram: `<svg class="brand-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="url(#igGrad)"/><path d="M50 31C39.5 31 31 39.5 31 50C31 60.5 39.5 69 50 69C60.5 69 69 60.5 69 50C69 39.5 60.5 31 50 31ZM50 62C43.4 62 38 56.6 38 50C38 43.4 43.4 38 50 38C56.6 38 62 43.4 62 50C62 56.6 56.6 62 50 62Z" fill="white"/><circle cx="64" cy="36" r="3" fill="white"/><rect x="22" y="22" width="56" height="56" rx="15" stroke="white" stroke-width="7" fill="none"/><defs><linearGradient id="igGrad" x1="0" y1="100" x2="100" y2="0"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs></svg>`,
+    tiktok: `<svg class="brand-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" rx="20" fill="#000000"/><path d="M59 18v34c0 7.7-6.3 14-14 14s-14-6.3-14-14 6.3-14 14-14v10c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4V18h10c0 7 5 12.8 12 13.8v9.2c-5.8-1-10.8-4.5-14-9.4V18z" fill="#ffffff"/></svg>`
 };
 
 // --- Brand Colors mapping for highlights ---
@@ -142,7 +145,10 @@ const BRAND_COLORS = {
     'spotify': '#1DB954',
     'chatgpt': '#10A37F',
     'canva': '#00C4CC',
-    'iptv': '#00f2fe'
+    'iptv': '#00f2fe',
+    'facebook': '#1877F2',
+    'instagram': '#E1306C',
+    'tiktok': '#ff0050'
 };
 
 // Scroll flags
@@ -191,6 +197,9 @@ const getBrandLogoHtml = (product, productName, catalogType = 'streaming') => {
     if (name.includes('spotify')) brandsFound.push('spotify');
     if (name.includes('chatgpt')) brandsFound.push('chatgpt');
     if (name.includes('canva')) brandsFound.push('canva');
+    if (name.includes('facebook')) brandsFound.push('facebook');
+    if (name.includes('instagram')) brandsFound.push('instagram');
+    if (name.includes('tiktok')) brandsFound.push('tiktok');
 
     // Remove duplicates
     const uniqueBrands = [...new Set(brandsFound)];
@@ -482,14 +491,22 @@ const createProductCard = (product, settings, catalogType) => {
         }
     }
 
-    // Duration pills
-    if (plans.length > 0) {
-        html += '<div class="duration-pills">';
+    // Card footer wrap to push bottom elements down
+    html += '<div class="card-footer-wrap" style="margin-top: auto; display: flex; flex-direction: column;">';
+
+    // Plan Selection (Dropdown for many, or just single if only 1 plan)
+    if (plans.length > 1) {
+        html += '<div class="custom-select-wrapper" style="margin-bottom: var(--spacing-lg); position: relative;">';
+        html += '<select class="duration-select" style="width: 100%; padding: 12px 16px; background: rgba(12, 16, 30, 0.9); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-primary); font-family: var(--font-main); font-size: 0.9rem; font-weight: 600; cursor: pointer; outline: none; appearance: none; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">';
         plans.forEach((plan, index) => {
-            const activeClass = index === 0 ? ' active' : '';
-            html += `<button class="duration-pill${activeClass}" data-plan-id="${plan.id}" data-price="${plan.price}" data-duration="${plan.duration}">${plan.duration}</button>`;
+            html += `<option value="${index}" data-plan-id="${plan.id}" data-price="${plan.price}" data-duration="${plan.duration}">${plan.duration}</option>`;
         });
+        html += '</select>';
+        // Custom arrow icon
+        html += '<div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-secondary);">▼</div>';
         html += '</div>';
+    } else if (plans.length === 1) {
+        html += `<div style="margin-bottom: var(--spacing-lg); text-align: center; color: var(--text-secondary); font-size: 0.9rem;">${plans[0].duration}</div>`;
     }
 
     // Price display
@@ -523,25 +540,23 @@ const createProductCard = (product, settings, catalogType) => {
         }
     }
 
+    html += '</div>'; // End of card footer wrap
+
     card.innerHTML = html;
 
     // --- Event Listeners ---
 
-    // Duration pill click
-    const pills = card.querySelectorAll('.duration-pill');
+    // Dropdown change event
+    const durationSelect = card.querySelector('.duration-select');
     const priceAmount = card.querySelector('.price-amount');
     const priceDuration = card.querySelector('.price-duration');
     const buyBtn = card.querySelector('.btn-buy');
 
-    pills.forEach(pill => {
-        pill.addEventListener('click', () => {
-            // Update active state
-            pills.forEach(p => p.classList.remove('active'));
-            pill.classList.add('active');
-
-            // Update price
-            const price = pill.dataset.price;
-            const duration = pill.dataset.duration;
+    if (durationSelect) {
+        durationSelect.addEventListener('change', (e) => {
+            const selectedOption = e.target.options[e.target.selectedIndex];
+            const price = selectedOption.dataset.price;
+            const duration = selectedOption.dataset.duration;
 
             if (priceAmount) {
                 priceAmount.innerHTML = `<span class="price-currency">${currencySymbol}</span>${price}`;
@@ -555,7 +570,7 @@ const createProductCard = (product, settings, catalogType) => {
                 buyBtn.href = buildWhatsAppLink(settings, product.name, duration, price, catalogType);
             }
         });
-    });
+    }
 
     return card;
 };

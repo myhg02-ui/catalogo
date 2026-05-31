@@ -125,6 +125,27 @@
       "icon": "🔍",
       "sort_order": 10,
       "type": "doxeo"
+    },
+    {
+      "id": 19,
+      "name": "Instagram",
+      "icon": "📷",
+      "sort_order": 1,
+      "type": "seguidores"
+    },
+    {
+      "id": 20,
+      "name": "TikTok",
+      "icon": "🎵",
+      "sort_order": 2,
+      "type": "seguidores"
+    },
+    {
+      "id": 21,
+      "name": "Facebook",
+      "icon": "📘",
+      "sort_order": 3,
+      "type": "seguidores"
     }
   ],
   "products": [
@@ -343,7 +364,7 @@
       "category_id": 6,
       "name": "2 Netflix + Apps",
       "emoji": "🎁",
-      "description": "1 App PREMIUM (Disney Premium) ó 2 Apps ESTÁNDAR (HBO Max, Prime Video, Canva o Disney Estándar)",
+      "description": "🎁 ¡SÚPER REGALO EXCLUSIVO! Llévate Netflix y elige totalmente GRATIS: ⭐ 1 App Premium (Disney Premium) ó 🍿 2 Apps Estándar (HBO Max, Prime Video, Canva o Disney Estándar). ¡Multiplica tu entretenimiento al instante!",
       "image": null,
       "highlight": 1,
       "sort_order": 1,
@@ -354,7 +375,7 @@
       "category_id": 7,
       "name": "ChatGPT Plus",
       "emoji": "🤖",
-      "description": "Cuenta completa",
+      "description": "Cuenta compartida",
       "image": null,
       "highlight": 0,
       "sort_order": 1,
@@ -417,17 +438,6 @@
       "active": true
     },
     {
-      "id": 27,
-      "category_id": 9,
-      "name": "Consulta RENIEC Completo",
-      "emoji": "📂",
-      "description": "Búsqueda avanzada con foto de firma digital oficial, datos de filiación (padres), y ficha RENIEC en formato PDF.",
-      "image": null,
-      "highlight": 0,
-      "sort_order": 2,
-      "active": true
-    },
-    {
       "id": 28,
       "category_id": 10,
       "name": "Búsqueda de Líneas Activas",
@@ -450,61 +460,6 @@
       "active": true
     },
     {
-      "id": 30,
-      "category_id": 11,
-      "name": "Reporte SBS & Sentinel",
-      "emoji": "💳",
-      "description": "Historial crediticio detallado, calificación de riesgo, deudas activas en bancos e historial financiero de los últimos 12 meses.",
-      "image": null,
-      "highlight": 0,
-      "sort_order": 5,
-      "active": true
-    },
-    {
-      "id": 31,
-      "category_id": 12,
-      "name": "Antecedentes Penales y Policiales",
-      "emoji": "🚨",
-      "description": "Verificación formal de antecedentes judiciales, penales y policiales vigentes en bases oficiales a nivel nacional.",
-      "image": null,
-      "highlight": 0,
-      "sort_order": 6,
-      "active": true
-    },
-    {
-      "id": 32,
-      "category_id": 13,
-      "name": "Búsqueda por Placa",
-      "emoji": "🚗",
-      "description": "Datos completos del vehículo, marca, modelo, número de motor/chasis, gravámenes, y propietario actual.",
-      "image": null,
-      "highlight": 0,
-      "sort_order": 7,
-      "active": true
-    },
-    {
-      "id": 33,
-      "category_id": 14,
-      "name": "Reporte SUNAT Avanzado",
-      "emoji": "🏢",
-      "description": "Consulta de RUC, deudas tributarias coactivas, representantes legales y domicilio fiscal registrado.",
-      "image": null,
-      "highlight": 0,
-      "sort_order": 8,
-      "active": true
-    },
-    {
-      "id": 34,
-      "category_id": 15,
-      "name": "Búsqueda de Propiedades",
-      "emoji": "📜",
-      "description": "Identifica todas las propiedades, bienes inmuebles y terrenos registrados a nombre de una persona o empresa a nivel nacional.",
-      "image": null,
-      "highlight": 0,
-      "sort_order": 9,
-      "active": true
-    },
-    {
       "id": 35,
       "category_id": 16,
       "name": "📑✅ CERTIFICADO MOVIMIENTOS MIGRATORIOS",
@@ -513,17 +468,6 @@
       "image": "/uploads/doxeo/Reporte_Migratorio_10258502.pdf",
       "highlight": 0,
       "sort_order": 10,
-      "active": true
-    },
-    {
-      "id": 36,
-      "category_id": 17,
-      "name": "Verificación SUNEDU",
-      "emoji": "🎓",
-      "description": "Búsqueda y descarga del registro oficial de grados, bachilleres y títulos universitarios inscritos en SUNEDU.",
-      "image": null,
-      "highlight": 0,
-      "sort_order": 11,
       "active": true
     },
     {
@@ -613,6 +557,64 @@
       "highlight": 0,
       "sort_order": 3,
       "active": 1
+    },
+    {
+      "category_id": 20,
+      "name": "Seguidores TikTok",
+      "emoji": "🎵",
+      "description": "Perfecto para desbloquear LIVE, ganar confianza y empezar a monetizar.",
+      "image": null,
+      "highlight": 1,
+      "sort_order": 1,
+      "active": 1,
+      "out_of_stock": false,
+      "id": 45
+    },
+    {
+      "category_id": 19,
+      "name": "Seguidores Instagram",
+      "emoji": "📸",
+      "description": "Ideal para incrementar autoridad y alcance rápidamente.",
+      "image": null,
+      "highlight": 1,
+      "sort_order": 1,
+      "active": 1,
+      "out_of_stock": false,
+      "id": 46
+    },
+    {
+      "category_id": 21,
+      "name": "Seguidores Facebook (Página o Perfil)",
+      "emoji": "👍",
+      "description": "Ideal para negocios, marcas personales y crecimiento orgánico visual.",
+      "image": null,
+      "highlight": 1,
+      "sort_order": 1,
+      "active": 1,
+      "out_of_stock": false,
+      "id": 47
+    },
+    {
+      "id": 48,
+      "category_id": 21,
+      "name": "Espectadores en Vivo (Facebook)",
+      "emoji": "🔴",
+      "description": "Servicio ideal para transmisiones, sorteos, ventas en vivo, eventos y lanzamientos.",
+      "image": null,
+      "highlight": 1,
+      "sort_order": 2,
+      "active": 1,
+      "out_of_stock": false
+    },
+    {
+      "id": 49,
+      "category_id": 13,
+      "name": "TARJETA DE IDENTIFICACION VEHICULAR ELECTRONICA (TIVE)",
+      "description": "<pre class=\"doxeo-terminal-text-mini\">🚗 TIVE (PLACA 3755-4k) \n\n📌 𝗡𝗼𝗺𝗯𝗿𝗲: VASQUEZ PINCHI JOHN WERNER\n📆 𝗙𝗲𝗰𝗵𝗮 𝗣𝗿𝗼𝗽𝗶𝗲𝗱𝗮𝗱: 20/12/2021\n📄 𝗧𝗶𝗽𝗼 𝗗𝗼𝗰.: DNI\n🆔 𝗗𝗼𝗰𝘂𝗺𝗲𝗻𝘁𝗼: 44385988\n👤 𝗧𝗶𝗽𝗼: PERSONA NATURAL</pre>\n<p style=\"color:#a1a1aa; font-size:0.8rem; margin-top:5px;\"><strong>Requisito:</strong> Placa</p>",
+      "image": "TIVE-3755-4k.pdf",
+      "active": 1,
+      "sort_order": 1,
+      "highlight": 0
     }
   ],
   "plans": [
@@ -641,7 +643,7 @@
       "id": 4,
       "product_id": 2,
       "price": 10,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -662,7 +664,7 @@
       "id": 7,
       "product_id": 3,
       "price": 6,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -683,7 +685,7 @@
       "id": 10,
       "product_id": 4,
       "price": 6,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -704,7 +706,7 @@
       "id": 13,
       "product_id": 5,
       "price": 5,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -725,7 +727,7 @@
       "id": 16,
       "product_id": 6,
       "price": 6,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -746,7 +748,7 @@
       "id": 19,
       "product_id": 7,
       "price": 5,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -767,7 +769,7 @@
       "id": 22,
       "product_id": 8,
       "price": 10,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -788,7 +790,7 @@
       "id": 25,
       "product_id": 9,
       "price": 13,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -809,7 +811,7 @@
       "id": 28,
       "product_id": 10,
       "price": 14,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -830,7 +832,7 @@
       "id": 31,
       "product_id": 11,
       "price": 18,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -851,7 +853,7 @@
       "id": 34,
       "product_id": 12,
       "price": 17,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -872,7 +874,7 @@
       "id": 37,
       "product_id": 13,
       "price": 18,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -893,7 +895,7 @@
       "id": 40,
       "product_id": 14,
       "price": 18,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -914,7 +916,7 @@
       "id": 43,
       "product_id": 15,
       "price": 20,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -935,7 +937,7 @@
       "id": 46,
       "product_id": 16,
       "price": 21,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -956,7 +958,7 @@
       "id": 49,
       "product_id": 17,
       "price": 23,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -977,7 +979,7 @@
       "id": 52,
       "product_id": 18,
       "price": 24,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -998,7 +1000,7 @@
       "id": 55,
       "product_id": 19,
       "price": 27,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -1019,7 +1021,7 @@
       "id": 58,
       "product_id": 20,
       "price": 30,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -1040,56 +1042,56 @@
       "id": 61,
       "product_id": 21,
       "price": 15,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
       "id": 62,
       "product_id": 22,
       "price": 10,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
       "id": 63,
       "product_id": 22,
       "price": 18,
-      "duration": "60 días",
+      "duration": "2 meses",
       "sort_order": 2
     },
     {
       "id": 64,
       "product_id": 22,
       "price": 25,
-      "duration": "90 días",
+      "duration": "3 meses",
       "sort_order": 3
     },
     {
       "id": 65,
       "product_id": 23,
       "price": 5,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
       "id": 66,
       "product_id": 23,
       "price": 9,
-      "duration": "60 días",
+      "duration": "2 meses",
       "sort_order": 2
     },
     {
       "id": 67,
       "product_id": 23,
       "price": 12,
-      "duration": "90 días",
+      "duration": "3 meses",
       "sort_order": 3
     },
     {
       "id": 68,
       "product_id": 24,
       "price": 10,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -1110,7 +1112,7 @@
       "id": 71,
       "product_id": 25,
       "price": 10,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -1135,13 +1137,6 @@
       "sort_order": 1
     },
     {
-      "id": 75,
-      "product_id": 27,
-      "price": 10,
-      "duration": "Por Consulta",
-      "sort_order": 1
-    },
-    {
       "id": 76,
       "product_id": 28,
       "price": 4,
@@ -1156,52 +1151,10 @@
       "sort_order": 1
     },
     {
-      "id": 78,
-      "product_id": 30,
-      "price": 12,
-      "duration": "Por DNI",
-      "sort_order": 1
-    },
-    {
-      "id": 79,
-      "product_id": 31,
-      "price": 10,
-      "duration": "Por Consulta",
-      "sort_order": 1
-    },
-    {
-      "id": 80,
-      "product_id": 32,
-      "price": 7,
-      "duration": "Por Placa",
-      "sort_order": 1
-    },
-    {
-      "id": 81,
-      "product_id": 33,
-      "price": 8,
-      "duration": "Por RUC",
-      "sort_order": 1
-    },
-    {
-      "id": 82,
-      "product_id": 34,
-      "price": 15,
-      "duration": "Por Persona",
-      "sort_order": 1
-    },
-    {
       "id": 83,
       "product_id": 35,
       "price": 10,
       "duration": "Por Persona",
-      "sort_order": 1
-    },
-    {
-      "id": 84,
-      "product_id": 36,
-      "price": 8,
-      "duration": "Por DNI",
       "sort_order": 1
     },
     {
@@ -1278,7 +1231,7 @@
       "id": 95,
       "product_id": 43,
       "price": 27,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -1299,7 +1252,7 @@
       "id": 98,
       "product_id": 44,
       "price": 27,
-      "duration": "30 días",
+      "duration": "1 mes",
       "sort_order": 1
     },
     {
@@ -1315,6 +1268,209 @@
       "price": 78,
       "duration": "3 meses",
       "sort_order": 3
+    },
+    {
+      "id": 101,
+      "product_id": 45,
+      "price": 5,
+      "duration": "100 Seg.",
+      "sort_order": 1
+    },
+    {
+      "id": 102,
+      "product_id": 45,
+      "price": 9,
+      "duration": "250 Seg.",
+      "sort_order": 2
+    },
+    {
+      "id": 103,
+      "product_id": 45,
+      "price": 15,
+      "duration": "500 Seg.",
+      "sort_order": 3
+    },
+    {
+      "id": 104,
+      "product_id": 45,
+      "price": 25,
+      "duration": "1,000 Seg.",
+      "sort_order": 4
+    },
+    {
+      "id": 105,
+      "product_id": 45,
+      "price": 55,
+      "duration": "2,500 Seg.",
+      "sort_order": 5
+    },
+    {
+      "id": 106,
+      "product_id": 45,
+      "price": 85,
+      "duration": "5,000 Seg.",
+      "sort_order": 6
+    },
+    {
+      "id": 107,
+      "product_id": 45,
+      "price": 139,
+      "duration": "10,000 Seg. ⭐",
+      "sort_order": 7
+    },
+    {
+      "id": 108,
+      "product_id": 46,
+      "price": 3.5,
+      "duration": "100 Seg.",
+      "sort_order": 1
+    },
+    {
+      "id": 109,
+      "product_id": 46,
+      "price": 7,
+      "duration": "250 Seg.",
+      "sort_order": 2
+    },
+    {
+      "id": 110,
+      "product_id": 46,
+      "price": 12,
+      "duration": "500 Seg.",
+      "sort_order": 3
+    },
+    {
+      "id": 111,
+      "product_id": 46,
+      "price": 20,
+      "duration": "1,000 Seg.",
+      "sort_order": 4
+    },
+    {
+      "id": 112,
+      "product_id": 46,
+      "price": 44,
+      "duration": "2,500 Seg.",
+      "sort_order": 5
+    },
+    {
+      "id": 113,
+      "product_id": 46,
+      "price": 79,
+      "duration": "5,000 Seg. ⭐",
+      "sort_order": 6
+    },
+    {
+      "id": 114,
+      "product_id": 47,
+      "price": 3,
+      "duration": "100 Seg.",
+      "sort_order": 1
+    },
+    {
+      "id": 115,
+      "product_id": 47,
+      "price": 6,
+      "duration": "250 Seg.",
+      "sort_order": 2
+    },
+    {
+      "id": 116,
+      "product_id": 47,
+      "price": 10,
+      "duration": "500 Seg.",
+      "sort_order": 3
+    },
+    {
+      "id": 117,
+      "product_id": 47,
+      "price": 18,
+      "duration": "1,000 Seg.",
+      "sort_order": 4
+    },
+    {
+      "id": 118,
+      "product_id": 47,
+      "price": 38,
+      "duration": "2,500 Seg.",
+      "sort_order": 5
+    },
+    {
+      "id": 119,
+      "product_id": 47,
+      "price": 59,
+      "duration": "5,000 Seg. ⭐",
+      "sort_order": 6
+    },
+    {
+      "id": 120,
+      "product_id": 48,
+      "price": 5,
+      "duration": "100 En Vivo",
+      "sort_order": 1
+    },
+    {
+      "id": 121,
+      "product_id": 48,
+      "price": 10,
+      "duration": "250 En Vivo",
+      "sort_order": 2
+    },
+    {
+      "id": 122,
+      "product_id": 48,
+      "price": 20,
+      "duration": "500 En Vivo",
+      "sort_order": 3
+    },
+    {
+      "id": 123,
+      "product_id": 48,
+      "price": 40,
+      "duration": "1,000 En Vivo",
+      "sort_order": 4
+    },
+    {
+      "id": 124,
+      "product_id": 48,
+      "price": 75,
+      "duration": "2,000 En Vivo",
+      "sort_order": 5
+    },
+    {
+      "id": 125,
+      "product_id": 48,
+      "price": 110,
+      "duration": "3,000 En Vivo",
+      "sort_order": 6
+    },
+    {
+      "id": 126,
+      "product_id": 48,
+      "price": 180,
+      "duration": "5,000 En Vivo",
+      "sort_order": 7
+    },
+    {
+      "id": 127,
+      "product_id": 48,
+      "price": 270,
+      "duration": "7,500 En Vivo",
+      "sort_order": 8
+    },
+    {
+      "id": 128,
+      "product_id": 48,
+      "price": 360,
+      "duration": "10,000 ⭐ En Vivo",
+      "sort_order": 9
+    },
+    {
+      "id": 129,
+      "product_id": 49,
+      "duration": "1 PDF Oficial",
+      "price": 8,
+      "sort_order": 1
     }
   ],
   "settings": {

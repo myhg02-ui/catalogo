@@ -477,7 +477,7 @@ const createProductCard = (product, settings, catalogType) => {
                     </div>
                 </div>
             `;
-        } else {
+        } else if (product.image) {
             // Standard single image zoom layout
             const imgSrc = product.image.startsWith('/') ? product.image : `/uploads/${product.image}`;
             html += `

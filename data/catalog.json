@@ -184,17 +184,6 @@
       "active": true
     },
     {
-      "id": 4,
-      "category_id": 1,
-      "name": "HBO Max",
-      "emoji": "🎥",
-      "description": "",
-      "image": null,
-      "highlight": 0,
-      "sort_order": 4,
-      "active": 1
-    },
-    {
       "id": 5,
       "category_id": 1,
       "name": "Prime Video",
@@ -211,7 +200,7 @@
       "name": "Paramount+",
       "emoji": "⭐",
       "description": "",
-      "image": null,
+      "image": "/images/paramount.svg",
       "highlight": 0,
       "sort_order": 6,
       "active": 1
@@ -388,6 +377,7 @@
       "emoji": "▶️",
       "description": "Cuenta completa",
       "image": null,
+      "discount_badge": "🎁 10% Dscto. Clientes Netflix",
       "highlight": 0,
       "sort_order": 2,
       "active": 1
@@ -399,6 +389,7 @@
       "emoji": "🎨",
       "description": "Cuenta completa",
       "image": null,
+      "discount_badge": "🎁 10% Dscto. Clientes Netflix",
       "highlight": 0,
       "sort_order": 3,
       "active": 1
@@ -422,6 +413,7 @@
       "emoji": "📺",
       "description": "Más de 10,000 canales en vivo, series y películas. ¡Incluye todo el Mundial 2026! Solicita tu prueba de 12 horas.",
       "image": "/images/iptv.png",
+      "discount_badge": "🎁 10% Dscto. Clientes Netflix",
       "highlight": true,
       "sort_order": 2,
       "active": true
@@ -466,6 +458,7 @@
       "emoji": "🛂",
       "description": "⚡ <strong>Reporte de Movimiento Migratorio Oficial</strong><br>🔍 <strong>¿Quieres saber las entradas y salidas del país de una persona? Registros oficiales de aeropuertos, fronteras, pasaportes y fechas de viaje.</strong><br>📦 <strong>Entrega:</strong> PDF Certificado Oficial + Captura en Tiempo Real<br>🔑 <strong>Requerimiento:</strong> Nombre Completo o N° de DNI<br><br>➕ <em>S/2 adicionales si aportas datos extra (teléfono, red social, etc.)</em><br><br><strong>Ejemplo de lo que recibes:</strong><br><pre class=\"example-box\">[🛂] MOVIMIENTO MIGRATORIO TIEMPO REAL\n=============================================\nDNI                   : 10258502\nNOMBRE                : CARLOS ALBERTO AYALA HUAMAN\nAP. PATERNO           : AYALA\nAP. MATERNO           : HUAMAN\nNACIONALIDAD          : PERU\nNUMERO DE MOVIMIENTOS : 21\nENTRADAS              : 10\nSALIDAS               : 11\n=============================================</pre>",
       "image": "/uploads/doxeo/Reporte_Migratorio_10258502.pdf",
+      "discount_badge": "🎁 10% Dscto. Clientes Netflix",
       "highlight": 0,
       "sort_order": 10,
       "active": true
@@ -477,6 +470,7 @@
       "emoji": "🔍",
       "description": "⚡ <strong>Doxeo Completo e Integrado</strong><br>🔍 <strong>Incluye:</strong> SEMÁFORO, HISTORIAL CREDITICIO, TELÉFONOS, DIRECCIONES, DELITOS, TRABAJOS, SEGUROS, FAMILIARES, CORREOS, PROPIEDADES, ETC.<br>📦 <strong>Entrega:</strong> PDF Muestra + Reporte Completo",
       "image": "/uploads/doxeo/Reporte-08167022.pdf",
+      "discount_badge": "🎁 10% Dscto. Clientes Netflix",
       "highlight": 1,
       "sort_order": 12,
       "active": true
@@ -510,6 +504,7 @@
       "emoji": "🎓",
       "description": "⚡ <strong>Duplicado de Constancia de Estudios (Copia Original)</strong><br>📄 <strong>¿Perdiste tu documento de colegio o necesitas un duplicado original para tus trámites?</strong> Te extraemos tus constancias oficiales con firma digital y código QR válidas a nivel nacional.<br>👶 Nivel Inicial<br>👦 Nivel Primaria<br>🧑 Nivel Secundaria<br>⚠️ <em>Nosotros no creamos ni inventamos datos; extraemos de los sistemas oficiales la copia 100% real tal como está registrada.</em><br>📦 <strong>Entrega:</strong> Archivo PDF oficial listo para imprimir con QR verificado<br>🔑 <strong>Requerimientos:</strong> Nombre completo o número de DNI<br><br>➕ <em>S/2 adicionales si aportas datos extra (teléfono, red social, etc.)</em>",
       "image": "/uploads/doxeo/Constancia_Estudios_Inicial.pdf, /uploads/doxeo/Constancia_Estudios_Primaria.pdf, /uploads/doxeo/Constancia_Estudios_Secundaria.pdf",
+      "discount_badge": "🎁 10% Dscto. Clientes Netflix",
       "highlight": 0,
       "sort_order": 12,
       "active": true
@@ -612,9 +607,55 @@
       "name": "TARJETA DE IDENTIFICACION VEHICULAR ELECTRONICA (TIVE)",
       "description": "<pre class=\"doxeo-terminal-text-mini\">🚗 TIVE (PLACA 3755-4k) \n\n📌 𝗡𝗼𝗺𝗯𝗿𝗲: VASQUEZ PINCHI JOHN WERNER\n📆 𝗙𝗲𝗰𝗵𝗮 𝗣𝗿𝗼𝗽𝗶𝗲𝗱𝗮𝗱: 20/12/2021\n📄 𝗧𝗶𝗽𝗼 𝗗𝗼𝗰.: DNI\n🆔 𝗗𝗼𝗰𝘂𝗺𝗲𝗻𝘁𝗼: 44385988\n👤 𝗧𝗶𝗽𝗼: PERSONA NATURAL</pre>\n<p style=\"color:#a1a1aa; font-size:0.8rem; margin-top:5px;\"><strong>Requisito:</strong> Placa</p>",
       "image": "TIVE-3755-4k.pdf",
+      "discount_badge": "🎁 10% Dscto. Clientes Netflix",
       "active": 1,
       "sort_order": 1,
       "highlight": 0
+    },
+    {
+      "id": 50,
+      "category_id": 7,
+      "name": "Geminis IA PRO",
+      "emoji": "✨",
+      "description": "Cuenta completa",
+      "image": "/images/gemini.svg",
+      "discount_badge": "🎁 10% Dscto. Clientes Netflix",
+      "highlight": 0,
+      "sort_order": 4,
+      "active": 1
+    },
+    {
+      "id": 51,
+      "category_id": 8,
+      "name": "Paramount+ — Mundial 2026",
+      "emoji": "⭐",
+      "description": "⚽ <strong>Cobertura Total del Mundial 2026</strong><br>Disfruta de los <strong>104 partidos en vivo</strong> para Perú y Sudamérica gracias a la alianza exclusiva con DSPORTS. ¡Acceso premium a cada jugada de la máxima fiesta del fútbol!",
+      "image": "/images/paramount.svg",
+      "highlight": 1,
+      "sort_order": 3,
+      "active": 1
+    },
+    {
+      "id": 52,
+      "category_id": 1,
+      "name": "HBO Max Platino",
+      "emoji": "🎬",
+      "description": "Entrega rápida y garantía completa durante el tiempo contratado. Calidad Ultra HD",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 7,
+      "active": 1
+    },
+    {
+      "id": 53,
+      "category_id": 1,
+      "name": "HBO Max Estándar",
+      "emoji": "🎬",
+      "description": "Entrega rápida y garantía completa durante el tiempo contratado. Calidad FULL HD",
+      "image": null,
+      "highlight": 0,
+      "sort_order": 8,
+      "active": 1
     }
   ],
   "plans": [
@@ -682,27 +723,6 @@
       "sort_order": 3
     },
     {
-      "id": 10,
-      "product_id": 4,
-      "price": 6,
-      "duration": "1 mes",
-      "sort_order": 1
-    },
-    {
-      "id": 11,
-      "product_id": 4,
-      "price": 11,
-      "duration": "2 meses",
-      "sort_order": 2
-    },
-    {
-      "id": 12,
-      "product_id": 4,
-      "price": 15,
-      "duration": "3 meses",
-      "sort_order": 3
-    },
-    {
       "id": 13,
       "product_id": 5,
       "price": 5,
@@ -726,21 +746,21 @@
     {
       "id": 16,
       "product_id": 6,
-      "price": 6,
+      "price": 8,
       "duration": "1 mes",
       "sort_order": 1
     },
     {
       "id": 17,
       "product_id": 6,
-      "price": 11,
+      "price": 15,
       "duration": "2 meses",
       "sort_order": 2
     },
     {
       "id": 18,
       "product_id": 6,
-      "price": 15,
+      "price": 20,
       "duration": "3 meses",
       "sort_order": 3
     },
@@ -1471,6 +1491,90 @@
       "duration": "1 PDF Oficial",
       "price": 8,
       "sort_order": 1
+    },
+    {
+      "id": 130,
+      "product_id": 50,
+      "price": 10,
+      "duration": "1 mes",
+      "sort_order": 1
+    },
+    {
+      "id": 131,
+      "product_id": 50,
+      "price": 18,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 132,
+      "product_id": 50,
+      "price": 25,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 133,
+      "product_id": 51,
+      "price": 8,
+      "duration": "1 mes",
+      "sort_order": 1
+    },
+    {
+      "id": 136,
+      "product_id": 52,
+      "price": 8,
+      "duration": "1 mes",
+      "sort_order": 1
+    },
+    {
+      "id": 140,
+      "product_id": 52,
+      "price": 15,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 141,
+      "product_id": 52,
+      "price": 20,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 137,
+      "product_id": 53,
+      "price": 6,
+      "duration": "1 mes",
+      "sort_order": 1
+    },
+    {
+      "id": 142,
+      "product_id": 53,
+      "price": 11,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 143,
+      "product_id": 53,
+      "price": 15,
+      "duration": "3 meses",
+      "sort_order": 3
+    },
+    {
+      "id": 138,
+      "product_id": 51,
+      "price": 14,
+      "duration": "2 meses",
+      "sort_order": 2
+    },
+    {
+      "id": 139,
+      "product_id": 51,
+      "price": 20,
+      "duration": "3 meses",
+      "sort_order": 3
     }
   ],
   "settings": {
@@ -1490,7 +1594,7 @@
   },
   "_nextId": {
     "categories": 19,
-    "products": 45,
-    "plans": 101
+    "products": 54,
+    "plans": 144
   }
 }

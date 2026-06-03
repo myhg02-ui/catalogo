@@ -339,6 +339,12 @@ function seedDatabase(db) {
   insertPlan(db, p, 5, '30 días', 1);
   insertPlan(db, p, 9, '60 días', 2);
   insertPlan(db, p, 12, '90 días', 3);
+
+  p = insertProduct(db, cat7, 'Geminis IA PRO', '✨', 'Cuenta completa', 0, 4);
+  db.products.find(x => x.id === p).image = '/images/gemini.svg';
+  insertPlan(db, p, 10, '1 mes', 1);
+  insertPlan(db, p, 18, '2 meses', 2);
+  insertPlan(db, p, 25, '3 meses', 3);
 }
 
 module.exports = { loadDatabase, saveDatabase, insertCategory, insertProduct, insertPlan, DB_PATH };

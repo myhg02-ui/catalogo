@@ -174,7 +174,7 @@ const getBrandLogoHtml = (product, productName, catalogType = 'streaming') => {
     // If a custom image is uploaded via the admin panel, use it (for streaming only as main logo)
     if (product.image && catalogType === 'streaming') {
         const imgSrc = product.image.startsWith('/') ? product.image : `/uploads/${product.image}`;
-        return `<div class="card-logo-container"><img src="${imgSrc}" class="card-brand-logo-img" alt="${productName}"></div>`;
+        return `<div class="card-logo-container custom-logo-box"><img src="${imgSrc}" class="card-brand-logo-img custom-img-fit" alt="${productName}"></div>`;
     }
 
     const name = productName.toLowerCase();
@@ -291,6 +291,10 @@ const createProductCard = (product, settings, catalogType) => {
     // Highlight or Out of Stock badge
     if (product.out_of_stock) {
         html += '<span class="out-of-stock-badge">🚫 SIN STOCK</span>';
+    } else if (product.discount_badge) {
+        const discountIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>`;
+        const cleanText = product.discount_badge.replace('🎁 ', '');
+        html += `<div class="discount-badge">${discountIcon} <span>${cleanText}</span></div>`;
     } else if (product.highlight === 1) {
         html += '<span class="highlight-badge">🔥 RECOMENDADO</span>';
     }
@@ -546,28 +550,77 @@ const createProductCard = (product, settings, catalogType) => {
 
     // --- Event Listeners ---
 
-    // Dropdown change event
     const durationSelect = card.querySelector('.duration-select');
     const priceAmount = card.querySelector('.price-amount');
     const priceDuration = card.querySelector('.price-duration');
     const buyBtn = card.querySelector('.btn-buy');
+    const discountBadge = card.querySelector('.discount-badge');
+    
+    let isDiscountActive = false;
+
+    const updatePriceDisplay = () => {
+        let price = defaultPlan ? defaultPlan.price : 0;
+        let duration = defaultPlan ? defaultPlan.duration : '';
+        
+        if (durationSelect) {
+            const selectedOption = durationSelect.options[durationSelect.selectedIndex];
+            price = parseFloat(selectedOption.dataset.price);
+            duration = selectedOption.dataset.duration;
+        } else {
+            price = parseFloat(price);
+        }
+
+        if (isDiscountActive) {
+            price = price * 0.9;
+            price = Number.isInteger(price) ? price : price.toFixed(2);
+        }
+
+        if (priceAmount) {
+            priceAmount.innerHTML = `<span class="price-currency">${currencySymbol}</span>${price}`;
+        }
+        if (priceDuration) {
+            priceDuration.textContent = duration;
+        }
+
+        if (buyBtn && buyBtn.tagName === 'A') {
+            const promoText = isDiscountActive ? " (Promo Cliente Netflix)" : "";
+            buyBtn.href = buildWhatsAppLink(settings, product.name + promoText, duration, price, catalogType);
+        }
+    };
 
     if (durationSelect) {
-        durationSelect.addEventListener('change', (e) => {
-            const selectedOption = e.target.options[e.target.selectedIndex];
-            const price = selectedOption.dataset.price;
-            const duration = selectedOption.dataset.duration;
+        durationSelect.addEventListener('change', updatePriceDisplay);
+    }
 
-            if (priceAmount) {
-                priceAmount.innerHTML = `<span class="price-currency">${currencySymbol}</span>${price}`;
-            }
-            if (priceDuration) {
-                priceDuration.textContent = duration;
-            }
+    if (discountBadge) {
+        discountBadge.addEventListener('click', () => {
+            if (isDiscountActive) return;
 
-            // Update buy button link
-            if (buyBtn && buyBtn.tagName === 'A') {
-                buyBtn.href = buildWhatsAppLink(settings, product.name, duration, price, catalogType);
+            const activate = () => {
+                isDiscountActive = true;
+                discountBadge.classList.add('active');
+                const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                discountBadge.innerHTML = `${checkIcon} <span>10% Dscto. Aplicado</span>`;
+                updatePriceDisplay();
+            };
+
+            if (window.Swal) {
+                window.Swal.fire({
+                    title: '¿Eres cliente de Netflix?',
+                    text: 'Se aplicará un 10% de descuento automático en tu compra.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#25D366',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, soy cliente',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) activate();
+                });
+            } else {
+                if (confirm('¿Eres cliente activo de Netflix? Al confirmar se aplicará un 10% de descuento en este producto.')) {
+                    activate();
+                }
             }
         });
     }

@@ -541,7 +541,7 @@ const createProductCard = (product, settings, catalogType) => {
             html += `
                 <div class="price-display">
                     <span class="price-amount"><span class="price-currency">${currencySymbol}</span>${defaultPlan.price}</span>
-                    <span class="price-duration">${defaultPlan.duration}</span>
+                    ${(catalogType === 'social' && plans.length > 1) ? '' : `<span class="price-duration">${defaultPlan.duration}</span>`}
                 </div>
             `;
             if (product.out_of_stock) {

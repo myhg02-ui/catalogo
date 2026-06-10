@@ -309,7 +309,13 @@ const createProductCard = (product, settings, catalogType) => {
     if (product.description && product.description.trim() !== '') {
         html += `<p class="card-description">${product.description}</p>`;
     } else {
-        html += `<p class="card-description">Entrega rápida y garantía completa durante el tiempo contratado.</p>`;
+        if (catalogType === 'doxeo') {
+            html += `<p class="card-description">Resultados rápidos, exactos y 100% confidenciales.</p>`;
+        } else if (catalogType === 'seguidores') {
+            html += `<p class="card-description">Entrega rápida, segura y con resultados garantizados.</p>`;
+        } else {
+            html += `<p class="card-description">Entrega rápida y garantía completa durante el tiempo contratado.</p>`;
+        }
     }
 
     // Large product mockup preview (especially for Doxeo & Seguidores sample search result)
@@ -509,27 +515,41 @@ const createProductCard = (product, settings, catalogType) => {
         // Custom arrow icon
         html += '<div style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-secondary);">▼</div>';
         html += '</div>';
-    } else if (plans.length === 1) {
-        html += `<div style="margin-bottom: var(--spacing-lg); text-align: center; color: var(--text-secondary); font-size: 0.9rem;">${plans[0].duration}</div>`;
     }
 
-    // Price display
+    // Price display & Buy button
     if (defaultPlan) {
-        html += `
-            <div class="price-display">
-                <span class="price-amount"><span class="price-currency">${currencySymbol}</span>${defaultPlan.price}</span>
-                <span class="price-duration">${defaultPlan.duration}</span>
-            </div>
-        `;
-    }
-
-    // Buy button
-    if (defaultPlan) {
-        if (product.out_of_stock) {
-            html += `<button class="btn-buy btn-out-of-stock" disabled>Agotado / Sin Stock</button>`;
+        if (product.isDynamic) {
+            html += `
+                <div class="dynamic-qty-selector" style="margin: 10px 0;">
+                    <label style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Cantidad a comprar:</label>
+                    <input type="number" class="dynamic-input-qty" value="${product.minQty}" min="${product.minQty}" max="${product.maxQty}" step="100" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: #fff; font-size: 1rem; text-align: center; letter-spacing: 1px;">
+                </div>
+                <div class="price-display" style="margin-top: 15px;">
+                    <span class="price-amount"><span class="price-currency">${currencySymbol}</span><span class="dynamic-total-price">${(product.unitPrice * product.minQty).toFixed(2)}</span></span>
+                </div>
+                <div class="cashback-badge" style="display: none; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.75rem; margin-bottom: 15px; text-align: center; line-height: 1.4;">
+                </div>
+            `;
+            
+            if (product.out_of_stock) {
+                html += `<button class="btn-buy btn-out-of-stock" disabled>Agotado / Sin Stock</button>`;
+            } else {
+                html += `<a class="btn-buy btn-buy-dynamic" href="#" target="_blank" rel="noopener">Comprar por WhatsApp</a>`;
+            }
         } else {
-            const whatsappLink = buildWhatsAppLink(settings, product.name, defaultPlan.duration, defaultPlan.price, catalogType);
-            html += `<a class="btn-buy" href="${whatsappLink}" target="_blank" rel="noopener">Comprar por WhatsApp</a>`;
+            html += `
+                <div class="price-display">
+                    <span class="price-amount"><span class="price-currency">${currencySymbol}</span>${defaultPlan.price}</span>
+                    <span class="price-duration">${defaultPlan.duration}</span>
+                </div>
+            `;
+            if (product.out_of_stock) {
+                html += `<button class="btn-buy btn-out-of-stock" disabled>Agotado / Sin Stock</button>`;
+            } else {
+                const whatsappLink = buildWhatsAppLink(settings, product.name, defaultPlan.duration, defaultPlan.price, catalogType);
+                html += `<a class="btn-buy" href="${whatsappLink}" target="_blank" rel="noopener">Comprar por WhatsApp</a>`;
+            }
         }
     }
 
@@ -590,6 +610,62 @@ const createProductCard = (product, settings, catalogType) => {
 
     if (durationSelect) {
         durationSelect.addEventListener('change', updatePriceDisplay);
+    }
+
+    if (product.isDynamic) {
+        const qtyInput = card.querySelector('.dynamic-input-qty');
+        const totalPriceEl = card.querySelector('.dynamic-total-price');
+        const cashbackBadge = card.querySelector('.cashback-badge');
+        const btnBuyDynamic = card.querySelector('.btn-buy-dynamic');
+
+        if (qtyInput && btnBuyDynamic) {
+            const updateDynamicPrice = () => {
+                let val = parseInt(qtyInput.value) || 0;
+                
+                if (val > product.maxQty) {
+                    val = product.maxQty;
+                    qtyInput.value = val;
+                }
+                
+                let effectiveVal = val;
+                if (effectiveVal < product.minQty && qtyInput.value !== "") {
+                    effectiveVal = product.minQty;
+                }
+
+                const totalPriceNum = effectiveVal * product.unitPrice;
+                const totalPrice = totalPriceNum.toFixed(2);
+                totalPriceEl.textContent = totalPrice;
+
+                const doxeoCashback = (totalPriceNum * 0.10).toFixed(2);
+                const streamingCashback = (totalPriceNum * 0.05).toFixed(2);
+
+                cashbackBadge.style.display = 'block';
+                cashbackBadge.innerHTML = `<span style="font-size: 0.9rem; margin-right: 4px;">💎</span> <strong>Cashback acumulado:</strong><br>S/ ${doxeoCashback} (Doxeo) o S/ ${streamingCashback} (Streaming)`;
+
+                let msg = `¡Hola! Quisiera realizar la siguiente compra:\n`;
+                msg += `📦 Servicio: *${product.name}*\n`;
+                msg += `🔢 Cantidad: *${effectiveVal} seguidores*\n`;
+                msg += `💰 Total: *${currencySymbol}${totalPrice}*\n\n`;
+                msg += `Además, deseo elegir mi recompensa de Cashback acumulado:\n`;
+                msg += `👉 S/ ${doxeoCashback} para usar en Doxeo, o\n`;
+                msg += `👉 S/ ${streamingCashback} para usar en Streaming.`;
+                
+                const wNumber = settings[`whatsapp_number_${catalogType}`] || settings.whatsapp_number || '639631207428';
+                btnBuyDynamic.href = `https://wa.me/${wNumber}?text=${encodeURIComponent(msg)}`;
+            };
+
+            qtyInput.addEventListener('input', updateDynamicPrice);
+            
+            qtyInput.addEventListener('blur', () => {
+                let val = parseInt(qtyInput.value) || 0;
+                if (val < product.minQty) {
+                    qtyInput.value = product.minQty;
+                    updateDynamicPrice();
+                }
+            });
+            
+            updateDynamicPrice(); // initialize
+        }
     }
 
     if (discountBadge) {
@@ -666,10 +742,26 @@ const renderCatalog = (categories, settings, catalogType = 'streaming') => {
         const header = document.createElement('div');
         header.className = 'section-header';
         header.innerHTML = `
-            <span class="section-icon">${category.icon || '📂'}</span>
+            <span class="section-icon">${category.icon || ''}</span>
             <h2 class="section-title">${category.name}</h2>
         `;
         section.appendChild(header);
+
+        // Mundial 2026 Event Banner (special treatment for category 8)
+        if (category.id === 8 && catalogType === 'streaming') {
+            const banner = document.createElement('div');
+            banner.className = 'mundial-event-banner';
+            banner.innerHTML = `
+                <div class="mundial-event-top">
+                    <span class="mundial-event-badge">🔴 EVENTO EN VIVO</span>
+                </div>
+                <div class="mundial-event-title">⚽ FIFA World Cup 2026™</div>
+                <p class="mundial-event-subtitle">
+                    Accede a la cobertura completa de los <strong>104 partidos en vivo</strong> desde EE.UU., México y Canadá. Canales oficiales con calidad HD / 4K.
+                </p>
+            `;
+            section.appendChild(banner);
+        }
 
         // Products grid
         const grid = document.createElement('div');
@@ -714,7 +806,7 @@ const renderNavigation = (categories, catalogType = 'streaming') => {
 
         const pill = document.createElement('button');
         pill.className = 'nav-pill';
-        pill.textContent = `${category.icon || '📂'} ${category.name}`;
+        pill.textContent = `${category.icon || ''} ${category.name}`.trim();
         pill.dataset.categoryId = category.id;
 
         pill.addEventListener('click', (e) => {
@@ -886,32 +978,151 @@ const setupSearch = (catalogType = 'streaming') => {
 const setupMainTabs = () => {
     const tabs = document.querySelectorAll('.section-tab');
     
+    // Auth Modal Elements - Generate if missing (handles browser cache issues)
+    let authModal = document.getElementById('doxeoAuthModal');
+    if (!authModal) {
+        authModal = document.createElement('div');
+        authModal.className = 'modal-overlay';
+        authModal.id = 'doxeoAuthModal';
+        authModal.style.cssText = 'display:none; backdrop-filter: blur(8px); z-index: 9999;';
+        authModal.innerHTML = `
+            <div class="premium-modal" style="max-width: 400px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+                <div class="premium-modal-header" style="border-bottom: none; padding-bottom: 0;">
+                    <div class="premium-modal-title-group" style="justify-content: center; width: 100%;">
+                        <span class="premium-modal-icon" style="font-size: 2rem;">🔒</span>
+                    </div>
+                </div>
+                <div class="premium-modal-body" style="text-align: center; padding: 20px;">
+                    <h3 style="margin-bottom: 15px; color: var(--text-primary); font-size: 1.25rem;">Acceso Restringido</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">Ingrese el token de acceso para ver el catálogo de Doxeo.</p>
+                    <input type="password" id="doxeoTokenInput" placeholder="Token de acceso..." style="width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); background: rgba(12, 16, 30, 0.8); color: var(--text-primary); outline: none; text-align: center; font-size: 1rem; letter-spacing: 2px;">
+                    <p id="doxeoTokenError" style="color: #ef4444; font-size: 0.8rem; margin-top: 10px; display: none;">Token incorrecto</p>
+                </div>
+                <div class="premium-modal-footer" style="border-top: none; justify-content: center; gap: 10px;">
+                    <button class="btn-modal-action" id="cancelDoxeoAuthBtn" style="background: transparent; border: 1px solid var(--border); color: var(--text-secondary);">Volver</button>
+                    <button class="btn-modal-action" id="verifyDoxeoTokenBtn" style="background: var(--accent); color: #fff;">Acceder</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(authModal);
+    }
+
+    const tokenInput = document.getElementById('doxeoTokenInput');
+    const verifyBtn = document.getElementById('verifyDoxeoTokenBtn');
+    const cancelBtn = document.getElementById('cancelDoxeoAuthBtn');
+    const errorMsg = document.getElementById('doxeoTokenError');
+    let pendingTab = null;
+
+    const switchTab = (tab) => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        const sectionName = tab.dataset.section;
+
+        // Hide all views
+        document.querySelectorAll('.section-view').forEach(view => {
+            view.classList.remove('active');
+        });
+
+        // Show active view
+        const activeView = document.getElementById(`${sectionName}-view`);
+        if (activeView) {
+            activeView.classList.add('active');
+            
+            // Trigger animation reset
+            const soonCards = activeView.querySelectorAll('.soon-card');
+            soonCards.forEach(card => {
+                card.classList.remove('visible');
+                setTimeout(() => card.classList.add('visible'), 50);
+            });
+        }
+    };
+
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
             const sectionName = tab.dataset.section;
 
-            // Hide all views
-            document.querySelectorAll('.section-view').forEach(view => {
-                view.classList.remove('active');
-            });
-
-            // Show active view
-            const activeView = document.getElementById(`${sectionName}-view`);
-            if (activeView) {
-                activeView.classList.add('active');
+            // Doxeo Token Verification
+            if (sectionName === 'doxeo' && window.catalogSettings && window.catalogSettings.doxeo_token) {
+                let granted = false;
+                try { 
+                    const storedTime = sessionStorage.getItem('doxeo_access_granted');
+                    if (storedTime) {
+                        const timePassed = Date.now() - parseInt(storedTime, 10);
+                        if (timePassed < 10 * 60 * 1000) { // 10 minutes session
+                            granted = true;
+                            // Extend session on activity
+                            sessionStorage.setItem('doxeo_access_granted', Date.now().toString());
+                        } else {
+                            sessionStorage.removeItem('doxeo_access_granted');
+                        }
+                    }
+                } catch(e) {}
                 
-                // Trigger animation reset
-                const soonCards = activeView.querySelectorAll('.soon-card');
-                soonCards.forEach(card => {
-                    card.classList.remove('visible');
-                    setTimeout(() => card.classList.add('visible'), 50);
-                });
+                if (!granted) {
+                    pendingTab = tab;
+                    if (authModal) {
+                        authModal.style.display = 'flex';
+                        setTimeout(() => authModal.classList.add('active'), 10);
+                    }
+                    if (tokenInput) tokenInput.value = '';
+                    if (errorMsg) errorMsg.style.display = 'none';
+                    if (tokenInput) setTimeout(() => tokenInput.focus(), 100);
+                    return; // Stop tab switch
+                }
             }
+            
+            switchTab(tab);
         });
     });
+
+    if (verifyBtn) {
+        verifyBtn.addEventListener('click', () => {
+            const token = tokenInput ? tokenInput.value.trim() : '';
+            const expectedToken = window.catalogSettings ? window.catalogSettings.doxeo_token : null;
+            
+            if (!expectedToken) {
+                try { sessionStorage.setItem('doxeo_access_granted', Date.now().toString()); } catch(e) {}
+                if (authModal) {
+                    authModal.classList.remove('active');
+                    setTimeout(() => authModal.style.display = 'none', 300);
+                }
+                if (pendingTab) switchTab(pendingTab);
+                return;
+            }
+
+            if (token === expectedToken) {
+                try { sessionStorage.setItem('doxeo_access_granted', Date.now().toString()); } catch(e) {}
+                if (authModal) {
+                    authModal.classList.remove('active');
+                    setTimeout(() => authModal.style.display = 'none', 300);
+                }
+                if (pendingTab) switchTab(pendingTab);
+            } else {
+                if (errorMsg) errorMsg.style.display = 'block';
+                if (tokenInput) {
+                    tokenInput.classList.add('error-shake');
+                    setTimeout(() => tokenInput.classList.remove('error-shake'), 400);
+                }
+            }
+        });
+        
+        if (tokenInput) {
+            tokenInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') verifyBtn.click();
+            });
+        }
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+            if (authModal) {
+                authModal.classList.remove('active');
+                setTimeout(() => authModal.style.display = 'none', 300);
+            }
+            pendingTab = null;
+        });
+    }
 };
 
 /**
@@ -1207,6 +1418,7 @@ const init = async () => {
         let settings = {};
         if (settingsRes.ok) {
             settings = await settingsRes.json();
+            window.catalogSettings = settings;
         }
 
         // Global whatsapp fallback

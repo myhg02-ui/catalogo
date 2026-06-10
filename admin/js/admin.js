@@ -46,6 +46,8 @@
         settingWhatsapp: $('#settingWhatsapp'),
         settingCurrency: $('#settingCurrency'),
         settingWhatsappTemplate: $('#settingWhatsappTemplate'),
+        settingDoxeoTokenGroup: $('#settingDoxeoTokenGroup'),
+        settingDoxeoToken: $('#settingDoxeoToken'),
         currentPassword: $('#currentPassword'),
         newPassword: $('#newPassword'),
         modalOverlay: $('#modalOverlay'),
@@ -994,6 +996,15 @@
         dom.settingWhatsapp.value = state.settings[`whatsapp_number_${cat}`] || '';
         dom.settingCurrency.value = state.settings[`currency_symbol_${cat}`] || 'S/';
         dom.settingWhatsappTemplate.value = state.settings[`whatsapp_message_template_${cat}`] || '';
+        
+        if (cat === 'doxeo') {
+            dom.settingDoxeoTokenGroup.style.display = 'block';
+            dom.settingDoxeoToken.value = state.settings.doxeo_token || '';
+        } else {
+            dom.settingDoxeoTokenGroup.style.display = 'none';
+            dom.settingDoxeoToken.value = '';
+        }
+
         dom.currentPassword.value = '';
         dom.newPassword.value = '';
     }
@@ -1015,6 +1026,11 @@
         body[`whatsapp_number_${cat}`] = whatsapp_number;
         body[`currency_symbol_${cat}`] = currency_symbol;
         body[`whatsapp_message_template_${cat}`] = whatsapp_message_template;
+        
+        if (cat === 'doxeo') {
+            const doxeo_token = dom.settingDoxeoToken.value.trim();
+            body.doxeo_token = doxeo_token;
+        }
 
         try {
             await api('/api/admin/settings', {
@@ -1025,6 +1041,11 @@
             state.settings[`whatsapp_number_${cat}`] = whatsapp_number;
             state.settings[`currency_symbol_${cat}`] = currency_symbol;
             state.settings[`whatsapp_message_template_${cat}`] = whatsapp_message_template;
+            
+            if (cat === 'doxeo') {
+                state.settings.doxeo_token = body.doxeo_token;
+            }
+
             showToast('Configuración guardada para este panel', 'success');
         } catch (err) {
             showToast(err.message, 'error');

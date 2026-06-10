@@ -160,6 +160,13 @@
                                 <label>Símbolo de Moneda</label>
                                 <input type="text" id="settingCurrency" class="form-input" placeholder="Ej: S/ o €">
                             </div>
+                            <div class="form-group" id="settingDoxeoTokenGroup" style="display:none;">
+                                <label>Token de Acceso (Solo Doxeo)</label>
+                                <input type="text" id="settingDoxeoToken" class="form-input" placeholder="Ej: code02">
+                                <small style="display:block; margin-top:6px; color:#8b8fa3; font-size:0.85rem; line-height: 1.4;">
+                                    Contraseña para que los usuarios puedan ver el catálogo de Doxeo. Déjalo en blanco para acceso libre.
+                                </small>
+                            </div>
                             <div class="form-group">
                                 <label>Plantilla de Mensaje de WhatsApp</label>
                                 <textarea id="settingWhatsappTemplate" class="form-input" rows="4" placeholder="Hola! Me interesa *{productName}* por *{duration}* ({currencySymbol}{price}) desde tu Catálogo."></textarea>

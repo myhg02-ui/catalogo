@@ -1,25 +1,25 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fyis CatÃ¡logo â€” Admin</title>
+    <title>Fyis Catálogo — Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/admin/css/admin.css?v=2.0">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>ðŸ”</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
 </head>
 <body>
     <!-- LOGIN SCREEN -->
     <div class="login-screen" id="loginScreen">
         <div class="login-card">
-            <div class="login-icon">ðŸ”</div>
-            <h1>Fyis CatÃ¡logo Admin</h1>
-            <p>Ingresa tu contraseÃ±a para acceder</p>
+            <div class="login-icon">🔐</div>
+            <h1>Fyis Catálogo Admin</h1>
+            <p>Ingresa tu contraseña para acceder</p>
             <form id="loginForm">
                 <div class="form-group">
-                    <input type="password" id="loginPassword" placeholder="ContraseÃ±a" required autocomplete="current-password">
+                    <input type="password" id="loginPassword" placeholder="Contraseña" required autocomplete="current-password">
                 </div>
                 <button type="submit" class="btn btn-primary btn-full" id="loginBtn">Ingresar</button>
                 <p class="login-error" id="loginError"></p>
@@ -30,16 +30,16 @@
     <div class="portal-selector-screen" id="portalSelector" style="display:none;">
         <div class="portal-container">
             <h1 class="portal-title">Selecciona un <span class="gradient-text">Panel</span></h1>
-            <p class="portal-subtitle">Elige el catÃ¡logo que deseas gestionar hoy</p>
+            <p class="portal-subtitle">Elige el catálogo que deseas gestionar hoy</p>
             
             <div class="portal-grid">
                 <!-- Streaming Card -->
                 <div class="portal-card" data-portal-catalog="streaming">
                     <div class="portal-card-glow" style="--glow-color: #7c3aed;"></div>
                     <div class="portal-card-content">
-                        <div class="portal-icon">ðŸŽ¬</div>
+                        <div class="portal-icon">🎬</div>
                         <h3>Panel Streaming</h3>
-                        <p>Gestiona categorÃ­as, productos y planes de cuentas de streaming (Netflix, Disney, combos, etc.).</p>
+                        <p>Gestiona categorías, productos y planes de cuentas de streaming (Netflix, Disney, combos, etc.).</p>
                         <button class="btn btn-primary btn-full btn-portal">Gestionar Streaming</button>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="portal-card" data-portal-catalog="doxeo">
                     <div class="portal-card-glow" style="--glow-color: #a8d0fc;"></div>
                     <div class="portal-card-content">
-                        <div class="portal-icon">ðŸ”</div>
+                        <div class="portal-icon">🔍</div>
                         <h3>Panel Doxeo</h3>
                         <p>Gestiona consultas de datos personales, financieros, vehiculares, antecedentes y delitos.</p>
                         <button class="btn btn-primary btn-full btn-portal" style="background: linear-gradient(135deg, #a8d0fc, #7c3aed);">Gestionar Doxeo</button>
@@ -59,7 +59,7 @@
                 <div class="portal-card" data-portal-catalog="seguidores">
                     <div class="portal-card-glow" style="--glow-color: #faabbd;"></div>
                     <div class="portal-card-content">
-                        <div class="portal-icon">ðŸ‘¥</div>
+                        <div class="portal-icon">👥</div>
                         <h3>Panel Seguidores</h3>
                         <p>Gestiona servicios de crecimiento social, recarga de seguidores, likes y reproducciones.</p>
                         <button class="btn btn-primary btn-full btn-portal" style="background: linear-gradient(135deg, #faabbd, #7c3aed);">Gestionar Seguidores</button>
@@ -74,23 +74,23 @@
         <!-- Header -->
         <header class="admin-header">
             <div class="header-left">
-                <button class="hamburger" id="hamburgerBtn">â˜°</button>
-                <h1 class="admin-logo">Fyis<span>CatÃ¡logo</span> Admin <span id="headerPanelBadge" style="font-size:0.75rem; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px; margin-left:8px; border:1px solid rgba(255,255,255,0.08); vertical-align:middle; text-transform:uppercase;"></span></h1>
+                <button class="hamburger" id="hamburgerBtn">☰</button>
+                <h1 class="admin-logo">Fyis<span>Catálogo</span> Admin <span id="headerPanelBadge" style="font-size:0.75rem; background:rgba(255,255,255,0.06); padding:4px 8px; border-radius:6px; margin-left:8px; border:1px solid rgba(255,255,255,0.08); vertical-align:middle; text-transform:uppercase;"></span></h1>
             </div>
             <div class="header-right">
-                <a href="/" target="_blank" class="btn btn-outline btn-sm">ðŸ‘ï¸ Ver CatÃ¡logo</a>
-                <button class="btn btn-outline btn-sm" id="logoutBtn">Cerrar SesiÃ³n</button>
+                <a href="/" target="_blank" class="btn btn-outline btn-sm">👁️ Ver Catálogo</a>
+                <button class="btn btn-outline btn-sm" id="logoutBtn">Cerrar Sesión</button>
             </div>
         </header>
 
         <div class="admin-body">
             <!-- Sidebar -->
             <nav class="admin-sidebar" id="adminSidebar">
-                <button class="nav-item active" data-section="dashboard">ðŸ“Š Dashboard</button>
-                <button class="nav-item" data-section="categories">ðŸ“‚ CategorÃ­as</button>
-                <button class="nav-item" data-section="products">ðŸ“¦ Productos</button>
-                <button class="nav-item" data-section="settings">âš™ï¸ ConfiguraciÃ³n</button>
-                <button class="nav-item" id="btnBackToPortal" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; color: var(--accent);">ðŸ”„ Cambiar Panel</button>
+                <button class="nav-item active" data-section="dashboard">📊 Dashboard</button>
+                <button class="nav-item" data-section="categories">📂 Categorías</button>
+                <button class="nav-item" data-section="products">📦 Productos</button>
+                <button class="nav-item" data-section="settings">⚙️ Configuración</button>
+                <button class="nav-item" id="btnBackToPortal" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; color: var(--accent);">🔄 Cambiar Panel</button>
             </nav>
 
             <!-- Main Content -->
@@ -104,11 +104,11 @@
                 <!-- Categories Section -->
                 <section class="section" id="section-categories" style="display:none;">
                     <div class="section-header-main" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 16px;">
-                        <h2 id="categoriesTitle" style="margin: 0; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #a8d0fc, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">CategorÃ­as</h2>
+                        <h2 id="categoriesTitle" style="margin: 0; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #a8d0fc, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Categorías</h2>
                     </div>
                     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h3 id="categoriesSubTitle" style="margin: 0; font-size: 1.3rem;">Listado de CategorÃ­as</h3>
-                        <button class="btn btn-primary" id="catalogAddCategoryBtn">+ Nueva CategorÃ­a</button>
+                        <h3 id="categoriesSubTitle" style="margin: 0; font-size: 1.3rem;">Listado de Categorías</h3>
+                        <button class="btn btn-primary" id="catalogAddCategoryBtn">+ Nueva Categoría</button>
                     </div>
                     <div class="table-container">
                         <table class="data-table" id="catalogCategoriesTable">
@@ -128,14 +128,14 @@
                     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
                         <h3 id="productsSubTitle" style="margin: 0; font-size: 1.3rem;">Listado de Productos</h3>
                         <div class="section-actions" style="display: flex; gap: 12px;">
-                            <select id="catalogFilterCategory" class="select-input" style="cursor: pointer;"><option value="">Todas las categorÃ­as</option></select>
+                            <select id="catalogFilterCategory" class="select-input" style="cursor: pointer;"><option value="">Todas las categorías</option></select>
                             <button class="btn btn-primary" id="catalogAddProductBtn">+ Nuevo Producto</button>
                         </div>
                     </div>
                     <div class="table-container">
                         <table class="data-table" id="catalogProductsTable">
                             <thead>
-                                <tr id="productsTableHeader"><th>Emoji</th><th>Nombre</th><th>CategorÃ­a</th><th>Planes</th><th>Estado</th><th>Acciones</th></tr>
+                                <tr id="productsTableHeader"><th>Emoji</th><th>Nombre</th><th>Categoría</th><th>Planes</th><th>Estado</th><th>Acciones</th></tr>
                             </thead>
                             <tbody id="catalogProductsBody"></tbody>
                         </table>
@@ -144,7 +144,7 @@
 
                 <!-- Settings Section -->
                 <section class="section" id="section-settings" style="display:none;">
-                    <h2>ConfiguraciÃ³n</h2>
+                    <h2>Configuración</h2>
                     <div class="settings-form">
                         <div class="form-card">
                             <h3>Datos del Negocio</h3>
@@ -153,44 +153,44 @@
                                 <input type="text" id="settingBusinessName" class="form-input">
                             </div>
                             <div class="form-group">
-                                <label>NÃºmero de WhatsApp (sin +, sin espacios)</label>
+                                <label>Número de WhatsApp (sin +, sin espacios)</label>
                                 <input type="text" id="settingWhatsapp" class="form-input" placeholder="639631207428">
                             </div>
                             <div class="form-group">
-                                <label>SÃ­mbolo de Moneda</label>
-                                <input type="text" id="settingCurrency" class="form-input" placeholder="Ej: S/ o â‚¬">
+                                <label>Símbolo de Moneda</label>
+                                <input type="text" id="settingCurrency" class="form-input" placeholder="Ej: S/ o €">
                             </div>
                             <div class="form-group" id="settingDoxeoTokenGroup" style="display:none;">
                                 <label>Token de Acceso (Solo Doxeo)</label>
                                 <input type="text" id="settingDoxeoToken" class="form-input" placeholder="Ej: code02">
                                 <small style="display:block; margin-top:6px; color:#8b8fa3; font-size:0.85rem; line-height: 1.4;">
-                                    ContraseÃ±a para que los usuarios puedan ver el catÃ¡logo de Doxeo. DÃ©jalo en blanco para acceso libre.
+                                    Contraseña para que los usuarios puedan ver el catálogo de Doxeo. Déjalo en blanco para acceso libre.
                                 </small>
                             </div>
                             <div class="form-group">
                                 <label>Plantilla de Mensaje de WhatsApp</label>
-                                <textarea id="settingWhatsappTemplate" class="form-input" rows="4" placeholder="Hola! Me interesa *{productName}* por *{duration}* ({currencySymbol}{price}) desde tu CatÃ¡logo."></textarea>
+                                <textarea id="settingWhatsappTemplate" class="form-input" rows="4" placeholder="Hola! Me interesa *{productName}* por *{duration}* ({currencySymbol}{price}) desde tu Catálogo."></textarea>
                                 <small style="display:block; margin-top:6px; color:#8b8fa3; font-size:0.85rem; line-height: 1.4;">
-                                    Puedes usar las siguientes variables que serÃ¡n reemplazadas automÃ¡ticamente:
-                                    <br>â€¢ <strong>{productName}</strong>: Nombre del producto
-                                    <br>â€¢ <strong>{duration}</strong>: DuraciÃ³n del plan
-                                    <br>â€¢ <strong>{price}</strong>: Precio del plan
-                                    <br>â€¢ <strong>{currencySymbol}</strong>: SÃ­mbolo de moneda configurado
+                                    Puedes usar las siguientes variables que serán reemplazadas automáticamente:
+                                    <br>• <strong>{productName}</strong>: Nombre del producto
+                                    <br>• <strong>{duration}</strong>: Duración del plan
+                                    <br>• <strong>{price}</strong>: Precio del plan
+                                    <br>• <strong>{currencySymbol}</strong>: Símbolo de moneda configurado
                                 </small>
                             </div>
-                            <button class="btn btn-primary" id="saveSettingsBtn">Guardar ConfiguraciÃ³n</button>
+                            <button class="btn btn-primary" id="saveSettingsBtn">Guardar Configuración</button>
                         </div>
                         <div class="form-card">
-                            <h3>Cambiar ContraseÃ±a</h3>
+                            <h3>Cambiar Contraseña</h3>
                             <div class="form-group">
-                                <label>ContraseÃ±a Actual</label>
+                                <label>Contraseña Actual</label>
                                 <input type="password" id="currentPassword" class="form-input">
                             </div>
                             <div class="form-group">
-                                <label>Nueva ContraseÃ±a</label>
+                                <label>Nueva Contraseña</label>
                                 <input type="password" id="newPassword" class="form-input">
                             </div>
-                            <button class="btn btn-primary" id="changePasswordBtn">Cambiar ContraseÃ±a</button>
+                            <button class="btn btn-primary" id="changePasswordBtn">Cambiar Contraseña</button>
                         </div>
                     </div>
                 </section>

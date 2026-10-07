@@ -664,6 +664,35 @@
                     <span class="toggle-label" style="color: #ef4444; font-weight: 600;">⚠️ Agotado / Sin Stock</span>
                 </div>
             </div>
+            
+            <!-- Dynamic Fields -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-top: 15px;">
+                <h4 style="margin-bottom: 10px; color: #a8d0fc;">Opciones de Producto Dinámico (Seguidores, Likes, etc.)</h4>
+                <div class="form-group">
+                    <div class="toggle-wrapper">
+                        <label class="toggle">
+                            <input type="checkbox" id="prodIsDynamic" ${isEdit && product.isDynamic ? 'checked' : ''}>
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Es Producto Dinámico</span>
+                    </div>
+                    <small style="color: #8b8fa3;">Permite al usuario ingresar la cantidad exacta a comprar.</small>
+                </div>
+                <div class="form-group">
+                    <label>Precio Unitario (unitPrice)</label>
+                    <input type="number" class="form-input" id="prodUnitPrice" value="${isEdit ? (product.unitPrice || 0) : 0}" step="0.001" placeholder="Ej: 0.010">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Cantidad Mínima</label>
+                        <input type="number" class="form-input" id="prodMinQty" value="${isEdit ? (product.minQty || 0) : 0}">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Cantidad Máxima</label>
+                        <input type="number" class="form-input" id="prodMaxQty" value="${isEdit ? (product.maxQty || 0) : 0}">
+                    </div>
+                </div>
+            </div>
         `;
 
         const footerHTML = `
@@ -742,7 +771,12 @@
                 return;
             }
 
-            const body = { category_id, name, emoji, description, image, highlight, sort_order, active, out_of_stock };
+            const isDynamic = $('#prodIsDynamic').checked;
+            const minQty = parseInt($('#prodMinQty').value) || 0;
+            const maxQty = parseInt($('#prodMaxQty').value) || 0;
+            const unitPrice = parseFloat($('#prodUnitPrice').value) || 0;
+
+            const body = { category_id, name, emoji, description, image, highlight, sort_order, active, out_of_stock, isDynamic, minQty, maxQty, unitPrice };
 
             try {
                 if (isEdit) {

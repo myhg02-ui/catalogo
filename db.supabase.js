@@ -234,7 +234,11 @@ async function createProduct(prod) {
       highlight: prod.highlight ? 1 : 0,
       sort_order: prod.sort_order || 0,
       active: prod.active !== undefined ? (prod.active ? 1 : 0) : 1,
-      out_of_stock: !!prod.out_of_stock
+      out_of_stock: !!prod.out_of_stock,
+      isDynamic: !!prod.isDynamic,
+      minQty: parseInt(prod.minQty) || 0,
+      maxQty: parseInt(prod.maxQty) || 0,
+      unitPrice: parseFloat(prod.unitPrice) || 0
     };
     db.products.push(newProd);
     writeLocalDb(db);
@@ -251,7 +255,11 @@ async function createProduct(prod) {
       highlight: prod.highlight ? 1 : 0,
       sort_order: parseInt(prod.sort_order) || 0,
       active: prod.active !== undefined ? (prod.active ? 1 : 0) : 1,
-      out_of_stock: !!prod.out_of_stock
+      out_of_stock: !!prod.out_of_stock,
+      isDynamic: !!prod.isDynamic,
+      minQty: parseInt(prod.minQty) || 0,
+      maxQty: parseInt(prod.maxQty) || 0,
+      unitPrice: parseFloat(prod.unitPrice) || 0
     };
     const { data, error } = await supabase.from('products').insert(dbProd).select();
     if (error) throw error;
@@ -277,7 +285,11 @@ async function updateProduct(id, changes) {
         highlight: changes.highlight !== undefined ? (changes.highlight ? 1 : 0) : db.products[idx].highlight,
         sort_order: changes.sort_order !== undefined ? parseInt(changes.sort_order) : db.products[idx].sort_order,
         active: changes.active !== undefined ? (changes.active ? 1 : 0) : db.products[idx].active,
-        out_of_stock: changes.out_of_stock !== undefined ? !!changes.out_of_stock : db.products[idx].out_of_stock
+        out_of_stock: changes.out_of_stock !== undefined ? !!changes.out_of_stock : db.products[idx].out_of_stock,
+        isDynamic: changes.isDynamic !== undefined ? !!changes.isDynamic : db.products[idx].isDynamic,
+        minQty: changes.minQty !== undefined ? parseInt(changes.minQty) : db.products[idx].minQty,
+        maxQty: changes.maxQty !== undefined ? parseInt(changes.maxQty) : db.products[idx].maxQty,
+        unitPrice: changes.unitPrice !== undefined ? parseFloat(changes.unitPrice) : db.products[idx].unitPrice
       };
       db.products[idx] = updated;
       writeLocalDb(db);
@@ -296,6 +308,10 @@ async function updateProduct(id, changes) {
     if (changes.sort_order !== undefined) dbChanges.sort_order = parseInt(changes.sort_order);
     if (changes.active !== undefined) dbChanges.active = changes.active ? 1 : 0;
     if (changes.out_of_stock !== undefined) dbChanges.out_of_stock = !!changes.out_of_stock;
+    if (changes.isDynamic !== undefined) dbChanges.isDynamic = !!changes.isDynamic;
+    if (changes.minQty !== undefined) dbChanges.minQty = parseInt(changes.minQty) || 0;
+    if (changes.maxQty !== undefined) dbChanges.maxQty = parseInt(changes.maxQty) || 0;
+    if (changes.unitPrice !== undefined) dbChanges.unitPrice = parseFloat(changes.unitPrice) || 0;
 
     const { data, error } = await supabase.from('products').update(dbChanges).eq('id', targetId).select();
     if (error) throw error;

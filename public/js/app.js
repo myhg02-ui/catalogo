@@ -518,7 +518,7 @@ const createProductCard = (product, settings, catalogType) => {
     }
 
     // Price display & Buy button
-    if (defaultPlan) {
+    if (defaultPlan || product.isDynamic) {
         if (product.isDynamic) {
             html += `
                 <div class="dynamic-qty-selector" style="margin: 10px 0;">

@@ -233,7 +233,11 @@ app.post('/api/admin/products', requireAuth, async function(req, res) {
       sort_order: b.sort_order || 0,
       active: b.active !== undefined ? b.active : 1,
       image: b.image,
-      out_of_stock: b.out_of_stock || false
+      out_of_stock: b.out_of_stock || false,
+      isDynamic: b.isDynamic || false,
+      minQty: b.minQty || 0,
+      maxQty: b.maxQty || 0,
+      unitPrice: b.unitPrice || 0
     };
     const data = await supabaseDb.createProduct(prod);
     res.json(data);

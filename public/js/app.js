@@ -269,6 +269,32 @@ const buildWhatsAppLink = (settings, productName, duration, price, catalogType) 
 };
 
 /**
+ * ── Helpers para productos dinámicos (Seguidores, Espectadores, etc.) ──
+ * El precio por unidad SIEMPRE sale de product.unitPrice (campo "Precio por unidad" del admin).
+ * Nunca se lee de la descripción, para que no haya dos precios distintos.
+ */
+const getUnitWord = (name) => {
+    const n = (name || '').toLowerCase();
+    if (n.includes('espectador')) return { one: 'espectador', many: 'espectadores' };
+    if (n.includes('like') || n.includes('me gusta')) return { one: 'like', many: 'likes' };
+    if (n.includes('vista') || n.includes('view') || n.includes('reproducc')) return { one: 'vista', many: 'vistas' };
+    if (n.includes('miembro')) return { one: 'miembro', many: 'miembros' };
+    return { one: 'seguidor', many: 'seguidores' };
+};
+
+// 0.01 -> "0.010" | 0.015 -> "0.015" | 0.0125 -> "0.0125"
+const formatUnitPrice = (n) => {
+    const trimmed = n.toFixed(4).replace(/0+$/, '');
+    const decimals = Math.max(3, (trimmed.split('.')[1] || '').length);
+    return n.toFixed(decimals);
+};
+
+// Quita textos tipo "S/ 0.010 por seguidor." escritos a mano en la descripción
+const stripManualUnitPrice = (text) => (text || '')
+    .replace(/S\/\s*\d+(?:[.,]\d+)?\s*(?:por|x|c\/u|cada)\s*(?:seguidor|espectador|unidad|like|vista|miembro)(?:es|s)?\s*\.?\s*/gi, '')
+    .trim();
+
+/**
  * Creates a single product card DOM element.
  */
 const createProductCard = (product, settings, catalogType) => {
@@ -284,6 +310,13 @@ const createProductCard = (product, settings, catalogType) => {
 
     const whatsappNumber = settings[`whatsapp_number_${catalogType}`] || settings.whatsapp_number || '639631207428';
     const currencySymbol = settings[`currency_symbol_${catalogType}`] || settings.currency_symbol || 'S/';
+
+    // Datos del producto dinámico (una sola fuente de verdad: unitPrice)
+    const isDynamic = !!product.isDynamic;
+    const unitPrice = parseFloat(product.unitPrice) || (defaultPlan ? parseFloat(defaultPlan.price) : 0) || 0;
+    const minQty = parseInt(product.minQty) || 1;
+    const maxQty = parseInt(product.maxQty) || 1000000;
+    const unitWord = getUnitWord(product.name);
 
     // Build inner HTML
     let html = '';
@@ -305,9 +338,15 @@ const createProductCard = (product, settings, catalogType) => {
     // Name
     html += `<h3 class="card-name">${product.name}</h3>`;
 
-    // Description
-    if (product.description && product.description.trim() !== '') {
-        html += `<p class="card-description">${product.description}</p>`;
+    // Precio por unidad (generado automáticamente desde unitPrice)
+    if (isDynamic) {
+        html += `<div class="unit-price-chip"><strong>${currencySymbol} ${formatUnitPrice(unitPrice)}</strong> por ${unitWord.one}</div>`;
+    }
+
+    // Description (en dinámicos se oculta el precio escrito a mano para evitar contradicciones)
+    const descText = isDynamic ? stripManualUnitPrice(product.description) : (product.description || '');
+    if (descText.trim() !== '') {
+        html += `<p class="card-description">${descText}</p>`;
     } else {
         if (catalogType === 'doxeo') {
             html += `<p class="card-description">Resultados rápidos, exactos y 100% confidenciales.</p>`;
@@ -518,15 +557,17 @@ const createProductCard = (product, settings, catalogType) => {
     }
 
     // Price display & Buy button
-    if (defaultPlan || product.isDynamic) {
-        if (product.isDynamic) {
+    if (defaultPlan || isDynamic) {
+        if (isDynamic) {
             html += `
                 <div class="dynamic-qty-selector" style="margin: 10px 0;">
-                    <label style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Cantidad a comprar:</label>
-                    <input type="number" class="dynamic-input-qty" value="${product.minQty}" min="${product.minQty}" max="${product.maxQty}" step="100" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: #fff; font-size: 1rem; text-align: center; letter-spacing: 1px;">
+                    <label style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Cantidad de ${unitWord.many}:</label>
+                    <input type="number" class="dynamic-input-qty" value="${minQty}" min="${minQty}" max="${maxQty}" step="100" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5); color: #fff; font-size: 1rem; text-align: center; letter-spacing: 1px;">
+                    <small class="dynamic-limits">Mínimo ${minQty.toLocaleString('es-PE')} · Máximo ${maxQty.toLocaleString('es-PE')}</small>
                 </div>
                 <div class="price-display" style="margin-top: 15px;">
-                    <span class="price-amount"><span class="price-currency">${currencySymbol}</span><span class="dynamic-total-price">${(product.unitPrice * product.minQty).toFixed(2)}</span></span>
+                    <span class="price-amount"><span class="price-currency">${currencySymbol}</span><span class="dynamic-total-price">${(unitPrice * minQty).toFixed(2)}</span></span>
+                    <span class="dynamic-breakdown"></span>
                 </div>
                 <div class="cashback-badge" style="display: none; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.75rem; margin-bottom: 15px; text-align: center; line-height: 1.4;">
                 </div>
@@ -612,9 +653,10 @@ const createProductCard = (product, settings, catalogType) => {
         durationSelect.addEventListener('change', updatePriceDisplay);
     }
 
-    if (product.isDynamic) {
+    if (isDynamic) {
         const qtyInput = card.querySelector('.dynamic-input-qty');
         const totalPriceEl = card.querySelector('.dynamic-total-price');
+        const breakdownEl = card.querySelector('.dynamic-breakdown');
         const cashbackBadge = card.querySelector('.cashback-badge');
         const btnBuyDynamic = card.querySelector('.btn-buy-dynamic');
 
@@ -622,19 +664,23 @@ const createProductCard = (product, settings, catalogType) => {
             const updateDynamicPrice = () => {
                 let val = parseInt(qtyInput.value) || 0;
                 
-                if (val > product.maxQty) {
-                    val = product.maxQty;
+                if (val > maxQty) {
+                    val = maxQty;
                     qtyInput.value = val;
                 }
                 
                 let effectiveVal = val;
-                if (effectiveVal < product.minQty && qtyInput.value !== "") {
-                    effectiveVal = product.minQty;
+                if (effectiveVal < minQty) {
+                    effectiveVal = minQty;
                 }
 
-                const totalPriceNum = effectiveVal * product.unitPrice;
+                // Total = cantidad × precio por unidad (unitPrice del admin)
+                const totalPriceNum = effectiveVal * unitPrice;
                 const totalPrice = totalPriceNum.toFixed(2);
                 totalPriceEl.textContent = totalPrice;
+                if (breakdownEl) {
+                    breakdownEl.textContent = `${effectiveVal.toLocaleString('es-PE')} ${unitWord.many} × ${currencySymbol} ${formatUnitPrice(unitPrice)}`;
+                }
 
                 const doxeoCashback = (totalPriceNum * 0.10).toFixed(2);
                 const streamingCashback = (totalPriceNum * 0.05).toFixed(2);
@@ -644,7 +690,8 @@ const createProductCard = (product, settings, catalogType) => {
 
                 let msg = `¡Hola! Quisiera realizar la siguiente compra:\n`;
                 msg += `📦 Servicio: *${product.name}*\n`;
-                msg += `🔢 Cantidad: *${effectiveVal} seguidores*\n`;
+                msg += `🔢 Cantidad: *${effectiveVal} ${unitWord.many}*\n`;
+                msg += `🏷️ Precio: *${currencySymbol}${formatUnitPrice(unitPrice)} por ${unitWord.one}*\n`;
                 msg += `💰 Total: *${currencySymbol}${totalPrice}*\n\n`;
                 msg += `Además, deseo elegir mi recompensa de Cashback acumulado:\n`;
                 msg += `👉 S/ ${doxeoCashback} para usar en Doxeo, o\n`;
@@ -658,8 +705,8 @@ const createProductCard = (product, settings, catalogType) => {
             
             qtyInput.addEventListener('blur', () => {
                 let val = parseInt(qtyInput.value) || 0;
-                if (val < product.minQty) {
-                    qtyInput.value = product.minQty;
+                if (val < minQty) {
+                    qtyInput.value = minQty;
                     updateDynamicPrice();
                 }
             });

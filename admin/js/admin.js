@@ -554,7 +554,9 @@
                     ${p.highlight ? '<span class="badge badge-active" style="margin-left:6px">⭐</span>' : ''}
                 </td>
                 <td>${escapeHTML(p.categoryIcon)} ${escapeHTML(p.categoryName)}</td>
-                <td>${(p.plans || []).length}</td>
+                <td>${p.isDynamic
+                    ? `<span class="badge badge-active" title="Precio por unidad que usa la calculadora">🧮 S/ ${(parseFloat(p.unitPrice) || 0).toFixed(3)} c/u</span>`
+                    : (p.plans || []).length}</td>
                 <td>
                     <span class="badge ${p.active ? 'badge-active' : 'badge-inactive'}">
                         ${p.active ? 'Activo' : 'Inactivo'}
@@ -667,30 +669,34 @@
             
             <!-- Dynamic Fields -->
             <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-top: 15px;">
-                <h4 style="margin-bottom: 10px; color: #a8d0fc;">Opciones de Producto Dinámico (Seguidores, Likes, etc.)</h4>
+                <h4 style="margin-bottom: 10px; color: #a8d0fc;">🧮 Venta por cantidad (Seguidores, Espectadores, Likes...)</h4>
                 <div class="form-group">
                     <div class="toggle-wrapper">
                         <label class="toggle">
                             <input type="checkbox" id="prodIsDynamic" ${isEdit && product.isDynamic ? 'checked' : ''}>
                             <span class="toggle-slider"></span>
                         </label>
-                        <span class="toggle-label">Es Producto Dinámico</span>
+                        <span class="toggle-label">El cliente elige la cantidad</span>
                     </div>
-                    <small style="color: #8b8fa3;">Permite al usuario ingresar la cantidad exacta a comprar.</small>
+                    <small style="color: #8b8fa3;">Muestra una calculadora: el total se calcula como <strong>cantidad × precio por unidad</strong>. No necesita planes.</small>
                 </div>
-                <div class="form-group">
-                    <label>Precio Unitario (unitPrice)</label>
-                    <input type="number" class="form-input" id="prodUnitPrice" value="${isEdit ? (product.unitPrice || 0) : 0}" step="0.001" placeholder="Ej: 0.010">
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <div class="form-group" style="flex: 1;">
-                        <label>Cantidad Mínima</label>
-                        <input type="number" class="form-input" id="prodMinQty" value="${isEdit ? (product.minQty || 0) : 0}">
+                <div id="dynamicFieldsBox" style="${isEdit && product.isDynamic ? '' : 'display:none;'}">
+                    <div class="form-group">
+                        <label>💲 Precio por UNA unidad (S/)</label>
+                        <input type="number" class="form-input" id="prodUnitPrice" value="${isEdit ? (parseFloat(product.unitPrice) || 0) : 0}" step="0.001" min="0" placeholder="Ej: 0.010">
+                        <small style="color: #8b8fa3;">Ej: si 1000 seguidores cuestan S/ 10, escribe <strong>0.010</strong>. Este es el ÚNICO precio que usa la web; no hace falta escribirlo en la descripción (se muestra solo).</small>
                     </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label>Cantidad Máxima</label>
-                        <input type="number" class="form-input" id="prodMaxQty" value="${isEdit ? (product.maxQty || 0) : 0}">
+                    <div style="display: flex; gap: 10px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Cantidad Mínima</label>
+                            <input type="number" class="form-input" id="prodMinQty" value="${isEdit ? (product.minQty || 0) : 100}" min="1">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Cantidad Máxima</label>
+                            <input type="number" class="form-input" id="prodMaxQty" value="${isEdit ? (product.maxQty || 0) : 10000}" min="1">
+                        </div>
                     </div>
+                    <div id="dynamicPreview" style="background: rgba(168,208,252,0.08); border: 1px solid rgba(168,208,252,0.25); border-radius: 8px; padding: 10px 12px; font-size: 0.85rem; line-height: 1.6; color: #cbd5e1;"></div>
                 </div>
             </div>
         `;
@@ -701,6 +707,27 @@
         `;
 
         openModal(title, bodyHTML, footerHTML);
+
+        // Vista previa en vivo del precio dinámico
+        const dynToggle = $('#prodIsDynamic');
+        const dynBox = $('#dynamicFieldsBox');
+        const dynPreview = $('#dynamicPreview');
+        const renderDynPreview = () => {
+            const up = parseFloat($('#prodUnitPrice').value) || 0;
+            const min = parseInt($('#prodMinQty').value) || 0;
+            const max = parseInt($('#prodMaxQty').value) || 0;
+            const row = (q) => `• ${q.toLocaleString('es-PE')} unidades = <strong style="color:#fff">S/ ${(q * up).toFixed(2)}</strong>`;
+            const samples = [min, 1000, max].filter((q, i, a) => q > 0 && a.indexOf(q) === i).sort((a, b) => a - b);
+            dynPreview.innerHTML = up > 0
+                ? `👀 <strong>Así lo verá el cliente:</strong><br>${samples.map(row).join('<br>')}`
+                : '⚠️ Escribe el precio por unidad para que la calculadora funcione.';
+        };
+        dynToggle.addEventListener('change', () => {
+            dynBox.style.display = dynToggle.checked ? '' : 'none';
+            renderDynPreview();
+        });
+        ['#prodUnitPrice', '#prodMinQty', '#prodMaxQty'].forEach((sel) => $(sel).addEventListener('input', renderDynPreview));
+        renderDynPreview();
 
         const uploadArea = $('#imageUploadArea');
         const fileInput = $('#prodImageFile');
@@ -775,6 +802,17 @@
             const minQty = parseInt($('#prodMinQty').value) || 0;
             const maxQty = parseInt($('#prodMaxQty').value) || 0;
             const unitPrice = parseFloat($('#prodUnitPrice').value) || 0;
+
+            if (isDynamic) {
+                if (unitPrice <= 0) {
+                    showToast('Escribe el precio por unidad (ej: 0.010)', 'error');
+                    return;
+                }
+                if (minQty <= 0 || maxQty < minQty) {
+                    showToast('Revisa la cantidad mínima y máxima', 'error');
+                    return;
+                }
+            }
 
             const body = { category_id, name, emoji, description, image, highlight, sort_order, active, out_of_stock, isDynamic, minQty, maxQty, unitPrice };
 

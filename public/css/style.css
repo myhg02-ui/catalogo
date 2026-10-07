@@ -651,6 +651,44 @@ body {
     line-height: 1.45;
 }
 
+/* Precio por unidad (productos dinámicos) — generado automáticamente */
+.unit-price-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    margin: 6px 0 8px;
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, rgba(168, 208, 252, 0.14), rgba(250, 171, 189, 0.14));
+    border: 1px solid rgba(168, 208, 252, 0.3);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+}
+
+.unit-price-chip strong {
+    color: var(--text-primary);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+.dynamic-limits {
+    display: block;
+    margin-top: 6px;
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    opacity: 0.75;
+}
+
+.dynamic-breakdown {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
 /* Duration pills */
 .duration-pills {
     display: flex;

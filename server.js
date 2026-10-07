@@ -55,6 +55,12 @@ app.use(session({
   cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
+// Nunca cachear la API: así los precios cambiados en el admin se ven al instante
+app.use('/api', function(req, res, next) {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+  next();
+});
+
 // Directorio de uploads
 var uploadsDir = path.join(__dirname, 'public', 'uploads');
 var catalogTypes = ['streaming', 'doxeo', 'seguidores'];

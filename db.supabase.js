@@ -315,7 +315,10 @@ async function updateProduct(id, changes) {
 
     const { data, error } = await supabase.from('products').update(dbChanges).eq('id', targetId).select();
     if (error) throw error;
-    return data && data[0];
+    if (!data || data.length === 0) {
+      throw new Error('La base de datos no guardó el cambio (0 filas actualizadas). Revisa permisos/clave de Supabase.');
+    }
+    return data[0];
   } catch (err) {
     console.error('⚠️ DB ADAPTER: Error actualizando producto en Supabase:', err.message);
     throw err;
